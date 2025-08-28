@@ -1,12 +1,11 @@
+import OrganizerDashboard from "./components/organizer-dashboard"
 
 
 function App() {
 
   return (
     <>
-      <div className='text-red-500'>
-        hello
-      </div>
+      <OrganizerDashboard />
     </>
   )
 }
