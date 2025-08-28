@@ -33,7 +33,21 @@ class EventController {
     }
 
 
-    
+    async getAll(req: Request, res: Response, next: NextFunction) {
+        try {
+            const events = await this.eventRepository.find({
+                relations: ["venue", "organizer", "ticketTypes"],
+            });
+            return res.status(200).json({
+            message: "Fetched events successfully",
+            count: events.length,
+            events,
+        });
+        } catch (error) {
+            console.error("Error fetching events:", error);
+            next(error);
+        }
+    }
 }
 
 export default new EventController();
