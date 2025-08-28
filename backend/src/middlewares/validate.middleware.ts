@@ -19,3 +19,4 @@ export const validate = (schema: ZodObject<ZodRawShape>) => (req: Request, res: 
     next(err);
   }
 };
+

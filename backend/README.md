@@ -71,10 +71,10 @@
 
 ```bash
 # clone dự án
-git clone https://github.com/helloVietTran/booking-event-and-buying-ticket-web
+git clone https://github.com/helloVietTran/selling-ticket-web
 
 # di chuyển tới thư mục dự án
-cd booking-event-and-buying-ticket-web/backend
+cd selling-ticket-web/backend
 
 # cài dependencies
 npm install
