@@ -14,10 +14,10 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
-  @Column()
+  @Column({type: "varchar", length: 50})
   userName!: string;
 
-  @Column()
+  @Column({type: "varchar"})
   passwordHash!: string;
 
   @Column({ 
