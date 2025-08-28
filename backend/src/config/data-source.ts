@@ -17,11 +17,11 @@ import { Attendee } from '../models/Attendee.model';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
-  host: config.db.host,
-  port: Number(config.db.port),
-  username: config.db.user,
-  password: config.db.pass,
-  database: config.db.name,
+  host:'localhost',
+  port: 3306,
+  username: 'root',
+  password: "root",
+  database:"event_ticket_db",
   synchronize: true, // dev only
   logging: false,
   entities: [User, QrCode, Ticket, Event, Venue, TicketType, Booking, BookingItem, Payment, Organizer, Attendee],
