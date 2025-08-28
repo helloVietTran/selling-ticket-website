@@ -4,22 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon",
+    "start": "node dist/index.js",
+    "build": "tsc"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/helloVietTran/booking-event-and-buying-ticket-web.git"
-  },
+
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "module",
-  "bugs": {
-    "url": "https://github.com/helloVietTran/booking-event-and-buying-ticket-web/issues"
-  },
-  "homepage": "https://github.com/helloVietTran/booking-event-and-buying-ticket-web#readme",
   "dependencies": {
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
@@ -37,10 +29,10 @@
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
-    "@types/node": "^24.3.0",
-    "nodemon": "^3.1.10",
+    "@types/node": "^22.13.11",
     "prettier": "^3.6.2",
     "ts-node": "^10.9.2",
-    "typescript": "^5.9.2"
+    "typescript": "^5.8.2",
+    "nodemon": "^3.1.9"
   }
 }

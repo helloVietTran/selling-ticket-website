@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
+
 import route from './routes';
 import { AppDataSource } from './config/data-source';
 
