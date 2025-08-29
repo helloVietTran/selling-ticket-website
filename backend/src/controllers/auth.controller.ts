@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
-import { AppDataSource } from '../config/data-source';
-import { User } from '../models/User.model';
-import { Role } from '../types/enum';
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import { AppDataSource } from "../config/data-source";
+import { User } from "../models/User.model";
+import { Role } from "../types/enum"
+import { DisabledToken } from '../models/disabletoken.model';
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
@@ -53,7 +54,31 @@ class AuthController {
 
       return res.status(200).json({ message: 'Đăng nhập thành công', token });
     } catch (error) {
-      return res.status(500).json({ error: 'Lỗi server' });
+      return res.status(500).json({ error: "Lỗi server" });
+    }
+  }
+  async logout(req: Request, res: Response, next: NextFunction) {
+    try{
+      const { accessToken } = req.body;
+      const decoded = jwt.verify(
+      accessToken,
+      process.env.JWT_SECRET as string
+    ) as { id: number; role: string; exp: number };
+
+      const expiresAt = new Date(decoded.exp * 1000);
+
+      const repo = AppDataSource.getRepository(DisabledToken);
+
+      const disabledToken = repo.create({
+         token: accessToken,
+         expiresAt,
+    });
+
+      await repo.save(disabledToken);
+
+      return { message: "Đăng xuất thành công, token đã bị vô hiệu hóa." };
+    } catch(error){
+      return { error: "Token không hợp lệ hoặc đã hết hạn." };
     }
   }
 }
