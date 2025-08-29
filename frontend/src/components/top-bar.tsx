@@ -1,3 +1,5 @@
+import { AvatarDropdown } from "./avatar-dropdown";
+
 export default function TopBar() {
   return (
     <header className="flex items-center justify-between px-8 py-4 bg-[#282a29] border-b border-white/9">
@@ -11,7 +13,7 @@ export default function TopBar() {
           <span>Tạo sự kiện</span>
         </button>
 
-        <div className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">A</div>
+        <AvatarDropdown />
       </div>
     </header>
   );
