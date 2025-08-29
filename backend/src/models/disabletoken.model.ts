@@ -1,16 +1,16 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
 
-@Entity("disabletoken")
+@Entity('disabletoken')
 export class DisabledToken {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ type: "varchar", unique: true })
+  @Column({ type: 'varchar', unique: true })
   token!: string;
 
-  @Column({ type: "datetime" })
+  @Column({ type: 'datetime' })
   expiresAt!: Date;
 
-  @CreateDateColumn({ type: "timestamp" })
+  @CreateDateColumn({ type: 'timestamp' })
   createdAt!: Date;
 }
