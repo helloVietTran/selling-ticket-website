@@ -4,7 +4,7 @@ import {
   Column,
   TableInheritance,
 } from "typeorm";
-
+import { Role } from "../types/enum"
 @Entity("user")
 @TableInheritance({ column: { type: "varchar", name: "type" } })
 export class User {
@@ -14,13 +14,16 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
-  @Column()
+  @Column({type: "varchar", length: 50})
   userName!: string;
 
-  @Column()
+  @Column({type: "varchar"})
   passwordHash!: string;
 
-  @Column({ type: "simple-array", nullable: true })
-  roles!: string[];
+  @Column({ 
+    type:"enum",
+    enum: Role
+   })
+  roles!: Role;
 }
 
