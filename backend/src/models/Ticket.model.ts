@@ -4,12 +4,12 @@ import { TicketState } from '../types/enum';
 import { TicketType } from './TicketType.model';
 import { Attendee } from './Attendee.model';
 
-@Entity("ticket")
+@Entity('ticket')
 export class Ticket {
   @PrimaryGeneratedColumn()
   ticketId!: number;
 
-  @Column({ type: "enum", enum: TicketState, default: TicketState.Available })
+  @Column({ type: 'enum', enum: TicketState, default: TicketState.Available })
   ticketStatus!: TicketState;
 
   @Column({ nullable: true })
@@ -22,6 +22,6 @@ export class Ticket {
   owner?: Attendee;
 
   @OneToOne(() => QrCode, (q) => q.ticket, { cascade: true })
-  @JoinColumn({ name: "ticketId" })
+  @JoinColumn({ name: 'ticketId' })
   qrCode?: QrCode;
 }

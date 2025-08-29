@@ -3,9 +3,9 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 if (process.env.NODE_ENV && process.env.NODE_ENV !== 'development') {
-    dotenv.config({
-        path: `.env.${process.env.NODE_ENV}`
-    });
+  dotenv.config({
+    path: `.env.${process.env.NODE_ENV}`
+  });
 }
 
 export const config = {
@@ -20,10 +20,10 @@ export const config = {
     port: process.env.DB_PORT!,
     user: process.env.DB_USER!,
     pass: process.env.DB_PASS!,
-    name: process.env.DB_NAME!,
+    name: process.env.DB_NAME!
   },
   admin: {
     email: process.env.ADMIN_EMAIL!,
-    password: process.env.ADMIN_PASSWORD!,
-  },
+    password: process.env.ADMIN_PASSWORD!
+  }
 };

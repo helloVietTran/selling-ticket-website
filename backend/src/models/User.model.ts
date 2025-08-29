@@ -1,12 +1,7 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  TableInheritance,
-} from "typeorm";
-import { Role } from "../types/enum"
-@Entity("user")
-@TableInheritance({ column: { type: "varchar", name: "type" } })
+import { Entity, PrimaryGeneratedColumn, Column, TableInheritance } from 'typeorm';
+import { Role } from '../types/enum';
+@Entity('user')
+@TableInheritance({ column: { type: 'varchar', name: 'type' } })
 export class User {
   @PrimaryGeneratedColumn()
   id!: number;
@@ -14,16 +9,15 @@ export class User {
   @Column({ unique: true })
   email!: string;
 
-  @Column({type: "varchar", length: 50})
+  @Column({ type: 'varchar', length: 50 })
   userName!: string;
 
-  @Column({type: "varchar"})
+  @Column({ type: 'varchar' })
   passwordHash!: string;
 
-  @Column({ 
-    type:"enum",
+  @Column({
+    type: 'enum',
     enum: Role
-   })
+  })
   roles!: Role;
 }
-

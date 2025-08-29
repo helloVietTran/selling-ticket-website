@@ -1,16 +1,10 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-} from "typeorm";
-import { Organizer } from "./Organizer.model";
-import { Venue } from "./Venue.model";
-import { TicketType } from "./TicketType.model";
-import { EventStatus } from "../types/enum";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Organizer } from './Organizer.model';
+import { Venue } from './Venue.model';
+import { TicketType } from './TicketType.model';
+import { EventStatus } from '../types/enum';
 
-@Entity("event")
+@Entity('event')
 export class Event {
   @PrimaryGeneratedColumn()
   eventId!: number;
@@ -21,13 +15,13 @@ export class Event {
   @Column({ nullable: true })
   description?: string;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: 'timestamp' })
   startTime!: Date;
 
-  @Column({ type: "timestamp" })
+  @Column({ type: 'timestamp' })
   endTime!: Date;
 
-  @Column({ type: "enum", enum: EventStatus, default: EventStatus.Draft })
+  @Column({ type: 'enum', enum: EventStatus, default: EventStatus.Draft })
   status!: EventStatus;
 
   @Column({ nullable: true })
