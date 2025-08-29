@@ -23,7 +23,7 @@ export const AppDataSource = new DataSource({
   username: 'root',
   password: "root",
   database:"event_ticket_db",
-  synchronize: true, // dev only
+  synchronize: true,
   logging: false,
   entities: [User, QrCode, Ticket, Event, Venue, TicketType, Booking, BookingItem, Payment, Organizer, Attendee,DisabledToken],
   migrations: [],
