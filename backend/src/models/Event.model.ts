@@ -36,7 +36,7 @@ export class Event {
   @ManyToOne(() => Venue, (v) => v.events, { nullable: true })
   venue?: Venue;
 
-  @ManyToOne(() => Organizer, (o) => o.events, { nullable: false })
+  @ManyToOne(() => Organizer, (o) => o.events, { nullable: true })
   organizer!: Organizer;
 
   @OneToMany(() => TicketType, (tt) => tt.event)

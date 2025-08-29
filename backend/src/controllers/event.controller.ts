@@ -2,18 +2,16 @@ import { NextFunction, Request, Response } from 'express';
 import { AppDataSource } from "../config/data-source";
 import { Event } from "../models/Event.model";
 
-
-
 class EventController {
     private eventRepository = AppDataSource.getRepository(Event);
 
-    // Tạo
-    async create(req: Request, res: Response, next: NextFunction) {
+    // Tạo event
+    create = async (req: Request, res: Response, next: NextFunction) => {
         try {
-            const { title, description, startTime, endTime, status, capacity } = req.body;
+            const { title, description, startTime, endTime, status, capacity, organizer, } = req.body;
 
             const newEvent = this.eventRepository.create({
-                ...{ title, description, startTime, endTime, status, capacity }
+                title, description, startTime, endTime, status, capacity, organizer
             });
 
             await this.eventRepository.save(newEvent);
@@ -26,9 +24,10 @@ class EventController {
             console.error("Error creating event:", error);
             next(error);
         }
-    }
+    };
 
-    async getEvents(req: Request, res: Response, next: NextFunction) {
+    // Lấy danh sách event
+    getEvents = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const events = await this.eventRepository.find({
                 relations: ["venue", "organizer", "ticketTypes"],
@@ -42,11 +41,10 @@ class EventController {
             console.error("Error fetching events:", error);
             next(error);
         }
-    }
+    };
 
-
-
-    async update(req: Request, res: Response, next: NextFunction) {
+    // Cập nhật event
+    update = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
             const data = req.body;
@@ -64,11 +62,10 @@ class EventController {
             console.error("Error updating event:", error);
             next(error);
         }
-    }
+    };
 
-
-
-    async delete(req: Request, res: Response, next: NextFunction) {
+    // Xóa event
+    delete = async (req: Request, res: Response, next: NextFunction) => {
         try {
             const { id } = req.params;
 
@@ -84,10 +81,7 @@ class EventController {
             console.error("Error deleting event:", error);
             next(error);
         }
-    }
+    };
 }
 
 export default new EventController();
-
-
-
