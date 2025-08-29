@@ -1,8 +1,8 @@
-import { ChildEntity, Column, OneToMany } from "typeorm";
-import { User } from "./User.model";
-import { Event } from "./Event.model";
+import { ChildEntity, Column, OneToMany } from 'typeorm';
+import { User } from './User.model';
+import { Event } from './Event.model';
 
-@ChildEntity("organizer")
+@ChildEntity('organizer')
 export class Organizer extends User {
   @Column({ nullable: true })
   organizationName?: string;

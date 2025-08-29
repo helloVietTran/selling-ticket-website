@@ -1,8 +1,8 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from "typeorm";
-import { Booking } from "./Booking.model";
-import { TicketType } from "./TicketType.model";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Booking } from './Booking.model';
+import { TicketType } from './TicketType.model';
 
-@Entity("booking_item")
+@Entity('booking_item')
 export class BookingItem {
   @PrimaryGeneratedColumn()
   bookingItemId!: number;
@@ -13,6 +13,6 @@ export class BookingItem {
   @ManyToOne(() => TicketType)
   ticketType!: TicketType;
 
-  @Column("int")
+  @Column('int')
   quantity!: number;
 }

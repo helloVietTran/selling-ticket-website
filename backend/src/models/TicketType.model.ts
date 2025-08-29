@@ -1,15 +1,9 @@
 // file: src/entities/TicketType.ts
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  OneToMany,
-} from "typeorm";
-import { Event } from "./Event.model";
-import { Ticket } from "./Ticket.model";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Event } from './Event.model';
+import { Ticket } from './Ticket.model';
 
-@Entity("ticket_type")
+@Entity('ticket_type')
 export class TicketType {
   @PrimaryGeneratedColumn()
   ticketTypeId!: number;
@@ -20,13 +14,13 @@ export class TicketType {
   @Column({ nullable: true })
   stand?: string;
 
-  @Column("int")
+  @Column('int')
   totalQuantity!: number;
 
-  @Column("int")
+  @Column('int')
   availableQuantity!: number;
 
-  @Column("double precision")
+  @Column('double precision')
   price!: number;
 
   @ManyToOne(() => Event, (e) => e.ticketTypes)

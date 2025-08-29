@@ -36,6 +36,4 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-
-
 // const requester = res.locals.requester;

@@ -1,5 +1,3 @@
-
-
 ## 📂 Cấu trúc thư mục
 
 ```
@@ -11,21 +9,21 @@
     |       config.js
     |       data-source.js
     |       db.js
-    |       
+    |
     +---controllers
     |       auth.controller.js
-    |       
+    |
     +---middlewares
     +---models
     |       Attendee.model.js
     |       Organizer.model.js
     |       Role.model.js
     |       User.model.js
-    |       
+    |
     +---routes
     |       auth.route.js
     |       index.js
-    |       
+    |
     \---validators
 
 ```
@@ -34,35 +32,34 @@
 
 ## 🔑 Giải thích nhanh
 
-- **app.js**  
-  - Tạo instance `express()`, cấu hình middleware (`morgan`, `cors`, body-parser), đăng ký route.  
+- **app.js**
+  - Tạo instance `express()`, cấu hình middleware (`morgan`, `cors`, body-parser), đăng ký route.
 
-- **server.js**  
+- **server.js**
   - Import `app` và start server, điểm bắt đầu của dự án
 
-- **config/**  
-  - `config.js`: đọc `.env` và chuẩn hóa config chung.  
-  - `data-source.js`: cấu hình TypeORM (database, entities, migrations).  
-  - `db.js`: khởi tạo và quản lý kết nối DB.  
+- **config/**
+  - `config.js`: đọc `.env` và chuẩn hóa config chung.
+  - `data-source.js`: cấu hình TypeORM (database, entities, migrations).
+  - `db.js`: khởi tạo và quản lý kết nối DB.
 
-- **controllers/**  
-  - Chứa logic nghiệp vụ của từng route (ví dụ: login, register).  
+- **controllers/**
+  - Chứa logic nghiệp vụ của từng route (ví dụ: login, register).
 
-- **middlewares/**  
-  - Xử lý request trước khi vào controller (auth, validate, error handler).  
+- **middlewares/**
+  - Xử lý request trước khi vào controller (auth, validate, error handler).
 
-- **models/**  
-  - Định nghĩa entity TypeORM (mapping với bảng DB).  
+- **models/**
+  - Định nghĩa entity TypeORM (mapping với bảng DB).
 
-- **routes/**  
-  - Khai báo API endpoint, mapping tới controller tương ứng.  
+- **routes/**
+  - Khai báo API endpoint, mapping tới controller tương ứng.
 
-- **validators/**  
-  - Chứa logic validate dữ liệu đầu vào.  
+- **validators/**
+  - Chứa logic validate dữ liệu đầu vào.
 
-
-- **.env**  
-  - Chứa biến môi trường: PORT, DB config, JWT secret, API prefix/version,…  
+- **.env**
+  - Chứa biến môi trường: PORT, DB config, JWT secret, API prefix/version,…
   - Không được public
 
 ---
@@ -84,3 +81,4 @@ cp .env
 
 npm run dev
 
+```
