@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   DropdownMenu,
@@ -6,8 +6,8 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { User, Ticket, Calendar, LogOut } from "lucide-react";
+} from '@/components/ui/dropdown-menu';
+import { User, Ticket, Calendar, LogOut } from 'lucide-react';
 
 export function AvatarDropdown() {
   return (
