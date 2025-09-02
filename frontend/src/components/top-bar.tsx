@@ -1,4 +1,4 @@
-import { AvatarDropdown } from "./avatar-dropdown";
+import { AvatarDropdown } from './avatar-dropdown';
 
 export default function TopBar() {
   return (

@@ -1,22 +1,53 @@
-import { useState } from "react";
-import { RiCalendarEventLine } from "react-icons/ri";
-import { IoStatsChart } from "react-icons/io5";
+import { useState } from 'react';
+import { RiCalendarEventLine, RiFileList3Line } from 'react-icons/ri';
+import { IoStatsChart } from 'react-icons/io5';
+import { LuScanLine } from 'react-icons/lu';
+import { useNavigate } from 'react-router-dom';
 
-import SidebarItem from "./sidebar-item";
+import SidebarItem from './sidebar-item';
 
 type MenuItem = {
   id: string;
   label: string;
   icon?: React.ReactNode;
+  path: string;
 };
 
 const menu: MenuItem[] = [
-  { id: "events", label: "Sự kiện của tôi", icon: <RiCalendarEventLine /> },
-  { id: "reports", label: "Quản lý báo cáo", icon: <IoStatsChart /> },
+  {
+    id: 'events',
+    label: 'Sự kiện của tôi',
+    icon: <RiCalendarEventLine />,
+    path: '/events',
+  },
+  {
+    id: 'revenue',
+    label: 'Doanh thu',
+    icon: <IoStatsChart />,
+    path: '/revenue',
+  },
+  {
+    id: 'check-in',
+    label: 'Check-in',
+    icon: <LuScanLine />,
+    path: '/check-in',
+  },
+  {
+    id: 'orders',
+    label: 'Đơn hàng',
+    icon: <RiFileList3Line />,
+    path: '/orders',
+  },
 ];
 
 export default function Sidebar() {
-  const [activeId, setActiveId] = useState<string>("events"); // mặc định chọn "events"
+  const [activeId, setActiveId] = useState<string>('events');
+  const navigate = useNavigate();
+
+  const handleClick = (id: string, path: string) => {
+    setActiveId(id);
+    navigate(path);
+  };
 
   return (
     <aside className="w-72 bg-gradient-to-b from-emerald-900/80 to-gray-800/60 text-white h-screen p-6 flex flex-col justify-between">
@@ -31,14 +62,14 @@ export default function Sidebar() {
         </div>
 
         <nav className="space-y-4">
-          {menu.map((m) => (
+          {menu.map(m => (
             <SidebarItem
               key={m.id}
               id={m.id}
               label={m.label}
               icon={m.icon}
               active={m.id === activeId}
-              onClick={(id) => setActiveId(id)}
+              onClick={() => handleClick(m.id, m.path)}
             />
           ))}
         </nav>
