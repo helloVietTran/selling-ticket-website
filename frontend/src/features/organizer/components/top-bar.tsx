@@ -1,4 +1,5 @@
-import { AvatarDropdown } from '@/components/avatar-dropdown';
+import AvatarDropdown from '@/components/avatar-dropdown';
+import { CreateEventButton } from '@/components/create-event-button';
 
 export default function TopBar() {
   return (
@@ -8,10 +9,10 @@ export default function TopBar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <button className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-full flex items-center gap-2">
-          <span className="text-xl">+</span>
+        <CreateEventButton fontSize='text-sm py-1.5'>
+          <span className="text-lg">+</span>
           <span>Tạo sự kiện</span>
-        </button>
+        </CreateEventButton>
 
         <AvatarDropdown />
       </div>

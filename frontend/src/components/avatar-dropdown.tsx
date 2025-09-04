@@ -1,4 +1,3 @@
-'use client';
 
 import {
   DropdownMenu,
@@ -9,12 +8,12 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { User, Ticket, Calendar, LogOut } from 'lucide-react';
 
-export function AvatarDropdown() {
+export default function AvatarDropdown() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <button className="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center hover:ring-2 hover:ring-emerald-500 transition">
-          <User className="w-6 h-6 text-white" />
+        <button className="size-10 cursor-pointer rounded-full bg-white/10 flex items-center justify-center hover:ring-2 hover:ring-emerald-500 transition">
+          <User className="size-6 text-white" />
         </button>
       </DropdownMenuTrigger>
 
