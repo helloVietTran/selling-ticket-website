@@ -1,3 +1,5 @@
+import { ScanLine, Edit3, Trash2 } from 'lucide-react';
+
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -6,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { ScanLine, Edit3, Trash2 } from 'lucide-react';
 
 export const mockEvents = [
   {
@@ -14,21 +15,21 @@ export const mockEvents = [
     title: '[TP.HCM] Những Thành Phố Mơ Màng Year End 2024',
     location: 'TP.HCM',
     date: '08.12.2024',
-    image: 'https://via.placeholder.com/150x100.png?text=Event+1',
+    image: 'https://placehold.co/300x300/png?text=Event+1',
   },
   {
     id: '2',
     title: '[Nhà Hát THANH NIÊN] Hài kịch: Lạc lối ở Bangkok',
     location: 'Hà Nội',
     date: '15.11.2024',
-    image: 'https://via.placeholder.com/150x100.png?text=Event+2',
+    image: 'https://placehold.co/300x300/png?text=Event+2',
   },
   {
     id: '3',
     title: '1900 Future Hits #61: Quang Hùng MasterD',
     location: 'Hà Nội',
     date: '21.11.2024',
-    image: 'https://via.placeholder.com/150x100.png?text=Event+3',
+    image: 'https://placehold.co/300x300/png?text=Event+2',
   },
 ];
 
@@ -48,8 +49,8 @@ export default function EventItem({
   image,
 }: EventItemProps) {
   return (
-    <Card className="flex flex-row items-start gap-3 bg-[#1C1C1E] text-white rounded-2xl shadow-md border border-gray-700">
-      <div className="w-32 h-20 flex-shrink-0">
+    <Card className="flex flex-row p-4 gap-3 bg-[#282629] text-white rounded-2xl shadow-md border border-[#1f1d1f]">
+      <div className="w-32 h-32 flex-shrink-0">
         <img
           src={image}
           alt={title}
@@ -57,18 +58,20 @@ export default function EventItem({
         />
       </div>
 
-      <CardContent className="flex flex-col flex-1 p-2">
-        <p className="text-sm font-semibold line-clamp-2">{title}</p>
-        <p className="text-xs text-gray-400">
-          {location} | {date}
-        </p>
+      <CardContent className="flex flex-col flex-1 p-2 justify-between">
+        <div>
+          <p className="font-semibold line-clamp-2 pb-2">{title}</p>
+          <p className="text-xs text-gray-400">
+            {location} | {date}
+          </p>
+        </div>
 
         <div className="flex gap-2 mt-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                className="cursor-pointer bg-transparent border border-green-500 text-green-500 hover:bg-green-500 hover:text-white transition"
+                className="cursor-pointer bg-transparent border border-emerald-500 hover:bg-emerald-600 hover:text-white transition"
               >
                 Quản lý
               </Button>
@@ -90,7 +93,7 @@ export default function EventItem({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-1 cursor-pointer">
+          <Button className="bg-emerald-500 hover:bg-emerald-600 text-white flex items-center gap-1 cursor-pointer">
             <ScanLine className="w-4 h-4" />
             Quét vé
           </Button>

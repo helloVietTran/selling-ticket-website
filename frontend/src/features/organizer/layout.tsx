@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom';
-import Sidebar from '@/components/sidebar';
-import TopBar from '@/components/top-bar';
+
+import Sidebar from '@/features/organizer/components/sidebar';
+import TopBar from '@/features/organizer/components/top-bar';
 
 const OrganizerLayout = () => {
   return (
@@ -9,7 +10,7 @@ const OrganizerLayout = () => {
       <div className="flex-1 flex flex-col">
         <TopBar />
 
-        <main className="flex-1 px-8 pt-4 overflow-y-auto scrollbar-hidden">
+        <main className="flex-1 px-8 py-8 overflow-y-auto scrollbar-hidden">
           <Outlet />
         </main>
       </div>

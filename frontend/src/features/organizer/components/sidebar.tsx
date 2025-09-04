@@ -4,7 +4,7 @@ import { IoStatsChart } from 'react-icons/io5';
 import { LuScanLine } from 'react-icons/lu';
 import { useNavigate } from 'react-router-dom';
 
-import SidebarItem from './sidebar-item';
+import SidebarItem from '@/features/organizer/components/sidebar-item';
 
 type MenuItem = {
   id: string;
