@@ -1,11 +1,11 @@
-import EventItem, { mockEvents } from '@/components/event-item';
-import SearchBox from '@/components/search-box';
+import EventItem, { mockEvents } from '@/features/organizer/components/event-item';
+import SearchBox from '@/features/organizer/components/search-box';
 import StatusTabs from '@/components/status-tabs';
 
 const EventsPage = () => {
   return (
     <>
-      <div className="py-6 flex items-center justify-between">
+      <div className="flex items-center justify-between pb-6">
         <SearchBox />
         <StatusTabs />
       </div>

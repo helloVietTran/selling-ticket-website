@@ -61,16 +61,16 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 export default function RevenueChart() {
   return (
     <Card className="w-full bg-transparent border-none text-white">
-      <div className="flex gap-2 mb-2">
-        <button className="px-3 py-1 rounded-full bg-green-600 text-sm">
-          30 ngày
+      <div className="flex gap-2 p-2">
+        <button className="px-3 py-1 rounded-full bg-emerald-500 text-sm cursor-pointer">
+          1 tuần
         </button>
-        <button className="px-3 py-1 rounded-full bg-gray-700 text-sm">
+        <button className="px-3 py-1 rounded-full bg-gray-700 text-sm cursor-pointer">
           24 giờ
         </button>
       </div>
 
-      <CardContent className="h-[400px]">
+      <CardContent className="h-[400px] px-0">
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data}>
             <CartesianGrid
