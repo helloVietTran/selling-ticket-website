@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { useState } from 'react';
 import { Ticket } from 'lucide-react';
 
 import AvatarDropdown from '@/components/avatar-dropdown';
@@ -7,7 +7,7 @@ import { CreateEventButton } from '@/components/create-event-button';
 
 
 export default function Header() {
-    const [query, setQuery] = React.useState('');
+    const [query, setQuery] = useState('');
 
     const handleSearch = () => {
         console.log('Searching for:', query);
@@ -23,6 +23,8 @@ export default function Header() {
                     value={query}
                     onChange={setQuery}
                     onSearch={handleSearch}
+                    inputClassName='text-sm'
+                    buttonClassName='text-sm'
                 />
 
 
