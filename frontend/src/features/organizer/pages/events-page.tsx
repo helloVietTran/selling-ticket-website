@@ -1,6 +1,8 @@
 import React from 'react';
 
-import EventItem, { mockEvents } from '@/features/organizer/components/event-item';
+import EventItem, {
+  mockEvents,
+} from '@/features/organizer/components/event-item';
 import StatusTabs from '@/components/status-tabs';
 import SearchBox from '@/components/search-box';
 

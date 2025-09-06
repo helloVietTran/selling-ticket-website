@@ -1,5 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { OrganizerLayout, CheckInPage, EventsPage, OrdersPage, RevenuePage } from './features/organizer';
+import {
+  OrganizerLayout,
+  CheckInPage,
+  EventsPage,
+  OrdersPage,
+  RevenuePage,
+} from './features/organizer';
 import { Home } from './features/home';
 
 export default function App() {

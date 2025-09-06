@@ -1,17 +1,21 @@
-import Footer from "@/components/footer";
-import Header from "@/components/header";
-import Navigation from "@/features/home/components/navigation";
-import HomeLayout from "@/layouts/home-layout";
+import EventList from '@/components/event-list';
+import Footer from '@/components/footer';
+import HomeLayout from '@/layouts/home-layout';
+import Navigation from '@/features/home/components/navigation';
 
 export default function Home() {
+  return (
+    <HomeLayout>
+      <Navigation />
 
-    return (
-        <HomeLayout>
+      <div className="p-4 bg-[#272729] ">
+        <EventList category="Âm nhạc" />
+        <EventList wrapperClassName="mt-4" category="Nghệ thuật" />
 
-            <Header />
-            <Navigation />
-
-            <Footer />
-        </HomeLayout>
-    );
+        <EventList wrapperClassName="mt-4" category="Thể thao" />
+        <EventList wrapperClassName="mt-4" category="Khác" />
+      </div>
+      <Footer />
+    </HomeLayout>
+  );
 }

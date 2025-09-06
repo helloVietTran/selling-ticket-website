@@ -1,32 +1,32 @@
-"use client";
+'use client';
 
-import * as React from "react";
+import * as React from 'react';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Eye, EyeOff } from "lucide-react";
+} from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Separator } from '@/components/ui/separator';
+import { Eye, EyeOff } from 'lucide-react';
 
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useAuthModal } from "@/context/auth-modal-context";
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useAuthModal } from '@/context/auth-modal-context';
 
 // Schema validate với zod
 const registerSchema = z
   .object({
-    email: z.string().email("Email không hợp lệ"),
-    password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),
+    email: z.string().email('Email không hợp lệ'),
+    password: z.string().min(6, 'Mật khẩu tối thiểu 6 ký tự'),
     confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Mật khẩu xác nhận không khớp",
+  .refine(data => data.password === data.confirmPassword, {
+    path: ['confirmPassword'],
+    message: 'Mật khẩu xác nhận không khớp',
   });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -36,7 +36,7 @@ export default function RegisterModal() {
   const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
 
   const { modalType, closeModal, openLogin } = useAuthModal();
-  const open = modalType === "register";
+  const open = modalType === 'register';
 
   const {
     register,
@@ -47,7 +47,7 @@ export default function RegisterModal() {
   });
 
   const onSubmit = (data: RegisterFormValues) => {
-    console.log("Register form data:", data);
+    console.log('Register form data:', data);
     // Gọi API đăng ký ở đây
   };
 
@@ -55,7 +55,7 @@ export default function RegisterModal() {
     <Dialog open={open} onOpenChange={closeModal}>
       <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl font-bold text-emerald-500">
+          <DialogTitle className="text-center text-2xl font-semibold font-raleway text-gray-500 mb-2">
             Đăng ký
           </DialogTitle>
         </DialogHeader>
@@ -67,7 +67,7 @@ export default function RegisterModal() {
               type="email"
               placeholder="Nhập email"
               className="rounded"
-              {...register("email")}
+              {...register('email')}
             />
             {errors.email && (
               <p className="text-rose-600 text-xs mt-1">
@@ -79,14 +79,14 @@ export default function RegisterModal() {
           {/* Password */}
           <div className="relative">
             <Input
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               placeholder="Nhập mật khẩu"
               className="rounded pr-10"
-              {...register("password")}
+              {...register('password')}
             />
             <button
               type="button"
-              onClick={() => setShowPassword((p) => !p)}
+              onClick={() => setShowPassword(p => !p)}
               className="absolute inset-y-0 right-3 flex items-center text-gray-500"
             >
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -101,14 +101,14 @@ export default function RegisterModal() {
           {/* Confirm Password */}
           <div className="relative">
             <Input
-              type={showConfirmPassword ? "text" : "password"}
+              type={showConfirmPassword ? 'text' : 'password'}
               placeholder="Xác nhận mật khẩu"
               className="rounded pr-10"
-              {...register("confirmPassword")}
+              {...register('confirmPassword')}
             />
             <button
               type="button"
-              onClick={() => setShowConfirmPassword((p) => !p)}
+              onClick={() => setShowConfirmPassword(p => !p)}
               className="absolute inset-y-0 right-3 flex items-center text-gray-500"
             >
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -128,7 +128,7 @@ export default function RegisterModal() {
           </Button>
 
           <p className="text-sm text-center">
-            Đã có tài khoản?{" "}
+            Đã có tài khoản?{' '}
             <button
               type="button"
               className="text-emerald-500 hover:underline"
@@ -159,8 +159,6 @@ export default function RegisterModal() {
             />
             Đăng ký với Google
           </Button>
-
-
         </form>
       </DialogContent>
     </Dialog>
