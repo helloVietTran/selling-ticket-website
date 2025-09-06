@@ -27,7 +27,7 @@ const Footer: React.FC = () => {
           <h3 className="text-white font-bold mt-5 mb-2">Email</h3>
           <div className="flex items-center justify-center md:justify-start gap-2 text-xs text-gray-400">
             <Mail size={16} />
-            <span>spnhom1@ticketbox.vn</span>
+            <span>sanphamnhom1@edu.vn</span>
           </div>
 
           <h3 className="text-white font-bold mt-5 mb-2">Văn phòng chính</h3>

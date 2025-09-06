@@ -6,7 +6,8 @@ import {
   OrdersPage,
   RevenuePage,
 } from './features/organizer';
-import { Home } from './features/home';
+import { HomePage } from './features/home';
+import { SearchPage } from './features/search';
 
 export default function App() {
   return (
@@ -18,7 +19,8 @@ export default function App() {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="check-in" element={<CheckInPage />} />
         </Route>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<HomePage />} />
+        <Route path="/search" element={<SearchPage />} />
       </Routes>
     </BrowserRouter>
   );
