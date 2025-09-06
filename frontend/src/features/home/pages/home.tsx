@@ -1,6 +1,6 @@
 import Footer from "@/components/footer";
 import Header from "@/components/header";
-
+import EventList from "@/components/event-list";
 export default function Home() {
 
 
@@ -8,7 +8,7 @@ export default function Home() {
         <>
             <Header />
             <Footer />
-           
+           <EventList />
         </>
     );
 }
