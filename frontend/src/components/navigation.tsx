@@ -14,19 +14,22 @@ const categories: Category[] = [
 
 export default function Navigation() {
   return (
-    <nav className="bg-black px-8 py-4">
-      <ul className="flex gap-8 text-white text-sm">
-        {categories.map(cat => (
-          <li key={cat.value}>
-            <Link
-              to={`/search?category=${cat.value}`}
-              className="hover:text-emerald-400 transition-colors"
-            >
-              {cat.label}
-            </Link>
-          </li>
-        ))}
-      </ul>
-    </nav>
+    <div className=' bg-black'>
+      <nav className="header-container !py-4">
+        <ul className="flex gap-8 text-white text-sm">
+          {categories.map(cat => (
+            <li key={cat.value}>
+              <Link
+                to={`/search?category=${cat.value}`}
+                className="hover:text-emerald-400 transition-colors"
+              >
+                {cat.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+
   );
 }

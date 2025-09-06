@@ -22,7 +22,7 @@ const events: Event[] = [
 
 const EventSlider: React.FC = () => {
     return (
-        <div className="pb-6">
+        <div className="py-6 overflow-x-hidden">
             <Swiper
                 modules={[Navigation, Pagination]}
                 navigation={{
@@ -30,16 +30,15 @@ const EventSlider: React.FC = () => {
                     prevEl: ".swiper-button-prev-custom",
                 }}
                 pagination={{
-
                     clickable: true,
-
+                    dynamicBullets: true,
                 }}
                 spaceBetween={10}
                 breakpoints={{
                     0: { slidesPerView: 1 },
-                    481: { slidesPerView: 2 },
+                    768: { slidesPerView: 2 },
                 }}
-                className="rounded-lg overflow-hidden relative"
+                className="rounded-lg relative"
                 loop={true}
             >
                 {events.map((event) => (
@@ -57,17 +56,13 @@ const EventSlider: React.FC = () => {
                     </SwiperSlide>
                 ))}
 
-                {/* prev/next */}
-                <div className="swiper-button-prev-custom absolute top-1/2 -translate-y-1/2 left-2 bg-black text-white p-3 rounded-md cursor-pointer z-10 opacity-35 hover:opacity-100 transition">
+                <div className="swiper-button-prev-custom absolute top-1/2 -translate-y-1/2 left-2 bg-black text-white p-3 rounded-md cursor-pointer z-10 opacity-40 hover:opacity-100 transition">
                     <ChevronLeft />
                 </div>
-                <div className="swiper-button-next-custom absolute top-1/2 -translate-y-1/2 right-2 bg-black text-white p-3 rounded-md cursor-pointer z-10 opacity-35 hover:opacity-100 transition">
-                     <ChevronRight />
+                <div className="swiper-button-next-custom absolute top-1/2 -translate-y-1/2 right-2 bg-black text-white p-3 rounded-md cursor-pointer z-10 opacity-40 hover:opacity-100 transition">
+                    <ChevronRight />
                 </div>
-
-
             </Swiper>
-
         </div>
     );
 };

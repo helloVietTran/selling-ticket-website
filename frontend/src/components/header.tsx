@@ -14,7 +14,7 @@ export default function Header() {
 
   return (
     <header className="w-full bg-emerald-500 text-white ">
-      <div className="max-w-[1200px] mx-auto flex items-center justify-between px-6 py-3">
+      <div className="header-container flex items-center justify-between">
         <div className="text-2xl font-bold">N1</div>
 
         <SearchBox
