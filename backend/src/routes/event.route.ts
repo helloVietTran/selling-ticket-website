@@ -7,6 +7,7 @@ const router = Router();
 router.get('/search', EventControllers.searchEvents);
 router.post('/', EventControllers.createEvent);
 router.get('/', EventControllers.getEvents);
+router.get('/management',ticket_typeController.getTicketType);
 router.put('/:id', EventControllers.updateEvent);
 router.delete('/:id', EventControllers.deleteEvent);
 router.get('/management',ticket_typeController.getTicketType);
