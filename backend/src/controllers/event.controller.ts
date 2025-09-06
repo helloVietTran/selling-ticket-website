@@ -185,6 +185,8 @@ class EventController {
       return res.status(500).json(ApiResponse.error(err));
     }
   };
+
+  
 }
 
 export default new EventController();
