@@ -12,6 +12,9 @@ export class Ticket {
   @Column({ type: 'enum', enum: TicketState, default: TicketState.Available })
   ticketStatus!: TicketState;
 
+  @Column("boolean")
+  checkedIn!:boolean;
+  
   @Column({ nullable: true })
   seatNumber?: number;
 
@@ -20,7 +23,8 @@ export class Ticket {
 
   @ManyToOne(() => Attendee, (a) => a.tickets, { nullable: true })
   owner?: Attendee;
-
+  
+  
   @OneToOne(() => QrCode, (q) => q.ticket, { cascade: true })
   @JoinColumn({ name: 'ticketId' })
   qrCode?: QrCode;
