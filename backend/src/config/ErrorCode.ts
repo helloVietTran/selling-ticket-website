@@ -11,5 +11,6 @@ export const ErrorMap = {
   UNAUTHORIZED: { code: 'AUTH_UNAUTHORIZED', statusCode: 401 } as IErrorCode,
   FORBIDDEN: { code: 'AUTH_FORBIDDEN', statusCode: 403 } as IErrorCode,
   TOKEN_EXPIRED: { code: 'AUTH_TOKEN_EXPIRED', statusCode: 401 } as IErrorCode,
-  TICKET_TYPE_NOT_FOUND:{code:"TICKET_TYPE_NOT_FOUND",statusCode:404,message:"Not found ticket"} as IErrorCode
+  TICKET_TYPE_NOT_FOUND:{code:"TICKET_TYPE_NOT_FOUND",statusCode:404,message:"Not found ticket"} as IErrorCode,
+  ERROR_CREATE_TICKET_TYPE:{code:"ERROR_CREATE_TICKET_TYPE",statusCode:400,message:"Not create ticket type"} as IErrorCode
 };
