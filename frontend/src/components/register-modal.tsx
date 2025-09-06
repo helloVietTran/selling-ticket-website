@@ -10,62 +10,68 @@ import {
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-
 import { Eye, EyeOff } from "lucide-react";
-import { Link } from "react-router-dom";
 
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuthModal } from "@/context/auth-modal-context";
 
-// Schema validate
-const loginSchema = z.object({
-  emailOrPhone: z.string().min(1, "Vui lòng nhập email hoặc số điện thoại"),
-  password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),
-});
+// Schema validate với zod
+const registerSchema = z
+  .object({
+    email: z.string().email("Email không hợp lệ"),
+    password: z.string().min(6, "Mật khẩu tối thiểu 6 ký tự"),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    path: ["confirmPassword"],
+    message: "Mật khẩu xác nhận không khớp",
+  });
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export default function LoginModal() {
+export default function RegisterModal() {
   const [showPassword, setShowPassword] = React.useState(false);
-  const { modalType, openRegister, closeModal } = useAuthModal();
-  const open = modalType === "login";
+  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+
+  const { modalType, closeModal, openLogin } = useAuthModal();
+  const open = modalType === "register";
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log("Login form data:", data);
-    // Gọi API login ở đây
+  const onSubmit = (data: RegisterFormValues) => {
+    console.log("Register form data:", data);
+    // Gọi API đăng ký ở đây
   };
 
   return (
     <Dialog open={open} onOpenChange={closeModal}>
-      <DialogContent className="sm:max-w-md rounded-xl">
+      <DialogContent className="sm:max-w-md rounded-xl overflow-hidden">
         <DialogHeader>
-          <DialogTitle className="text-center text-2xl font-bold text-green-600">
-            Đăng nhập
+          <DialogTitle className="text-center text-2xl font-bold text-emerald-500">
+            Đăng ký
           </DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          {/* Email / Phone */}
+          {/* Email */}
           <div>
             <Input
-              type="text"
-              placeholder="Nhập email hoặc số điện thoại"
-              className={`rounded ${errors.emailOrPhone ? "border-red-500" : ""}`}
-              {...register("emailOrPhone")}
+              type="email"
+              placeholder="Nhập email"
+              className="rounded"
+              {...register("email")}
             />
-            {errors.emailOrPhone && (
-              <p className="text-red-500 text-xs mt-1">
-                {errors.emailOrPhone.message}
+            {errors.email && (
+              <p className="text-rose-600 text-xs mt-1">
+                {errors.email.message}
               </p>
             )}
           </div>
@@ -75,7 +81,7 @@ export default function LoginModal() {
             <Input
               type={showPassword ? "text" : "password"}
               placeholder="Nhập mật khẩu"
-              className={`rounded pr-10 ${errors.password ? "border-red-500" : ""}`}
+              className="rounded pr-10"
               {...register("password")}
             />
             <button
@@ -86,7 +92,31 @@ export default function LoginModal() {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
             {errors.password && (
-              <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+              <p className="text-rose-600 text-xs mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          {/* Confirm Password */}
+          <div className="relative">
+            <Input
+              type={showConfirmPassword ? "text" : "password"}
+              placeholder="Xác nhận mật khẩu"
+              className="rounded pr-10"
+              {...register("confirmPassword")}
+            />
+            <button
+              type="button"
+              onClick={() => setShowConfirmPassword((p) => !p)}
+              className="absolute inset-y-0 right-3 flex items-center text-gray-500"
+            >
+              {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+            </button>
+            {errors.confirmPassword && (
+              <p className="text-rose-600 text-xs mt-1">
+                {errors.confirmPassword.message}
+              </p>
             )}
           </div>
 
@@ -94,28 +124,22 @@ export default function LoginModal() {
             type="submit"
             className="w-full rounded-lg bg-gray-200 text-black hover:bg-gray-300 cursor-pointer"
           >
-            Tiếp tục
+            Đăng ký
           </Button>
 
           <p className="text-sm text-center">
-            Chưa có tài khoản?{" "}
+            Đã có tài khoản?{" "}
             <button
               type="button"
               className="text-emerald-500 hover:underline"
               onClick={() => {
                 closeModal();
-                openRegister();
+                openLogin();
               }}
             >
-              Đăng ký ngay
+              Đăng nhập ngay
             </button>
           </p>
-
-          <div className="text-sm flex justify-between px-1">
-            <a href="#" className="text-gray-500 hover:underline">
-              Quên mật khẩu?
-            </a>
-          </div>
 
           <div className="flex items-center gap-2">
             <Separator className="flex-1" />
@@ -133,23 +157,8 @@ export default function LoginModal() {
               alt="Google"
               className="w-5 h-5"
             />
-            Đăng nhập với Google
+            Đăng ký với Google
           </Button>
-
-
-
-
-          <p className="text-xs text-gray-500 text-center mt-2">
-            Bằng việc tiếp tục, bạn đã đọc và đồng ý với{" "}
-            <Link to="#" className="text-green-600 hover:underline">
-              Điều khoản sử dụng
-            </Link>{" "}
-            và{" "}
-            <Link to="#" className="text-green-600 hover:underline">
-              Chính sách bảo mật
-            </Link>{" "}
-            của Website
-          </p>
 
 
         </form>
