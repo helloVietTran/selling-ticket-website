@@ -13,10 +13,13 @@ type AvatarDropdownProps = {
   align?: 'start' | 'center' | 'end';
 };
 
-export default function AvatarDropdown({ side = 'bottom', align = 'end' }: AvatarDropdownProps) {
+export default function AvatarDropdown({
+  side = 'bottom',
+  align = 'end',
+}: AvatarDropdownProps) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild className='bg-red-400'>
+      <DropdownMenuTrigger asChild className="bg-red-400">
         <button className="size-10 cursor-pointer rounded-full bg-white/10 flex items-center justify-center hover:ring-2 hover:ring-emerald-500 transition">
           <User className="size-6 text-white" />
         </button>
@@ -32,11 +35,14 @@ export default function AvatarDropdown({ side = 'bottom', align = 'end' }: Avata
           Vé của tôi
         </DropdownMenuItem>
 
-        <DropdownMenuItem >
-          <Link to="/organizer/events" className="flex items-center gap-2 cursor-pointer">
+        <DropdownMenuItem>
+          <Link
+            to="/organizer/events"
+            className="flex items-center gap-2 cursor-pointer"
+          >
             <Calendar className="w-4 h-4" />
-            Sự kiện của tôi</Link>
-
+            Sự kiện của tôi
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">

@@ -140,3 +140,8 @@ body {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+.home-container {
+  @apply p-4;
+  @apply bg-[#272729];
+}

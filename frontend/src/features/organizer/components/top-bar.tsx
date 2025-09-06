@@ -9,7 +9,7 @@ export default function TopBar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <CreateEventButton fontSize='text-sm py-1.5'>
+        <CreateEventButton fontSize="text-sm py-1.5">
           <span className="text-lg">+</span>
           <span>Tạo sự kiện</span>
         </CreateEventButton>
