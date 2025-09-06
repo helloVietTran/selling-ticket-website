@@ -13,7 +13,7 @@ export class Ticket {
   ticketStatus!: TicketState;
 
   @Column("boolean")
-  isChecked_in!:boolean;
+  checkedIn!:boolean;
   
   @Column({ nullable: true })
   seatNumber?: number;

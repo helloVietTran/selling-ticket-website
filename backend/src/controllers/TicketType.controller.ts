@@ -8,7 +8,7 @@ import { ErrorMap } from "../config/ErrorCode";
 class TicketTypeController {
   
 
-  async ticketType(req: Request, res: Response, next: NextFunction) {
+  async getTicketType(req: Request, res: Response, next: NextFunction) {
     try {
 
     const eventRepo = AppDataSource.getRepository(TicketType);
@@ -22,8 +22,8 @@ class TicketTypeController {
         return res.status(404).json(ApiResponse.error(ErrorMap.TICKET_TYPE_NOT_FOUND));
       }
       const ticketId=req.body.ticketId;
-      const Checked_in=await ticketRepo.findOne({where:{ticketId}})
-      if (!Checked_in) {
+      const checkedIn=await ticketRepo.findOne({where:{ticketId}})
+      if (!checkedIn) {
         return res.status(404).json(ApiResponse.error(ErrorMap.TICKET_TYPE_NOT_FOUND));
       }
       const totalTicket=await eventRepo.sum("totalQuantity",{totalQuantity: existedEvent.totalQuantity});
@@ -32,7 +32,7 @@ class TicketTypeController {
         ticketType: existedEvent.ticketTypeName,
         totalQuantity:existedEvent.totalQuantity,
         soldTicket:existedEvent.soldTicket,
-        isChecked_in: Checked_in.isChecked_in,
+        isChecked_in: checkedIn.checkedIn,
         totalTicket:totalTicket,
         totalsoldTicket:totalsoldTicket
       });
