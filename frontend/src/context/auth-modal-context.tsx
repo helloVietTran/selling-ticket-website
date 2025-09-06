@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useState } from 'react';
 
-type ModalType = "login" | "register" | null;
+type ModalType = 'login' | 'register' | null;
 
 type AuthModalContextType = {
   openLogin: () => void;
@@ -13,11 +13,15 @@ const AuthModalContext = createContext<AuthModalContextType | undefined>(
   undefined
 );
 
-export const AuthModalProvider = ({ children }: { children: React.ReactNode }) => {
+export const AuthModalProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const [modalType, setModalType] = useState<ModalType>(null);
 
-  const openLogin = () => setModalType("login");
-  const openRegister = () => setModalType("register");
+  const openLogin = () => setModalType('login');
+  const openRegister = () => setModalType('register');
   const closeModal = () => setModalType(null);
 
   return (
@@ -32,7 +36,7 @@ export const AuthModalProvider = ({ children }: { children: React.ReactNode }) =
 export const useAuthModal = () => {
   const context = useContext(AuthModalContext);
   if (!context) {
-    throw new Error("useAuthModal must be used within AuthModalProvider");
+    throw new Error('useAuthModal must be used within AuthModalProvider');
   }
   return context;
 };

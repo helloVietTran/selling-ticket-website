@@ -31,7 +31,7 @@ export default function SearchBox({
           type="text"
           placeholder={placeholder}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={e => onChange(e.target.value)}
           className={`border-0 focus-visible:ring-0 focus:outline-none flex-1 text-[#333333] ${inputClassName}`}
         />
       </div>

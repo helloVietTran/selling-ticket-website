@@ -1,8 +1,8 @@
-import { FaUserMinus } from "react-icons/fa6";
-import { FaUserPlus } from "react-icons/fa";
+import { FaUserMinus } from 'react-icons/fa6';
+import { FaUserPlus } from 'react-icons/fa';
 
-import { Card, CardHeader, CardContent, CardTitle } from "@/components/ui/card";
-import CircleChart from "./circle-chart";
+import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
+import CircleChart from './circle-chart';
 
 type CheckinSummaryProps = {
   totalCheckedIn: number;
@@ -27,7 +27,7 @@ const CheckinSummary = ({
           <CircleChart
             percent={percent}
             size={100}
-            colors={["#10b981", "#facc15"]}
+            colors={['#10b981', '#facc15']}
             fontSize="0.875rem" // text-sm
           />
         </div>

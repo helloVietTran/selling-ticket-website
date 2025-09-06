@@ -1,9 +1,8 @@
-import { useState } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import RevenueChart from "@/features/organizer/components/revenue-chart";
-import { Separator } from "@/components/ui/separator";
-import CircleChart from "@/features/organizer/components/circle-chart";
-
+import { useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
+import RevenueChart from '@/features/organizer/components/revenue-chart';
+import { Separator } from '@/components/ui/separator';
+import CircleChart from '@/features/organizer/components/circle-chart';
 
 type SummaryProps = {
   revenue: number;
@@ -46,7 +45,7 @@ export default function RevenuePage() {
             <CircleChart
               percent={revenuePercent}
               size={96}
-              colors={["#22c55e", "#facc15"]}
+              colors={['#22c55e', '#facc15']}
               fontSize="1rem"
             />
           </div>
@@ -58,14 +57,12 @@ export default function RevenuePage() {
             <div className="flex flex-col gap-4">
               <span>Số lượng vé đã bán</span>
               <p className="text-xl font-bold">{summary.tickets} vé</p>
-              <p className="text-gray-400">
-                Tổng: {summary.ticketsTotal} vé
-              </p>
+              <p className="text-gray-400">Tổng: {summary.ticketsTotal} vé</p>
             </div>
             <CircleChart
               percent={ticketsPercent}
               size={96}
-              colors={["#3b82f6", "#e5e7eb"]}
+              colors={['#3b82f6', '#e5e7eb']}
               fontSize="1rem"
             />
           </div>
