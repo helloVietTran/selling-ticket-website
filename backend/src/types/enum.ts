@@ -1,3 +1,5 @@
+import { boolean } from "zod";
+
 export enum Role {
   Attendee = 'ATTENDEE',
   Organizer = 'ORGANIZER',
@@ -20,9 +22,9 @@ export enum BookingStatus {
 
 export enum TicketState {
   Sold = 'SOLD',
-  CheckedIn = 'CHECKED_IN',
   Expired = 'EXPIRED',
   Cancelled = 'CANCELLED',
   Available = 'AVAILABLE',
   Held = 'HELD'
 }
+
