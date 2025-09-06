@@ -4,9 +4,12 @@ import ticket_typeController from '../controllers/TicketType.controller';
 
 const router = Router();
 
-router.post('/', EventControllers.create);
+router.get('/search', EventControllers.searchEvents);
+router.post('/', EventControllers.createEvent);
 router.get('/', EventControllers.getEvents);
-router.put('/:id', EventControllers.update);
-router.delete('/:id', EventControllers.delete);
+router.put('/:id', EventControllers.updateEvent);
+router.delete('/:id', EventControllers.deleteEvent);
 router.get('/management',ticket_typeController.getTicketType);
+
+
 export default router;

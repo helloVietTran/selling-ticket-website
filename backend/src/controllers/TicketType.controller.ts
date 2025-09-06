@@ -6,7 +6,6 @@ import ApiResponse from "../utils/ApiResponse"
 import { ErrorMap } from "../config/ErrorCode";
 
 class TicketTypeController {
-  
 
   async getTicketType(req: Request, res: Response, next: NextFunction) {
     try {
@@ -41,6 +40,25 @@ class TicketTypeController {
       return res.status(500).json({ message: "Internal server error" });
     }
   }
+   async createTicketType(res:Response,req:Request,next:NextFunction){
+    try {
+      const ticketRepo=AppDataSource.getRepository(TicketType)
+      const {ticketTypeName,stand,totalQuantity,soldTicket,availableQuantity,price,event}=req.body
+      const newTicketType=ticketRepo.create ({
+        ticketTypeName:ticketTypeName,
+        stand:stand,
+        totalQuantity:totalQuantity,
+        soldTicket:soldTicket,
+        availableQuantity:availableQuantity,
+        price:price,
+        event:event
+      })
+      await ticketRepo.save(newTicketType);
+    } catch(error){
+        return res.status(400).json(ApiResponse.error(ErrorMap.ERROR_CREATE_TICKET_TYPE));
+    }
+   }
+  // async readTicketType(res:)
 }
 
 export default new TicketTypeController();

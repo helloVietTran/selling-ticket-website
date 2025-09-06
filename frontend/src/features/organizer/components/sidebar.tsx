@@ -18,25 +18,25 @@ const menu: MenuItem[] = [
     id: 'events',
     label: 'Sự kiện của tôi',
     icon: <RiCalendarEventLine />,
-    path: '/events',
+    path: '/organizer/events',
   },
   {
     id: 'revenue',
     label: 'Doanh thu',
     icon: <IoStatsChart />,
-    path: '/revenue',
+    path: '/organizer/revenue',
   },
   {
     id: 'check-in',
     label: 'Check-in',
     icon: <LuScanLine />,
-    path: '/check-in',
+    path: '/organizer/check-in',
   },
   {
     id: 'orders',
     label: 'Đơn hàng',
     icon: <RiFileList3Line />,
-    path: '/orders',
+    path: '/organizer/orders',
   },
 ];
 
