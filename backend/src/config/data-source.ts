@@ -15,6 +15,7 @@ import { Event } from '../models/Event.model';
 import { Organizer } from '../models/Organizer.model';
 import { Attendee } from '../models/Attendee.model';
 import { DisabledToken } from '../models/disabletoken.model';
+import { Category } from "../models/Category.model";
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -37,7 +38,8 @@ export const AppDataSource = new DataSource({
     Payment,
     Organizer,
     Attendee,
-    DisabledToken
+    DisabledToken,
+    Category
   ],
   migrations: [],
   subscribers: []

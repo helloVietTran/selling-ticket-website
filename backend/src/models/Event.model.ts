@@ -38,10 +38,8 @@ export class Event {
   ticketTypes!: TicketType[];
 
 
-  @ManyToOne(() => Category, (c) => c.events, { nullable: true })
+  @ManyToOne(() => Category, (c) => c.events, { nullable: true })   
   @JoinColumn({ name: 'category_id' })
   category?: Category;
 
-  @Column({ name: 'category_id', nullable: true })
-  categoryId?: number;
 }

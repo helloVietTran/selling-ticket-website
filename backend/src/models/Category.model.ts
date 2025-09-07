@@ -2,7 +2,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Event } from './Event.model';
 
-@Entity('categorys')
+@Entity('category')
 export class Category {
   @PrimaryGeneratedColumn({ name: 'category_id' })
   categoryId!: number; // ID duy nhất của category
