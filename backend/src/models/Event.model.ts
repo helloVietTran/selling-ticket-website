@@ -1,8 +1,9 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn  } from 'typeorm';
 import { Organizer } from './Organizer.model';
 import { Venue } from './Venue.model';
 import { TicketType } from './TicketType.model';
 import { EventStatus } from '../types/enum';
+import { Category } from './Category.model';
 
 @Entity('event')
 export class Event {
@@ -35,4 +36,10 @@ export class Event {
 
   @OneToMany(() => TicketType, (tt) => tt.event)
   ticketTypes!: TicketType[];
+
+
+  @ManyToOne(() => Category, (c) => c.events, { nullable: true })   
+  @JoinColumn({ name: 'category_id' })
+  category?: Category;
+
 }
