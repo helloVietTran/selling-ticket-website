@@ -1,4 +1,4 @@
-import TicketTypeCard from '@/features/organizer/components/ticktet-type-card';
+import TicketTypeCard from '@/features/organizer/components/ticket-type-card';
 import CheckinSummary from '../components/check-in-summary';
 
 export default function CheckinPage() {

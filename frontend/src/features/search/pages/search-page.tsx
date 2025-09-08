@@ -6,7 +6,7 @@ import HomeLayout from '@/layouts/home-layout';
 const SearchPage = () => {
   return (
     <HomeLayout>
-      <div className="home-container">
+      <div className="main-bg-content">
         <FilterBar />
         <EventList category="Âm nhạc" />
         <EventList wrapperClassName="mt-4" category="Nghệ thuật" />

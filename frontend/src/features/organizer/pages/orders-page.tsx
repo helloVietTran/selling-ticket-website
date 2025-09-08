@@ -66,7 +66,7 @@ export default function OrdersPage() {
   ] as const;
 
   return (
-    <div>
+    <>
       <Input
         placeholder="Tìm kiếm đơn hàng..."
         value={search}
@@ -144,6 +144,6 @@ export default function OrdersPage() {
           </Card>
         ))}
       </div>
-    </div>
+    </>
   );
 }

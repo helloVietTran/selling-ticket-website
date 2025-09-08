@@ -51,7 +51,7 @@ export default function FilterBar() {
 
   return (
     <div className="flex justify-between items-end pb-6">
-      <h2 className="text-emerald-600 text-sm">Kết quả tìm kiếm:</h2>
+      <h2 className="text-emerald-600 text-sm font-semibold">Kết quả tìm kiếm:</h2>
       <div className="flex items-center gap-3">
         {/* Date Range Picker */}
         <Popover>

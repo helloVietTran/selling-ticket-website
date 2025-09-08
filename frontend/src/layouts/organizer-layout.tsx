@@ -10,7 +10,7 @@ const OrganizerLayout = () => {
       <div className="flex-1 flex flex-col">
         <TopBar />
 
-        <main className="flex-1 px-8 py-8 overflow-y-auto scrollbar-hidden">
+        <main className="flex-1 overflow-y-auto scrollbar-hidden p-8">
           <Outlet />
         </main>
       </div>

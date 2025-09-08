@@ -1,7 +1,10 @@
 import AvatarDropdown from '@/components/avatar-dropdown';
 import { CreateEventButton } from '@/components/create-event-button';
+import { useNavigate } from 'react-router-dom';
 
 export default function TopBar() {
+  const navigate = useNavigate();
+
   return (
     <header className="flex items-center justify-between px-8 py-4 bg-[#282a29] border-b border-white/9">
       <div>
@@ -9,7 +12,10 @@ export default function TopBar() {
       </div>
 
       <div className="flex items-center gap-4">
-        <CreateEventButton fontSize="text-sm py-1.5">
+        <CreateEventButton
+          fontSize="text-sm py-1.5"
+          onClick={() => navigate('/organizer/create-event')}
+        >
           <span className="text-lg">+</span>
           <span>Tạo sự kiện</span>
         </CreateEventButton>
