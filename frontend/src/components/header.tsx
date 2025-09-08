@@ -4,9 +4,11 @@ import { Ticket } from 'lucide-react';
 import AvatarDropdown from '@/components/avatar-dropdown';
 import SearchBox from '@/components/search-box';
 import { CreateEventButton } from '@/components/create-event-button';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Header() {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
 
   const handleSearch = () => {
     console.log('Searching for:', query);
@@ -15,7 +17,9 @@ export default function Header() {
   return (
     <header className="w-full bg-emerald-500 text-white ">
       <div className="header-container flex items-center justify-between">
-        <div className="text-2xl font-bold">N1</div>
+        <Link to="/" className="text-2xl font-bold">
+          N1
+        </Link>
 
         <SearchBox
           placeholder="Bạn tìm gì hôm nay?"
@@ -27,7 +31,12 @@ export default function Header() {
         />
 
         <div className="flex items-center space-x-8">
-          <CreateEventButton hoverMode="invert" withBorder fontSize="text-sm">
+          <CreateEventButton
+            hoverMode="invert"
+            withBorder
+            fontSize="text-sm"
+            onClick={() => navigate('/organizer/create-event')}
+          >
             <span>Tạo sự kiện</span>
           </CreateEventButton>
 

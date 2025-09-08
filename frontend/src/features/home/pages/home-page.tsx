@@ -4,7 +4,6 @@ import HomeLayout from '@/layouts/home-layout';
 import Navigation from '@/components/navigation';
 import EventSlider from '@/components/event-slider';
 
-
 export default function HomePage() {
   return (
     <HomeLayout>

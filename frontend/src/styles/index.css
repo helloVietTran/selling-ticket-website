@@ -81,7 +81,7 @@
   --sidebar-ring: oklch(0.708 0 0);
 
   /*Override swiper pagination variables*/
-  --swiper-pagination-color: oklch(69.6% 0.17 162.48); 
+  --swiper-pagination-color: oklch(69.6% 0.17 162.48);
   --swiper-pagination-bullet-inactive-color: #bbb;
   --swiper-pagination-bullet-inactive-opacity: 1;
   --swiper-pagination-bullet-size: 10px;
@@ -158,12 +158,34 @@ body {
 }
 
 /*Override swiper & pagination container*/
-.swiper{
-  overflow: unset!important;
- 
+.swiper {
+  overflow: unset !important;
 }
 
-.swiper-pagination{
-  bottom: -20px!important;
+.swiper-pagination {
+  bottom: -20px !important;
 }
 
+.field-container {
+  @apply p-4 rounded-lg bg-[#282629] text-white border-[#1f1d1f] mb-2;
+}
+
+.field-label {
+  @apply font-medium pb-2 text-sm gap-1 text-white;
+}
+
+.field-input {
+  @apply rounded border-none bg-gray-200 text-[#333];
+}
+
+.required::before {
+  display: inline-block;
+  color: #ff4d4f;
+  font-size: 20px;
+  font-weight: bold;
+  content: '*';
+}
+
+.ProseMirror {
+  outline: none !important;
+}

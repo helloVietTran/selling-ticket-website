@@ -14,7 +14,7 @@ const categories: Category[] = [
 
 export default function Navigation() {
   return (
-    <div className=' bg-black'>
+    <div className=" bg-black">
       <nav className="header-container !py-4">
         <ul className="flex gap-8 text-white text-sm">
           {categories.map(cat => (
@@ -30,6 +30,5 @@ export default function Navigation() {
         </ul>
       </nav>
     </div>
-
   );
 }
