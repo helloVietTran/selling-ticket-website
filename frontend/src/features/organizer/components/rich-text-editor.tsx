@@ -2,11 +2,8 @@ import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import TextAlign from '@tiptap/extension-text-align';
 import Highlight from '@tiptap/extension-highlight';
-
-interface RichTextEditorProps {
-  content: string;
-  onChange: (content: string) => void;
-}
+import { TextStyle } from '@tiptap/extension-text-style';
+import Color from '@tiptap/extension-color';
 
 import {
   AlignCenter,
@@ -20,6 +17,7 @@ import {
   Italic,
   List,
   ListOrdered,
+  Type,
   Strikethrough,
 } from 'lucide-react';
 
@@ -61,6 +59,16 @@ function EditorMenuBar({ editor }: { editor: Editor | null }) {
           .toggleHeading({ level: 3 })
           .run(),
       preesed: editor.isActive('heading', { level: 3 }),
+    },
+    {
+      icon: <Type className="size-4" />,
+      onClick: () =>
+        editor
+          .chain()
+          .focus()
+          .setParagraph()
+          .run(),
+      preesed: editor.isActive('paragraph'),
     },
     {
       icon: <Bold className="size-4" />,
@@ -155,7 +163,7 @@ function EditorMenuBar({ editor }: { editor: Editor | null }) {
   ];
 
   return (
-    <div className="p-1 space-x-2 z-50 border-b">
+    <div className="p-1 space-x-2 z-50 border-b flex items-center">
       {Options.map((option, index) => (
         <Toggle
           key={index}
@@ -165,8 +173,26 @@ function EditorMenuBar({ editor }: { editor: Editor | null }) {
           {option.icon}
         </Toggle>
       ))}
+
+      <input
+        type="color"
+        className="size-5 p-0 rounded cursor-pointer"
+        onInput={e =>
+          editor
+            .chain()
+            .focus()
+            .setColor((e.target as HTMLInputElement).value)
+            .run()
+        }
+        value={editor.getAttributes('textStyle').color || '#000000'}
+      />
     </div>
   );
+}
+
+interface RichTextEditorProps {
+  content: string;
+  onChange: (content: string) => void;
 }
 
 export default function RichTextEditor({
@@ -191,15 +217,16 @@ export default function RichTextEditor({
         types: ['heading', 'paragraph'],
       }),
       Highlight,
+      TextStyle,
+      Color,
     ],
     content: content,
     editorProps: {
       attributes: {
-        class: 'min-h-[156px] rounded-md py-2 px-3',
+        class: 'h-64 rounded-md py-2 px-3',
       },
     },
     onUpdate: ({ editor }) => {
-      // console.log(editor.getHTML());
       onChange(editor.getHTML());
     },
   });
@@ -215,16 +242,23 @@ export default function RichTextEditor({
             dark:border-gray-600 
             dark:bg-gray-900 
             dark:text-gray-100
-    "
+      "
     >
       <EditorMenuBar editor={editor} />
       <EditorContent
         editor={editor}
         className="
-        prose prose-sm max-w-none
-        text-gray-900
-        dark:text-gray-100
-      "
+                    prose prose-sm max-w-none
+                    text-gray-900 dark:text-gray-100
+                    overflow-y-auto max-h-64
+
+                    [&_h1]:text-3xl [&_h1]:font-bold
+                    [&_h2]:text-2xl [&_h2]:font-semibold
+                    [&_h3]:text-xl [&_h3]:font-medium
+                    [&_p]:text-base [&_p]:font-normal
+
+                    font-[Roboto]
+        "
       />
     </div>
   );

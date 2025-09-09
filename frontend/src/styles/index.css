@@ -44,6 +44,8 @@
   /*Font*/
   --font-poppins: 'Poppins', sans-serif;
   --font-raleway: 'Raleway', sans-serif;
+
+  --color-modal: rgba(81, 81, 88, 0.3);
 }
 
 :root {
@@ -188,4 +190,23 @@ body {
 
 .ProseMirror {
   outline: none !important;
+}
+
+.modal-bg-color {
+  background-color: var(--modal--bg-color);
+}
+
+@layer utilities {
+  .no-spinner {
+    /* Firefox */
+    -moz-appearance: textfield;
+    appearance: textfield;
+
+    /* Chrome, Safari, Edge */
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
 }
