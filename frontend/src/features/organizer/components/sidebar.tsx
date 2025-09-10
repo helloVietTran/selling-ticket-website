@@ -50,7 +50,7 @@ export default function Sidebar() {
   };
 
   return (
-    <aside className="w-72 bg-gradient-to-b from-emerald-900/80 to-gray-800/60 text-white h-screen p-6 flex flex-col justify-between">
+    <aside className="sticky top-0 left-0 h-screen w-[288px] bg-gradient-to-b from-emerald-900/80 to-gray-800/60 text-white p-6 flex flex-col justify-between">
       <div>
         <div className="flex items-center gap-3 mb-8">
           <div className="w-10 h-10 bg-emerald-600 rounded flex items-center justify-center font-bold">

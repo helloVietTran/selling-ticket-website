@@ -29,10 +29,10 @@ export default function RevenuePage() {
   return (
     <div>
       <h2 className="font-semibold text-xl pb-2">Tổng quan</h2>
-      <Card className="bg-[#282629] text-white border-[#1f1d1f] mt-4">
-        <CardContent className="space-y-10">
-          {/* Doanh thu */}
-          <div className="flex justify-between items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+        {/* Card Doanh thu */}
+        <Card className="bg-[#282629] text-white border-[#1f1d1f]">
+          <CardContent className="flex justify-between items-center">
             <div className="flex flex-col gap-4">
               <span>Doanh thu</span>
               <p className="text-xl font-bold">
@@ -48,16 +48,18 @@ export default function RevenuePage() {
               colors={['#22c55e', '#facc15']}
               fontSize="1rem"
             />
-          </div>
+          </CardContent>
+        </Card>
 
-          <Separator className="bg-gray-400 my-6" />
-
-          {/* Vé đã bán */}
-          <div className="flex justify-between items-center">
+        {/* Card Vé đã bán */}
+        <Card className="bg-[#282629] text-white border-[#1f1d1f]">
+          <CardContent className="flex justify-between items-center">
             <div className="flex flex-col gap-4">
               <span>Số lượng vé đã bán</span>
               <p className="text-xl font-bold">{summary.tickets} vé</p>
-              <p className="text-gray-400">Tổng: {summary.ticketsTotal} vé</p>
+              <p className="text-gray-400">
+                Tổng: {summary.ticketsTotal} vé
+              </p>
             </div>
             <CircleChart
               percent={ticketsPercent}
@@ -65,9 +67,10 @@ export default function RevenuePage() {
               colors={['#3b82f6', '#e5e7eb']}
               fontSize="1rem"
             />
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
+
 
       <RevenueChart />
     </div>

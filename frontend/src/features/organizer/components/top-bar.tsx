@@ -6,10 +6,9 @@ export default function TopBar() {
   const navigate = useNavigate();
 
   return (
-    <header className="flex items-center justify-between px-8 py-4 bg-[#282a29] border-b border-white/9">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Sự kiện của tôi</h1>
-      </div>
+    <header className="fixed right-0 w-[calc(100%-288px)] top-0 z-50 flex items-center justify-between px-8 py-4 bg-[#282a29] border-b border-white/9">
+
+      <h1 className="text-2xl font-bold text-white">Sự kiện của tôi</h1>
 
       <div className="flex items-center gap-4">
         <CreateEventButton
