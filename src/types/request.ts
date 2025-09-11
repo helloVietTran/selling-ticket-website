@@ -1,4 +1,4 @@
-import { Role } from "./enum";
+import { Role } from './enum';
 
 export interface Requester {
   userId: string;

@@ -2,6 +2,8 @@ import express, { Application, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 
+import eventRoutes from './routes/event.route';
+
 import route from './routes';
 import { AppDataSource } from './config/data-source';
 
@@ -13,6 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+app.use('/api/v1/events', eventRoutes);
 // routes
 route(app);
 

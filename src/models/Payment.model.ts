@@ -1,14 +1,7 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToOne,
-  JoinColumn,
-  ManyToOne,
-} from "typeorm";
-import { Booking } from "./Booking.model";
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
+import { Booking } from './Booking.model';
 
-@Entity("payment")
+@Entity('payment')
 export class Payment {
   @PrimaryGeneratedColumn()
   paymentId!: number;
@@ -17,12 +10,12 @@ export class Payment {
   @JoinColumn()
   booking!: Booking;
 
-  @Column("double precision")
+  @Column('double precision')
   amount!: number;
 
   @Column({ nullable: true })
   gatewayTransactionId?: number;
 
-  @Column("int", { nullable: true })
+  @Column('int', { nullable: true })
   methodType?: number;
 }

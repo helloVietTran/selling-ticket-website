@@ -14,17 +14,31 @@ import { Payment } from '../models/Payment.model';
 import { Event } from '../models/Event.model';
 import { Organizer } from '../models/Organizer.model';
 import { Attendee } from '../models/Attendee.model';
+import { DisabledToken } from '../models/disabletoken.model';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
-  host:'localhost',
+  host: 'localhost',
   port: 3306,
   username: 'root',
-  password: "root",
-  database:"event_ticket_db",
+  password: 'root',
+  database: 'event_ticket_db',
   synchronize: true, // dev only
   logging: false,
-  entities: [User, QrCode, Ticket, Event, Venue, TicketType, Booking, BookingItem, Payment, Organizer, Attendee],
+  entities: [
+    User,
+    QrCode,
+    Ticket,
+    Event,
+    Venue,
+    TicketType,
+    Booking,
+    BookingItem,
+    Payment,
+    Organizer,
+    Attendee,
+    DisabledToken
+  ],
   migrations: [],
   subscribers: []
 });
