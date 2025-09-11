@@ -1,43 +1,48 @@
-import { ScanLine, Edit3, Trash2 } from 'lucide-react';
+import { ScanLine, Edit3, Trash2, MapPin, Calendar } from "lucide-react";
 
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from "@/components/ui/dropdown-menu";
 
 export const mockEvents = [
   {
-    id: '1',
-    title: '[TP.HCM] Những Thành Phố Mơ Màng Year End 2024',
-    location: 'TP.HCM',
-    date: '08.12.2024',
-    image: 'https://placehold.co/300x300/png?text=Event+1',
+    id: "1",
+    title: "[TP.HCM] Những Thành Phố Mơ Màng Year End 2024",
+    location: "TP.HCM",
+    startDate: "08.12.2024 19:00",
+    endDate: "08.12.2024 22:00",
+    image: "https://placehold.co/500x300/png?text=Event+1",
   },
   {
-    id: '2',
-    title: '[Nhà Hát THANH NIÊN] Hài kịch: Lạc lối ở Bangkok',
-    location: 'Hà Nội',
-    date: '15.11.2024',
-    image: 'https://placehold.co/300x300/png?text=Event+2',
+    id: "2",
+    title: "[Nhà Hát THANH NIÊN] Hài kịch: Lạc lối ở Bangkok",
+    location: "Hà Nội",
+    startDate: "15.11.2024 20:00",
+    endDate: "15.11.2024 22:30",
+    image: "https://placehold.co/500x300/png?text=Event+2",
   },
   {
-    id: '3',
-    title: '1900 Future Hits #61: Quang Hùng MasterD',
-    location: 'Hà Nội',
-    date: '21.11.2024',
-    image: 'https://placehold.co/300x300/png?text=Event+2',
+    id: "3",
+    title: "1900 Future Hits #61: Quang Hùng MasterD",
+    location: "Hà Nội",
+    startDate: "21.11.2024 21:00",
+    endDate: "21.11.2024 23:00",
+    image: "https://placehold.co/500x300/png?text=Event+3",
   },
 ];
 
-type EventItemProps = {
+
+export type EventItemProps = {
   id: string;
   title: string;
   location: string;
-  date: string;
+  startDate: string;
+  endDate: string;
   image: string;
 };
 
@@ -45,12 +50,14 @@ export default function EventItem({
   id,
   title,
   location,
-  date,
+  startDate,
+  endDate,
   image,
 }: EventItemProps) {
   return (
-    <Card className="flex flex-row p-4 gap-3 bg-[#282629] text-white rounded-2xl shadow-md border border-[#1f1d1f]">
-      <div className="w-32 h-32 flex-shrink-0">
+    <Card className="flex flex-row p-4 gap-4 bg-[#282629] text-white rounded-2xl shadow-md border border-[#1f1d1f]">
+      {/* Ảnh sự kiện hình chữ nhật */}
+      <div className="w-48 aspect-video flex-shrink-0">
         <img
           src={image}
           alt={title}
@@ -58,14 +65,25 @@ export default function EventItem({
         />
       </div>
 
+
       <CardContent className="flex flex-col flex-1 p-2 justify-between">
         <div>
-          <p className="font-semibold line-clamp-2 pb-2">{title}</p>
-          <p className="text-xs text-gray-400">
-            {location} | {date}
+          <p className="font-semibold line-clamp-2 text-lg pb-2">{title}</p>
+
+          {/* Thời gian */}
+          <p className="flex items-center gap-2 text-xs text-emerald-400 mb-2">
+            <Calendar className="w-4 h-4" />
+            {startDate} → {endDate}
+          </p>
+
+          {/* Địa chỉ */}
+          <p className="flex items-center gap-2 text-xs text-gray-400">
+            <MapPin className="w-4 h-4 text-emerald-400" />
+            {location}
           </p>
         </div>
 
+        {/* Buttons */}
         <div className="flex gap-2 mt-3">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -87,7 +105,7 @@ export default function EventItem({
                 className="text-red-400 focus:text-red-500"
                 onClick={() => alert(`Xóa sự kiện ${id}`)}
               >
-                <Trash2 className="size-4 mr-2 text-red-400 focus:text-red-500" />{' '}
+                <Trash2 className="size-4 mr-2 text-red-400 focus:text-red-500" />{" "}
                 Xóa sự kiện
               </DropdownMenuItem>
             </DropdownMenuContent>

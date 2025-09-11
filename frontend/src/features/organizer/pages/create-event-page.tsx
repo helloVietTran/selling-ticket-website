@@ -11,7 +11,6 @@ import Step4Form from "@/features/organizer/components/payment-form";
 import type { FormDataByStep } from "@/features/organizer/schemas";
 import CreateProcessBar from "@/features/organizer/components/create-process-bar";
 
-
 const steps = [
   { id: "step1", label: "Thông tin sự kiện" },
   { id: "step2", label: "Thời gian & Loại vé" },

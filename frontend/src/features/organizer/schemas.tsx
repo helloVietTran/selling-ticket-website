@@ -57,30 +57,52 @@ export const infoSchema = z.object({
 });
 
 export const ticketSchema = z.object({
-  name: z.string().min(1),
-  price: z.number().min(0),
+  name: z.string().min(1, 'Tên vé không được để trống'),
+  price: z.string().regex(/^\d+$/, 'Giá vé phải là số'),
+  quantity: z.string().regex(/^\d+$/, 'Số lượng phải là số'),
+  startDate: z.string().min(1, 'Chọn thời gian bắt đầu'),
+  endDate: z.string().min(1, 'Chọn thời gian kết thúc'),
+  description: z
+    .string()
+    .max(1000)
+    .optional(),
 });
 
 export const timeAndTicketTypeSchema = z.object({
-  startDate: z.string().min(1, 'Chọn ngày bắt đầu'),
-  endDate: z.string().min(1, 'Chọn ngày kết thúc'),
-  tickets: z.array(ticketSchema).min(1, 'Phải có ít nhất 1 loại vé'),
+  startDate: z.string().nonempty('Chọn ngày bắt đầu'),
+  endDate: z.string().nonempty('Chọn ngày kết thúc'),
+
+  tickets: z.array(ticketSchema).min(1, 'Vui lòng thêm hạng vé'),
 });
 
 export const settingSchema = z.object({
-  isPublic: z.boolean(),
-  allowSharing: z.boolean(),
+  messageToReceiver: z.string().optional(),
 });
 
 export const paymentSchema = z.object({
-  paymentAccount: z.string().min(5, 'Nhập thông tin thanh toán'),
-  vatNumber: z.string().optional(),
+  accountHolder: z
+    .string()
+    .min(1, 'Vui lòng nhập tên chủ tài khoản')
+    .max(100),
+  accountNumber: z
+    .string()
+    .min(1, 'Vui lòng nhập số tài khoản')
+    .max(100),
+  bankName: z
+    .string()
+    .min(1, 'Vui lòng nhập tên ngân hàng')
+    .max(100),
+  branch: z
+    .string()
+    .min(1, 'Vui lòng nhập chi nhánh')
+    .max(100),
 });
 
 export type Step1Data = z.infer<typeof infoSchema>;
 export type Step2Data = z.infer<typeof timeAndTicketTypeSchema>;
 export type Step3Data = z.infer<typeof settingSchema>;
 export type Step4Data = z.infer<typeof paymentSchema>;
+export type TicketForm = z.infer<typeof ticketSchema>;
 
 export type FormDataByStep = {
   step1?: Step1Data;
