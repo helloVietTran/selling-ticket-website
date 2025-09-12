@@ -41,18 +41,17 @@ const EventList: React.FC<EventListProps> = ({
 }) => {
   return (
     <div className={wrapperClassName}>
-      <div className="flex justify-between items-center pb-4 ">
-        <h2 className="text-white text-sm font-semibold">{category}</h2>
+      <div className="flex justify-between items-center mt-6 mb-4 px-1">
+        <h2 className="text-white text-lg font-semibold">{category}</h2>
         <Link
           to={''}
-          className="flex items-center gap-1 text-gray-400 text-sm hover:text-gray-300 transition-all"
-        >
+          className="flex items-center gap-1 text-gray-400 text-sm hover:text-gray-300 transition-all">
           Xem thêm <ChevronRight className="size-4 text-inherit" />
         </Link>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
         {events.map((event, index) => (
-          <EventCard key={index} {...event} href="detail.html" />
+          <EventCard key={index} {...event} href="#" />
         ))}
       </div>
     </div>

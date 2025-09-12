@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { paymentSchema, type Step4Data } from "@/features/organizer/schemas";
+import { paymentSchema, type PaymentType } from "@/features/create-event/schemas";
 
 
 export default function Step4Form({
@@ -19,11 +19,11 @@ export default function Step4Form({
   onNext,
   onBack,
 }: {
-  initial?: Partial<Step4Data>;
-  onNext: (data: Step4Data) => void;
+  initial?: Partial<PaymentType>;
+  onNext: (data: PaymentType) => void;
   onBack?: () => void;
 }) {
-  const form = useForm<Step4Data>({
+  const form = useForm<PaymentType>({
     resolver: zodResolver(paymentSchema),
     defaultValues: {
       accountHolder: initial?.accountHolder ?? "",

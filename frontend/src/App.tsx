@@ -1,16 +1,20 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+
+import OrganizerLayout from '@/layouts/organizer-layout';
+import HomeLayout from '@/layouts/home-layout';
+
 import {
-  CheckInPage,
+  CheckinPage,
   EventsPage,
   OrdersPage,
   RevenuePage,
-  CreateEventPage,
 } from '@/features/organizer';
 import { HomePage } from '@/features/home';
 import { SearchPage } from '@/features/search';
-import { EventDetailPage } from '@/features/event';
-import OrganizerLayout from '@/layouts/organizer-layout';
-import HomeLayout from './layouts/home-layout';
+import { EventDetailPage } from '@/features/event-detail';
+import { SelectTicketPage } from '@/features/select-ticket';
+import { BookingPage } from '@/features/booking';
+import { CreateEventPage } from '@/features/create-event';
 
 export default function App() {
   return (
@@ -20,6 +24,11 @@ export default function App() {
           <Route path="/" element={<HomePage />} />
           <Route path="/search" element={<SearchPage />} />
           <Route path="/events/:id" element={<EventDetailPage />} />
+          <Route
+            path="/events/:id/select-ticket"
+            element={<SelectTicketPage />}
+          />
+          <Route path="/events/:id/bookings/:id" element={<BookingPage />} />
         </Route>
 
         <Route path="/organizer" element={<OrganizerLayout />}>
@@ -27,10 +36,8 @@ export default function App() {
           <Route path="events" element={<EventsPage />} />
           <Route path="revenue" element={<RevenuePage />} />
           <Route path="orders" element={<OrdersPage />} />
-          <Route path="check-in" element={<CheckInPage />} />
+          <Route path="check-in" element={<CheckinPage />} />
         </Route>
-
-
       </Routes>
     </BrowserRouter>
   );

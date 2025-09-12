@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import RevenueChart from '@/features/organizer/components/revenue-chart';
-import { Separator } from '@/components/ui/separator';
 import CircleChart from '@/features/organizer/components/circle-chart';
 
 type SummaryProps = {
@@ -57,9 +56,7 @@ export default function RevenuePage() {
             <div className="flex flex-col gap-4">
               <span>Số lượng vé đã bán</span>
               <p className="text-xl font-bold">{summary.tickets} vé</p>
-              <p className="text-gray-400">
-                Tổng: {summary.ticketsTotal} vé
-              </p>
+              <p className="text-gray-400">Tổng: {summary.ticketsTotal} vé</p>
             </div>
             <CircleChart
               percent={ticketsPercent}
@@ -70,7 +67,6 @@ export default function RevenuePage() {
           </CardContent>
         </Card>
       </div>
-
 
       <RevenueChart />
     </div>

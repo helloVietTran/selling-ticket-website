@@ -29,5 +29,5 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src", "src/features/organizer/components/info-form.tsx"]
+  "include": ["src", "src/features/create-event/components/info-form.tsx"]
 }

@@ -23,8 +23,7 @@ export default function SearchBox({
 }: SearchBoxProps) {
   return (
     <div
-      className={`flex w-[350px] max-w-md items-center rounded-sm bg-white shadow-sm ${className}`}
-    >
+      className={`flex w-[350px] max-w-md items-center rounded-sm bg-white shadow-sm ${className}`}>
       <div className="flex items-center px-3 flex-1">
         <Search className="size-4 text-gray-500 mr-2" />
         <Input
@@ -38,8 +37,7 @@ export default function SearchBox({
 
       <Button
         onClick={onSearch}
-        className={`rounded-l-none border-l border-gray-200 bg-white text-[#333333] hover:bg-gray-200 cursor-pointer ${buttonClassName}`}
-      >
+        className={`rounded-l-none border-l border-gray-200 bg-white text-[#333333] hover:bg-gray-200 cursor-pointer ${buttonClassName}`}>
         Tìm kiếm
       </Button>
     </div>

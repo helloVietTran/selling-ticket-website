@@ -86,8 +86,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({ field, onClose }) => {
               ref={hourListRef}
               className="h-40 overflow-y-auto rounded border p-1"
               role="listbox"
-              aria-label="Chọn giờ"
-            >
+              aria-label="Chọn giờ">
               {hours.map(h => (
                 <div
                   key={h}
@@ -102,8 +101,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({ field, onClose }) => {
                   className={cn(
                     'cursor-pointer select-none rounded px-2 py-1 text-center',
                     h === hour ? 'bg-primary text-white' : 'hover:bg-accent'
-                  )}
-                >
+                  )}>
                   {pad2(h)}
                 </div>
               ))}
@@ -116,8 +114,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({ field, onClose }) => {
               ref={minuteListRef}
               className="h-40 overflow-y-auto rounded border p-1"
               role="listbox"
-              aria-label="Chọn phút"
-            >
+              aria-label="Chọn phút">
               {minutes.map(m => (
                 <div
                   key={m}
@@ -132,8 +129,7 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({ field, onClose }) => {
                   className={cn(
                     'cursor-pointer select-none rounded px-2 py-1 text-center',
                     m === minute ? 'bg-primary text-white' : 'hover:bg-accent'
-                  )}
-                >
+                  )}>
                   {pad2(m)}
                 </div>
               ))}

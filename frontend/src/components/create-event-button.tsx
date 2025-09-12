@@ -42,8 +42,7 @@ export function CreateEventButton({
         hoverStyles,
         borderStyles,
         className
-      )}
-    >
+      )}>
       {children}
     </button>
   );

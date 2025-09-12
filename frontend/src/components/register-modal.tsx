@@ -87,8 +87,7 @@ export default function RegisterModal() {
             <button
               type="button"
               onClick={() => setShowPassword(p => !p)}
-              className="absolute inset-y-0 right-3 flex items-center text-gray-500"
-            >
+              className="absolute inset-y-0 right-3 flex items-center text-gray-500">
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
             {errors.password && (
@@ -109,8 +108,7 @@ export default function RegisterModal() {
             <button
               type="button"
               onClick={() => setShowConfirmPassword(p => !p)}
-              className="absolute inset-y-0 right-3 flex items-center text-gray-500"
-            >
+              className="absolute inset-y-0 right-3 flex items-center text-gray-500">
               {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
             {errors.confirmPassword && (
@@ -122,8 +120,7 @@ export default function RegisterModal() {
 
           <Button
             type="submit"
-            className="w-full rounded-lg bg-gray-200 text-black hover:bg-gray-300 cursor-pointer"
-          >
+            className="w-full rounded-lg bg-gray-200 text-black hover:bg-gray-300 cursor-pointer">
             Đăng ký
           </Button>
 
@@ -135,8 +132,7 @@ export default function RegisterModal() {
               onClick={() => {
                 closeModal();
                 openLogin();
-              }}
-            >
+              }}>
               Đăng nhập ngay
             </button>
           </p>
@@ -150,8 +146,7 @@ export default function RegisterModal() {
           <Button
             type="button"
             variant="outline"
-            className="w-full flex items-center gap-2 rounded-lg cursor-pointer"
-          >
+            className="w-full flex items-center gap-2 rounded-lg cursor-pointer">
             <img
               src="https://www.svgrepo.com/show/475656/google-color.svg"
               alt="Google"

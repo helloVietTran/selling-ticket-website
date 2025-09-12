@@ -59,8 +59,7 @@ const EventSlider: React.FC = () => {
           768: { slidesPerView: 2 },
         }}
         className="rounded-lg relative"
-        loop={true}
-      >
+        loop={true}>
         {events.map(event => (
           <SwiperSlide key={event.id}>
             <a href={event.href} className="relative block">

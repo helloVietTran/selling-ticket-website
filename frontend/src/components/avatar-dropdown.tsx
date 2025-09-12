@@ -28,8 +28,7 @@ export default function AvatarDropdown({
       <DropdownMenuContent
         side={side}
         align={align}
-        className="w-48 bg-white rounded-xl shadow-lg p-2"
-      >
+        className="w-48 bg-white rounded-xl shadow-lg p-2">
         <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
           <Ticket className="w-4 h-4" />
           Vé của tôi
@@ -38,8 +37,7 @@ export default function AvatarDropdown({
         <DropdownMenuItem>
           <Link
             to="/organizer/events"
-            className="flex items-center gap-2 cursor-pointer"
-          >
+            className="flex items-center gap-2 cursor-pointer">
             <Calendar className="w-4 h-4" />
             Sự kiện của tôi
           </Link>

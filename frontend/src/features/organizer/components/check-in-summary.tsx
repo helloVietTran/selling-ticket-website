@@ -1,5 +1,4 @@
-import { FaUserMinus } from 'react-icons/fa6';
-import { FaUserPlus } from 'react-icons/fa';
+import { UserMinus, UserPlus } from 'lucide-react';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import CircleChart from './circle-chart';
 
@@ -16,7 +15,8 @@ const CheckinSummary = ({
   inside,
   outside,
 }: CheckinSummaryProps) => {
-  const percent = totalSold > 0 ? Math.round((totalCheckedIn / totalSold) * 100) : 0;
+  const percent =
+    totalSold > 0 ? Math.round((totalCheckedIn / totalSold) * 100) : 0;
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -48,20 +48,19 @@ const CheckinSummary = ({
       <div className="flex flex-col gap-4 h-full">
         <Card className="bg-[#282629] text-white border-[#1f1d1f] flex flex-row justify-between items-center p-4 flex-1">
           <span className="flex items-center gap-4">
-            <FaUserPlus className="size-5 text-emerald-400" /> Trong sự kiện
+            <UserMinus className="size-5 text-emerald-400" /> Trong sự kiện
           </span>
           <span>{inside.toLocaleString()}</span>
         </Card>
 
         <Card className="bg-[#282629] text-white border-[#1f1d1f] flex flex-row justify-between items-center p-4 flex-1">
           <span className="flex items-center gap-4">
-            <FaUserMinus className="size-5 text-red-400" /> Đã ra ngoài
+            <UserMinus className="size-5 text-red-400" /> Đã ra ngoài
           </span>
           <span>{outside.toLocaleString()}</span>
         </Card>
       </div>
     </div>
-
   );
 };
 

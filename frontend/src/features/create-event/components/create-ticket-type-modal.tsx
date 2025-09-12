@@ -8,7 +8,7 @@ import {
     FormItem,
     FormLabel,
     FormControl,
-    FormMessage,
+    FormMessage 
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -16,29 +16,31 @@ import { Textarea } from "@/components/ui/textarea";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 
-import { ticketSchema, type TicketForm } from "@/features/organizer/schemas";
+import { tickeTypeSchema, type TicketType } from "@/features/create-event/schemas";
 import DateTimePicker from "./date-time-picker";
 
-type CreateTicketModalProps = {
+type CreateTicketTypeModalProps = {
     open: boolean;
     setOpen: (open: boolean) => void;
-    onCreate: (ticket: TicketForm) => void;
+    onCreate: (ticket: TicketType) => void;
 };
 
-const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ open, setOpen, onCreate }) => {
-    const form = useForm<TicketForm>({
-        resolver: zodResolverLocal(ticketSchema),
+const CreateTicketTypeModal: React.FC<CreateTicketTypeModalProps> = ({ open, setOpen, onCreate }) => {
+    const form = useForm<TicketType>({
+        resolver: zodResolverLocal(tickeTypeSchema),
         defaultValues: {
             name: "",
-            price: "0",
+            price: "1",
             quantity: "1",
-            startDate: "",
-            endDate: "",
+            startSellDate: "",
+            endSellDate: "",
             description: "",
+            maxPerUser: "",
+            minPerUser: "",
         },
     });
 
-    const handleSubmit = (values: TicketForm) => {
+    const handleSubmit = (values: TicketType) => {
         onCreate(values);
         form.reset();
     };
@@ -66,7 +68,7 @@ const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ open, setOpen, on
                                     <FormControl>
                                         <Input className="field-input" placeholder="Tên vé" {...field} />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-rose-500 min-h-[20px]" />
                                 </FormItem>
                             )}
                         />
@@ -79,9 +81,9 @@ const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ open, setOpen, on
                                     <FormItem>
                                         <FormLabel className="field-label required">Giá vé</FormLabel>
                                         <FormControl>
-                                            <Input type="number" placeholder="0" {...field} className="field-input no-spinner" />
+                                            <Input type="number" placeholder="1" {...field} className="field-input no-spinner" />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-rose-500 min-h-[20px]" />
                                     </FormItem>
                                 )}
                             />
@@ -95,21 +97,46 @@ const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ open, setOpen, on
                                         <FormControl>
                                             <Input type="number" {...field} className="field-input no-spinner" />
                                         </FormControl>
-                                        <FormMessage />
+                                        <FormMessage className="text-rose-500 min-h-[20px]" />
                                     </FormItem>
                                 )}
                             />
                         </div>
 
 
-                        {/* Thời gian */}
                         <div className="grid grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
-                                name="startDate"
+                                name="maxPerUser"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Thời gian bắt đầu</FormLabel>
+                                        <FormLabel className="field-label required">Số vé tối đa mỗi người</FormLabel>
+                                        <Input type="number" min={1} {...field} className="field-input no-spinner"/>
+                                        <FormMessage className="text-rose-500 min-h-[20px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="minPerUser"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="field-label required">Số vé tối thiểu mỗi lần mua</FormLabel>
+                                        <Input type="number" min={1} {...field} className="field-input no-spinner"/>
+                                        <FormMessage className="text-rose-500 min-h-[20px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
+                        {/* Thời gian  */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="startSellDate"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="field-label required">Thời gian mở bán</FormLabel>
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <Button
@@ -123,16 +150,16 @@ const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ open, setOpen, on
                                                 <DateTimePicker field={field} onClose={() => { }} />
                                             </PopoverContent>
                                         </Popover>
-                                        <FormMessage />
+                                        <FormMessage className="text-rose-500 min-h-[20px]" />
                                     </FormItem>
                                 )}
                             />
                             <FormField
                                 control={form.control}
-                                name="endDate"
+                                name="endSellDate"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Thời gian kết thúc</FormLabel>
+                                        <FormLabel className="field-label required">Thời gian kết thúc mở bán</FormLabel>
                                         <Popover>
                                             <PopoverTrigger asChild>
                                                 <Button
@@ -146,7 +173,7 @@ const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ open, setOpen, on
                                                 <DateTimePicker field={field} onClose={() => { }} />
                                             </PopoverContent>
                                         </Popover>
-                                        <FormMessage />
+                                        <FormMessage className="text-rose-500 min-h-[20px]" />
                                     </FormItem>
                                 )}
                             />
@@ -162,7 +189,7 @@ const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ open, setOpen, on
                                     <FormControl>
                                         <Textarea className="field-input resize-none" placeholder="Mô tả..." {...field} />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-rose-500 min-h-[20px]" />
                                 </FormItem>
                             )}
                         />
@@ -181,4 +208,4 @@ const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ open, setOpen, on
 
 
 
-export default CreateTicketModal;
+export default CreateTicketTypeModal;

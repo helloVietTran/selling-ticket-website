@@ -4,7 +4,6 @@ import TextAlign from '@tiptap/extension-text-align';
 import Highlight from '@tiptap/extension-highlight';
 import { TextStyle } from '@tiptap/extension-text-style';
 import Color from '@tiptap/extension-color';
-
 import {
   AlignCenter,
   AlignLeft,
@@ -20,14 +19,18 @@ import {
   Type,
   Strikethrough,
 } from 'lucide-react';
-
 import { Editor } from '@tiptap/react';
+import { Menu } from 'lucide-react';
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 import { Toggle } from '@/components/ui/toggle';
 
 function EditorMenuBar({ editor }: { editor: Editor | null }) {
-  if (!editor) {
-    return null;
-  }
+  if (!editor) return null;
 
   const Options = [
     {
@@ -163,30 +166,69 @@ function EditorMenuBar({ editor }: { editor: Editor | null }) {
   ];
 
   return (
-    <div className="p-1 space-x-2 z-50 border-b flex items-center">
-      {Options.map((option, index) => (
-        <Toggle
-          key={index}
-          pressed={option.preesed}
-          onPressedChange={option.onClick}
-        >
-          {option.icon}
-        </Toggle>
-      ))}
+    <>
+      {/* Desktop Toolbar */}
+      <div className="hidden lg:flex p-1 space-x-2 z-50 border-b items-center">
+        {Options.map((option, index) => (
+          <Toggle
+            key={index}
+            pressed={option.preesed}
+            onPressedChange={option.onClick}>
+            {option.icon}
+          </Toggle>
+        ))}
 
-      <input
-        type="color"
-        className="size-5 p-0 rounded cursor-pointer"
-        onInput={e =>
-          editor
-            .chain()
-            .focus()
-            .setColor((e.target as HTMLInputElement).value)
-            .run()
-        }
-        value={editor.getAttributes('textStyle').color || '#000000'}
-      />
-    </div>
+        <input
+          type="color"
+          className="size-5 p-0 rounded cursor-pointer"
+          onInput={e =>
+            editor
+              .chain()
+              .focus()
+              .setColor((e.target as HTMLInputElement).value)
+              .run()
+          }
+          value={editor.getAttributes('textStyle').color || '#000000'}
+        />
+      </div>
+
+      {/* Mobile Toolbar */}
+      <div className="lg:hidden border-b p-1 flex items-center justify-between">
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button className="p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-800">
+              <Menu className="size-5" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent
+            align="start"
+            className="flex flex-col gap-2 p-2">
+            {Options.map((option, index) => (
+              <Toggle
+                key={index}
+                pressed={option.preesed}
+                onPressedChange={option.onClick}
+                className="w-full justify-start">
+                {option.icon}
+              </Toggle>
+            ))}
+
+            <input
+              type="color"
+              className="size-6 p-0 rounded cursor-pointer"
+              onInput={e =>
+                editor
+                  .chain()
+                  .focus()
+                  .setColor((e.target as HTMLInputElement).value)
+                  .run()
+              }
+              value={editor.getAttributes('textStyle').color || '#000000'}
+            />
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </>
   );
 }
 
@@ -242,8 +284,7 @@ export default function RichTextEditor({
             dark:border-gray-600 
             dark:bg-gray-900 
             dark:text-gray-100
-      "
-    >
+      ">
       <EditorMenuBar editor={editor} />
       <EditorContent
         editor={editor}

@@ -14,63 +14,68 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 
 
-import { timeAndTicketTypeSchema, type Step2Data, type TicketForm } from "@/features/organizer/schemas";
-import CreateTicketModal from "./create-event-modal";
-import TicketItem from "./ticket-item";
+import { timeAndTicketTypeSchema, type TicketAndTimeType, type TicketType } from "@/features/create-event/schemas";
 import DateTimePicker from "./date-time-picker";
+import CreateTicketTypeModal from "./create-ticket-type-modal";
+import TicketTypeItem from "./ticket-type-item";
 
 
-export default function Step2Form({
+export default function TimeAndTicketTypeForm({
   initial,
   onNext,
   onBack,
 }: {
-  initial?: Partial<Step2Data>;
-  onNext: (data: Step2Data) => void;
+  initial?: Partial<TicketAndTimeType>;
+  onNext: (data: TicketAndTimeType) => void;
   onBack?: () => void;
 }) {
-  const form = useForm<Step2Data>({
+  const form = useForm<TicketAndTimeType>({
     resolver: zodResolver(timeAndTicketTypeSchema),
     defaultValues: {
       startDate: initial?.startDate ?? "",
       endDate: initial?.endDate ?? "",
-      tickets: initial?.tickets ?? [],
+      ticketTypes: initial?.ticketTypes ?? [],
+
     },
     mode: "onTouched",
   });
 
   const { fields, append, remove } = useFieldArray({
     control: form.control,
-    name: "tickets",
+    name: "ticketTypes",
   });
 
   const [modalOpen, setModalOpen] = useState(false);
 
-  const handleCreateTicket = (ticket: TicketForm) => {
-    // tạo id local để quản lý
+  const handleCreateTicket = (ticket: TicketType) => {
     const localId = `local_${Date.now()}`;
 
     const normalized = {
       ...ticket,
-      price: Number(ticket.price ?? 0),  // ép kiểu các field số
-      quantity: Number(ticket.quantity ?? 0),
       _localId: localId,
     };
 
+
+
     append(normalized as any);
+
+
     setModalOpen(false);
   };
 
-  const handleSubmit = (values: Step2Data) => {
-    const cleaned: Step2Data = {
+  const handleSubmit = (values: TicketAndTimeType) => {
+
+
+    const data: TicketAndTimeType = {
       ...values,
-      tickets: values.tickets.map((t: any) => {
-        // bỏ _localId vì chỉ dùng trong UI
+      ticketTypes: values.ticketTypes.map((t: any) => {
         const { _localId, ...rest } = t;
         return rest;
       }),
     };
-    onNext(cleaned);
+
+
+    onNext(data);
   };
 
   return (
@@ -144,7 +149,7 @@ export default function Step2Form({
               </Button>
             </div>
 
-            <CreateTicketModal
+            <CreateTicketTypeModal
               open={modalOpen}
               setOpen={setModalOpen}
               onCreate={handleCreateTicket}
@@ -153,11 +158,9 @@ export default function Step2Form({
 
             {/* Ticket list */}
             <div className="space-y-2">
-              {fields.length === 0 && (
-                <div className="text-sm text-gray-400 px-2">Chưa có loại vé nào.</div>
-              )}
+
               {fields.map((f, idx) => (
-                <TicketItem
+                <TicketTypeItem
                   key={f.id}
                   name={(f as any).name}
                   onRemove={() => remove(idx)}
@@ -165,6 +168,9 @@ export default function Step2Form({
               ))}
             </div>
           </div>
+          <FormMessage className="text-rose-500 text-center text-sm">
+            {form.formState.errors.ticketTypes?.message as string}
+          </FormMessage>
         </div>
 
         <div className="flex gap-2 justify-end mt-6">
@@ -182,6 +188,7 @@ export default function Step2Form({
             Tiếp theo
           </Button>
         </div>
+
       </form>
     </Form>
   );
