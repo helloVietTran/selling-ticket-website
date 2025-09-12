@@ -14,14 +14,17 @@ const EventsPage = () => {
   };
   return (
     <>
-      <div className="flex items-center justify-between pb-6">
+      <div className="flex flex-col gap-4 pb-6 lg:flex-row lg:items-center lg:justify-between lg:gap-0">
         <SearchBox
           placeholder="Tìm sự kiện"
           value={query}
           onChange={setQuery}
           onSearch={handleSearch}
+          className="w-full lg:w-auto"
         />
-        <StatusTabs />
+        <div className="w-full lg:w-auto">
+          <StatusTabs />
+        </div>
       </div>
       <div className="flex flex-col gap-4">
         {mockEvents.map(event => (

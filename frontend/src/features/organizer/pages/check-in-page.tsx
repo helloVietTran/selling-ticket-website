@@ -1,5 +1,5 @@
-import CheckinSummary from '../components/check-in-summary';
-import CheckinTable from '../components/checkin-table';
+import CheckinSummary from '@/features/organizer/components/check-in-summary';
+import CheckinTable from '@/features/organizer/components/checkin-table';
 
 export default function CheckinPage() {
   return (

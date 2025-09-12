@@ -1,11 +1,11 @@
-import { useState } from "react"
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
-import { ImagePlus } from "lucide-react"
-import subVn from "sub-vn"
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { ImagePlus } from "lucide-react";
+import subVn from "sub-vn";
 
-import { Button } from "@/components/ui/button"
-import { infoSchema, type Step1Data } from "@/features/organizer/schemas"
+import { Button } from "@/components/ui/button";
+import { infoSchema, type InfoType } from "@/features/create-event/schemas";
 import {
   Form,
   FormField,
@@ -13,7 +13,7 @@ import {
   FormLabel,
   FormMessage,
   FormControl,
-} from "@/components/ui/form"
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -21,34 +21,31 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
-import { Textarea } from "@/components/ui/textarea"
-import RichTextEditor from "./rich-text-editor"
-
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import RichTextEditor from "./rich-text-editor";
 
 export default function InfoForm({
   initial,
   onNext,
   onBack,
 }: {
-  initial?: Partial<Step1Data>
-  onNext: (data: Step1Data) => void
-  onBack?: () => void
+  initial?: Partial<InfoType>;
+  onNext: (data: InfoType) => void;
+  onBack?: () => void;
 }) {
-  const [preview, setPreview] = useState<string | null>(null)
+  const [preview, setPreview] = useState<string | null>(null);
 
-  const form = useForm<Step1Data>({
+  const form = useForm<InfoType>({
     resolver: zodResolver(infoSchema),
     defaultValues: {
       title: initial?.title ?? "",
-      image: undefined,
-
-      province: "",
-      district: "",
-      ward: "",
-      street: "",
-      category: "",
-
+      eventImage: undefined,
+      province: initial?.province ?? "",
+      district: initial?.district ?? "",
+      ward: initial?.ward ?? "",
+      street: initial?.street ?? "",
+      category: initial?.category ?? "",
       eventInfo: initial?.eventInfo ?? `
         <p><strong>Giới thiệu sự kiện:</strong></p>
         <p>[Tóm tắt ngắn gọn về sự kiện: Nội dung chính của sự kiện...]</p>
@@ -61,71 +58,79 @@ export default function InfoForm({
         <p><strong>Điều khoản và điều kiện:</strong></p>
         <p>[TnC] sự kiện</p>
       `,
-
-      organizerInfo: "",
-      organizerName: "",
+      organizerInfo: initial?.organizerInfo ?? "",
+      organizerName: initial?.organizerName ?? "",
     },
-  })
+  });
 
-  const [provinceCode, setProvinceCode] = useState<string>("")
-  const [districtCode, setDistrictCode] = useState<string>("")
+  // store codes so we can call subVn.getDistrictsByProvinceCode / getWardsByDistrictCode
+  const [provinceCode, setProvinceCode] = useState<string>(form.getValues("province") || "");
+  const [districtCode, setDistrictCode] = useState<string>(form.getValues("district") || "");
 
-  const provinces = subVn.getProvinces()
-  const districts = provinceCode ? subVn.getDistrictsByProvinceCode(provinceCode) : []
-  const wards = districtCode ? subVn.getWardsByDistrictCode(districtCode) : []
+  const provinces = subVn.getProvinces();
+  const districts = provinceCode ? subVn.getDistrictsByProvinceCode(provinceCode) : [];
+  const wards = districtCode ? subVn.getWardsByDistrictCode(districtCode) : [];
+
+  // cleanup preview URL when changes or unmount
+  useEffect(() => {
+    return () => {
+      if (preview) {
+        URL.revokeObjectURL(preview);
+      }
+    };
+  }, [preview]);
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onNext)} >
+      <form
+        onSubmit={form.handleSubmit((values) => {
+          // đảm bảo các trường address giữ code (province/district/ward) theo schema
+          onNext(values);
+        })}
+      >
         {/* Upload ảnh */}
-
         <div className="field-container">
           <FormField
             control={form.control}
-            name="image"
+            name="eventImage"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="field-label required">
-                  Ảnh sự kiện
-                </FormLabel>
+                <FormLabel className="field-label required">Ảnh sự kiện</FormLabel>
                 <FormControl>
                   <div className="relative w-full max-w-3xl mx-auto">
                     <label
                       htmlFor="event-image"
                       className="flex flex-col items-center justify-center w-full aspect-[16/9] rounded-lg border border-dashed border-gray-400 bg-gray-500/80 cursor-pointer overflow-hidden relative"
                     >
-                      {/* Preview ảnh */}
-                      {preview && (
+                      {preview ? (
                         <div className="absolute inset-0">
-                          <img
-                            src={preview}
-                            alt="Preview"
-                            className="object-cover w-full h-full"
-                          />
+                          <img src={preview} alt="Preview" className="object-cover w-full h-full" />
                         </div>
-                      )}
-
-
-                      {!preview && (
+                      ) : (
                         <div className="flex flex-col items-center justify-center text-center text-white">
                           <ImagePlus className="w-10 h-10 text-emerald-400 mb-2" />
                           <p className="text-base">Thêm ảnh nền sự kiện</p>
                         </div>
                       )}
 
-                      {/* Input file ẩn */}
                       <input
                         id="event-image"
                         type="file"
                         accept="image/*"
                         className="hidden"
                         onChange={(e) => {
-                          const file = e.target.files?.[0]
-                          field.onChange(file)
+                          const file = e.target.files?.[0] ?? undefined;
+                          // cập nhật giá trị trong react-hook-form
+                          field.onChange(file as any);
+                          // revoke previous preview nếu có
+                          if (preview) {
+                            URL.revokeObjectURL(preview);
+                          }
                           if (file) {
-                            setPreview(URL.createObjectURL(file))
+                            const url = URL.createObjectURL(file);
+                            setPreview(url);
                           } else {
-                            setPreview(null)
+                            setPreview(null);
                           }
                         }}
                       />
@@ -137,16 +142,13 @@ export default function InfoForm({
             )}
           />
 
-
           {/* Tiêu đề */}
           <FormField
             control={form.control}
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="field-label required mt-5">
-                  Tên sự kiện
-                </FormLabel>
+                <FormLabel className="field-label required mt-5">Tên sự kiện</FormLabel>
                 <FormControl>
                   <Input className="field-input" {...field} />
                 </FormControl>
@@ -163,21 +165,20 @@ export default function InfoForm({
             name="province"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="field-label required">
-                  Tỉnh/Thành
-                </FormLabel>
+                <FormLabel className="field-label required">Tỉnh/Thành</FormLabel>
                 <Select
-                  onValueChange={(value) => {
-                    field.onChange(value)
-                    setProvinceCode(value)
-                    form.setValue("district", "")
-                    form.setValue("ward", "")
-                  }}
                   value={field.value}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    setProvinceCode(value);
+                    // reset district + ward when province change
+                    form.setValue("district", "");
+                    form.setValue("ward", "");
+                    setDistrictCode("");
+                  }}
                 >
                   <FormControl>
                     <SelectTrigger className="w-full field-input">
-
                       <SelectValue placeholder="Chọn Tỉnh/Thành" />
                     </SelectTrigger>
                   </FormControl>
@@ -200,17 +201,14 @@ export default function InfoForm({
             name="district"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="field-label required">
-                  Quận/Huyện
-                </FormLabel>
-
+                <FormLabel className="field-label required">Quận/Huyện</FormLabel>
                 <Select
-                  onValueChange={(value) => {
-                    field.onChange(value)
-                    setDistrictCode(value)
-                    form.setValue("ward", "")
-                  }}
                   value={field.value}
+                  onValueChange={(value) => {
+                    field.onChange(value);
+                    setDistrictCode(value);
+                    form.setValue("ward", "");
+                  }}
                   disabled={!provinceCode}
                 >
                   <FormControl>
@@ -236,13 +234,12 @@ export default function InfoForm({
             control={form.control}
             name="ward"
             render={({ field }) => (
-              <FormItem >
+              <FormItem>
                 <FormLabel className="field-label">Phường/Xã</FormLabel>
                 <Select
-                  onValueChange={field.onChange}
                   value={field.value}
+                  onValueChange={field.onChange}
                   disabled={!districtCode}
-
                 >
                   <FormControl>
                     <SelectTrigger className="w-full field-input">
@@ -268,18 +265,10 @@ export default function InfoForm({
             name="street"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="field-label required">
-                  Số nhà, đường
-                </FormLabel>
+                <FormLabel className="field-label required">Số nhà, đường</FormLabel>
                 <FormControl>
-                  <Input
-                    {...field}
-                    placeholder="Số nhà, đường"
-                    maxLength={80}
-                    className="field-input"
-                  />
+                  <Input {...field} placeholder="Số nhà, đường" maxLength={80} className="field-input" />
                 </FormControl>
-
                 <FormMessage className="text-sm font-semibold text-rose-500" />
               </FormItem>
             )}
@@ -288,20 +277,14 @@ export default function InfoForm({
 
         {/* Category */}
         <div className="field-container">
-
           <FormField
             control={form.control}
             name="category"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="field-label required">
-                  Thể loại sự kiện
-                </FormLabel>
+                <FormLabel className="field-label required">Thể loại sự kiện</FormLabel>
                 <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
+                  <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger className="field-input w-full">
                       <SelectValue placeholder="Chọn thể loại" />
                     </SelectTrigger>
@@ -309,7 +292,7 @@ export default function InfoForm({
                       <SelectItem value="music">Âm nhạc</SelectItem>
                       <SelectItem value="sport">Thể thao</SelectItem>
                       <SelectItem value="art">Nghệ thuật</SelectItem>
-                      <SelectItem value="other">Khách</SelectItem>
+                      <SelectItem value="other">Khác</SelectItem>
                     </SelectContent>
                   </Select>
                 </FormControl>
@@ -326,9 +309,7 @@ export default function InfoForm({
             name="eventInfo"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="field-label required">
-                  Thông tin sự kiện
-                </FormLabel>
+                <FormLabel className="field-label required">Thông tin sự kiện</FormLabel>
                 <FormControl>
                   <RichTextEditor content={field.value} onChange={field.onChange} />
                 </FormControl>
@@ -336,48 +317,32 @@ export default function InfoForm({
               </FormItem>
             )}
           />
-
         </div>
 
         {/* Organizer */}
         <div className="field-container space-y-6">
-
           <FormField
             control={form.control}
             name="organizerName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="field-label required">
-                  Tên ban tổ chức
-                </FormLabel>
+                <FormLabel className="field-label required">Tên ban tổ chức</FormLabel>
                 <FormControl>
-                  <Input
-                    className="field-input w-full"
-                    placeholder="Nhập tên ban tổ chức"
-                    {...field}
-                  />
+                  <Input className="field-input w-full" placeholder="Nhập tên ban tổ chức" {...field} />
                 </FormControl>
                 <FormMessage className="text-sm font-semibold text-rose-500" />
               </FormItem>
             )}
           />
-
 
           <FormField
             control={form.control}
             name="organizerInfo"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="field-label required">
-                  Thông tin ban tổ chức
-                </FormLabel>
+                <FormLabel className="field-label required">Thông tin ban tổ chức</FormLabel>
                 <FormControl>
-                  <Textarea
-                    className="field-input w-full"
-                    placeholder="Nhập thông tin ban tổ chức"
-                    rows={3}
-                    {...field}
-                  />
+                  <Textarea className="field-input w-full" placeholder="Nhập thông tin ban tổ chức" rows={3} {...field} />
                 </FormControl>
                 <FormMessage className="text-sm font-semibold text-rose-500" />
               </FormItem>
@@ -385,27 +350,17 @@ export default function InfoForm({
           />
         </div>
 
-
         <div className="flex gap-2 justify-end">
           {onBack && (
-            <Button
-              type="button"
-              onClick={onBack}
-              variant="ghost"
-              className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border border-emerald-300"
-            >
+            <Button type="button" onClick={onBack} variant="ghost" className="bg-emerald-100 text-emerald-700 hover:bg-emerald-200 border border-emerald-300">
               Quay lại
             </Button>
           )}
-          <Button
-            type="submit"
-            className="bg-emerald-500 hover:bg-emerald-600 text-white"
-          >
+          <Button type="submit" className="bg-emerald-500 hover:bg-emerald-600 text-white">
             Tiếp theo
           </Button>
         </div>
-
       </form>
     </Form>
-  )
+  );
 }

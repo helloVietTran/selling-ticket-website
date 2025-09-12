@@ -1,1 +1,0 @@
-export { default as EventDetailPage } from "./pages/event-detail-page"

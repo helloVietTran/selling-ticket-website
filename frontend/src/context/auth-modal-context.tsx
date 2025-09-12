@@ -26,8 +26,7 @@ export const AuthModalProvider = ({
 
   return (
     <AuthModalContext.Provider
-      value={{ modalType, openLogin, openRegister, closeModal }}
-    >
+      value={{ modalType, openLogin, openRegister, closeModal }}>
       {children}
     </AuthModalContext.Provider>
   );

@@ -8,21 +8,20 @@ type Category = {
 const categories: Category[] = [
   { label: 'Âm nhạc', value: 'music' },
   { label: 'Nghệ thuật', value: 'art' },
-  { label: 'Thể Thao', value: 'sports' },
+  { label: 'Thể Thao', value: 'sport' },
   { label: 'Khác', value: 'other' },
 ];
 
-export default function Navigation() {
+const Navigation = () => {
   return (
     <div className=" bg-black">
-      <nav className="header-container !py-4">
-        <ul className="flex gap-8 text-white text-sm">
+      <nav className="navigation-container py-5">
+        <ul className="flex gap-8 text-gray-100 text-sm font-medium">
           {categories.map(cat => (
             <li key={cat.value}>
               <Link
                 to={`/search?category=${cat.value}`}
-                className="hover:text-emerald-400 transition-colors"
-              >
+                className="hover:text-emerald-400 transition-colors">
                 {cat.label}
               </Link>
             </li>
@@ -31,4 +30,6 @@ export default function Navigation() {
       </nav>
     </div>
   );
-}
+};
+
+export default Navigation;

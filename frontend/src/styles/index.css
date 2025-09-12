@@ -47,6 +47,7 @@
 
   --color-modal: rgba(81, 81, 88, 0.3);
   --color-text-wrapper: rgb(56, 56, 61);
+  --color-main-content: #272729;
 }
 
 :root {
@@ -151,13 +152,16 @@ body {
   scrollbar-width: none;
 }
 
-.main-bg-content {
-  @apply p-4;
-  @apply bg-[#272729];
+.main-container {
+  @apply max-w-[1200px] mx-auto px-4;
 }
 
 .header-container {
-  @apply max-w-[1200px] mx-auto px-6 py-3;
+  @apply max-w-[1200px] mx-auto px-4 py-3;
+}
+
+.navigation-container {
+  @apply max-w-[1050px] mx-auto;
 }
 
 /*Override swiper & pagination container*/
@@ -199,11 +203,9 @@ body {
 
 @layer utilities {
   .no-spinner {
-    /* Firefox */
     -moz-appearance: textfield;
     appearance: textfield;
 
-    /* Chrome, Safari, Edge */
     &::-webkit-inner-spin-button,
     &::-webkit-outer-spin-button {
       -webkit-appearance: none;
@@ -234,11 +236,35 @@ body {
 }
 
 .fade-mask::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
   height: 50px;
   background: linear-gradient(to top, white, transparent);
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  20% {
+    transform: rotate(-15deg);
+  }
+  40% {
+    transform: rotate(15deg);
+  }
+  60% {
+    transform: rotate(-10deg);
+  }
+  80% {
+    transform: rotate(10deg);
+  }
+}
+
+.animate-shake {
+  animation: shake 0.6s ease-in-out infinite;
+  transform-origin: top center;
 }

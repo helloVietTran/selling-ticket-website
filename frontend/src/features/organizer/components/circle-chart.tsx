@@ -29,8 +29,7 @@ export default function CircleChart({
             endAngle={-270}
             innerRadius="65%"
             outerRadius="100%"
-            stroke="none"
-          >
+            stroke="none">
             <Cell fill={colors[0]} />
             <Cell fill={colors[1]} />
           </Pie>
@@ -38,8 +37,7 @@ export default function CircleChart({
       </ResponsiveContainer>
       <span
         className="absolute inset-0 flex items-center justify-center font-bold"
-        style={{ fontSize }}
-      >
+        style={{ fontSize }}>
         {percent}%
       </span>
     </div>

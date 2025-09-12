@@ -11,7 +11,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { settingSchema, type Step3Data } from "@/features/organizer/schemas";
+import { settingSchema, type SettingType } from "@/features/create-event/schemas";
 import { Mail } from "lucide-react";
 
 
@@ -20,11 +20,11 @@ export default function Step3Form({
   onNext,
   onBack,
 }: {
-  initial?: Partial<Step3Data>;
-  onNext: (data: Step3Data) => void;
+  initial?: Partial<SettingType>;
+  onNext: (data: SettingType) => void;
   onBack?: () => void;
 }) {
-  const form = useForm<Step3Data>({
+  const form = useForm<SettingType>({
     resolver: zodResolver(settingSchema),
     defaultValues: {
       messageToReceiver: initial?.messageToReceiver ?? "",
@@ -43,9 +43,7 @@ export default function Step3Form({
                 <FormLabel className="field-label text-lg">
                   <Mail className="mr-1 size-5" />
                   <span>Tin nhắn được gửi cho người dùng khi đặt vé thành công</span>
-
                 </FormLabel>
-
                 <FormControl>
                   <div className="relative">
                     <Textarea
