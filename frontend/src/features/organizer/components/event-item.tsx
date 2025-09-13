@@ -11,9 +11,41 @@ import {
 import QrScanner from './qr-scanner';
 import { useState } from 'react';
 
-export const mockEvents = [{ id: '1', title: '[TP.HCM] Những Thành Phố Mơ Màng Year End 2024', location: 'TP.HCM', startDate: '08.12.2024 19:00', endDate: '08.12.2024 22:00', image: 'https://placehold.co/500x300/png?text=Event+1', }, { id: '2', title: '[Nhà Hát THANH NIÊN] Hài kịch: Lạc lối ở Bangkok', location: 'Hà Nội', startDate: '15.11.2024 20:00', endDate: '15.11.2024 22:30', image: 'https://placehold.co/500x300/png?text=Event+2', }, { id: '3', title: '1900 Future Hits #61: Quang Hùng MasterD', location: 'Hà Nội', startDate: '21.11.2024 21:00', endDate: '21.11.2024 23:00', image: 'https://placehold.co/500x300/png?text=Event+3', },];
+export const mockEvents = [
+  {
+    id: '1',
+    title: '[TP.HCM] Những Thành Phố Mơ Màng Year End 2024',
+    location: 'TP.HCM',
+    startDate: '08.12.2024 19:00',
+    endDate: '08.12.2024 22:00',
+    image: 'https://placehold.co/500x300/png?text=Event+1',
+  },
+  {
+    id: '2',
+    title: '[Nhà Hát THANH NIÊN] Hài kịch: Lạc lối ở Bangkok',
+    location: 'Hà Nội',
+    startDate: '15.11.2024 20:00',
+    endDate: '15.11.2024 22:30',
+    image: 'https://placehold.co/500x300/png?text=Event+2',
+  },
+  {
+    id: '3',
+    title: '1900 Future Hits #61: Quang Hùng MasterD',
+    location: 'Hà Nội',
+    startDate: '21.11.2024 21:00',
+    endDate: '21.11.2024 23:00',
+    image: 'https://placehold.co/500x300/png?text=Event+3',
+  },
+];
 
-export type EventItemProps = { id: string; title: string; location: string; startDate: string; endDate: string; image: string; };
+export type EventItemProps = {
+  id: string;
+  title: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  image: string;
+};
 
 export default function EventItem({
   id,
@@ -24,8 +56,6 @@ export default function EventItem({
   image,
 }: EventItemProps) {
   const [scannerOpen, setScannerOpen] = useState(false);
-
-
 
   return (
     <Card className="flex flex-col md:flex-row p-4 gap-4 bg-[#282629] text-white rounded-2xl shadow-md border border-[#1f1d1f]">
@@ -80,7 +110,8 @@ export default function EventItem({
             </DropdownMenuContent>
           </DropdownMenu>
 
-          <Button className="bg-emerald-500 hover:bg-emerald-600 text-white flex items-center gap-1 cursor-pointer 
+          <Button
+            className="bg-emerald-500 hover:bg-emerald-600 text-white flex items-center gap-1 cursor-pointer 
           w-full sm:w-auto justify-center sm:justify-start
           "
             onClick={() => setScannerOpen(true)}>
@@ -91,7 +122,7 @@ export default function EventItem({
           <QrScanner
             open={scannerOpen}
             onClose={() => setScannerOpen(false)}
-            onScan={(data) => console.log('Gửi server kiểm tra vé:', data)}
+            onScan={data => console.log('Gửi server kiểm tra vé:', data)}
           />
         </div>
       </CardContent>

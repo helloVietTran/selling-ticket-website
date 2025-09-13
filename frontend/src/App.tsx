@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import OrganizerLayout from '@/layouts/organizer-layout';
 import HomeLayout from '@/layouts/home-layout';
+import AccountLayout from '@/layouts/account-layout';
 
 import {
   CheckinPage,
@@ -15,9 +16,9 @@ import { EventDetailPage } from '@/features/event-detail';
 import { SelectTicketPage } from '@/features/select-ticket';
 import { BookingPage } from '@/features/booking';
 import { CreateEventPage } from '@/features/create-event';
-import MyInfoPage from './features/my-ticket';
-import MyTicketPage from './features/my-info';
-import NotFoundPage from './components/not-found';
+import { MyInfoPage } from '@/features/my-info';
+import MyTicketPage from '@/features/my-ticket/pages/my-ticket-page';
+import NotFoundPage from '@/components/not-found';
 
 export default function App() {
   return (
@@ -42,9 +43,11 @@ export default function App() {
           <Route path="check-in" element={<CheckinPage />} />
         </Route>
 
+        <Route path="/my" element={<AccountLayout />}>
+          <Route path="info" element={<MyInfoPage />} />
+          <Route path="tickets" element={<MyTicketPage />} />
+        </Route>
 
-        <Route path="/my/info" element={<MyInfoPage />} />
-        <Route path="/my/tickets" element={<MyTicketPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

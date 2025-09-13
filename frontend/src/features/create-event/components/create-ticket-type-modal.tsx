@@ -53,7 +53,7 @@ const CreateTicketTypeModal: React.FC<CreateTicketTypeModalProps> = ({ open, set
 
             <DialogContent className="bg-[#2d2f34] bg-gradient-to-br from-[#2d2f34] to-[#1f2023] backdrop-blur-md text-white border-none">
                 <DialogHeader>
-                    <DialogTitle className=" text-center font-medium mb-2">Tạo loại vé mới</DialogTitle>
+                    <DialogTitle className=" text-center font-medium mb-2">Tạo hạng vé mới</DialogTitle>
                 </DialogHeader>
 
                 <Form {...form}>

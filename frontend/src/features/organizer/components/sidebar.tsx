@@ -1,6 +1,13 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { ListX, TicketCheck, ListChecks, DollarSign, CheckSquare, ShoppingCart } from 'lucide-react';
+import {
+  ListX,
+  TicketCheck,
+  ListChecks,
+  DollarSign,
+  CheckSquare,
+  ShoppingCart,
+} from 'lucide-react';
 
 import SidebarItem from '@/features/organizer/components/sidebar-item';
 
@@ -10,8 +17,6 @@ type MenuItem = {
   icon?: React.ReactNode;
   path: string;
 };
-
-
 
 const menu: MenuItem[] = [
   {
@@ -80,10 +85,11 @@ export default function Sidebar({
 
       <div
         aria-hidden={!mobileOpen}
-        className={`fixed inset-0 z-50 transition-opacity duration-300 ${mobileOpen
-          ? 'opacity-100 pointer-events-auto'
-          : 'opacity-0 pointer-events-none'
-          }`}
+        className={`fixed inset-0 z-50 transition-opacity duration-300 ${
+          mobileOpen
+            ? 'opacity-100 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
+        }`}
         onClick={onRequestClose}>
         <div className="w-full h-full bg-black/50" />
       </div>
