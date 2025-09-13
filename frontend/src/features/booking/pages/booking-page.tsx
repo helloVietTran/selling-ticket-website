@@ -3,12 +3,12 @@ import BookingInfo from '@/features/booking/components/booking-info';
 
 const BookingPage = () => {
   return (
-    <div className="main-bg-content min-h-[90vh] !p-0 space-y-4 !pb-4">
+    <div className="bg-main-content min-h-[90vh] !p-0 space-y-4 !pb-4">
       <EventBanner
         title="[FLOWER 1969’s] ROLLERBALL PERFUME WORKSHOP – TRẢI NGHIỆM LÀM NƯỚC HOA LĂN"
         datetime="17:00 - 19:00, 13 Tháng 09, 2025"
         location="The Seat Cafe"
-        initialMinutes={0}
+        initialMinutes={15}
       />
       <BookingInfo
         tickets={[

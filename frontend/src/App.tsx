@@ -15,6 +15,9 @@ import { EventDetailPage } from '@/features/event-detail';
 import { SelectTicketPage } from '@/features/select-ticket';
 import { BookingPage } from '@/features/booking';
 import { CreateEventPage } from '@/features/create-event';
+import MyInfoPage from './features/my-ticket';
+import MyTicketPage from './features/my-info';
+import NotFoundPage from './components/not-found';
 
 export default function App() {
   return (
@@ -38,6 +41,11 @@ export default function App() {
           <Route path="orders" element={<OrdersPage />} />
           <Route path="check-in" element={<CheckinPage />} />
         </Route>
+
+
+        <Route path="/my/info" element={<MyInfoPage />} />
+        <Route path="/my/tickets" element={<MyTicketPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
   );
