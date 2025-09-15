@@ -15,7 +15,7 @@ const categories: Category[] = [
 const Navigation = () => {
   return (
     <div className=" bg-black">
-      <nav className="navigation-container py-5">
+      <nav className="navigation-container ">
         <ul className="flex gap-8 text-gray-100 text-sm font-medium">
           {categories.map(cat => (
             <li key={cat.value}>

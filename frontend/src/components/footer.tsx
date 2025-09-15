@@ -13,8 +13,8 @@ const Footer: React.FC = () => {
     'Phương thức thanh toán',
   ];
   return (
-    <footer className="bg-[#1f1f2e] text-gray-300 px-5 py-10">
-      <div className="max-w-screen-xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-6 text-center md:text-left">
+    <footer className="bg-[#2a2a3d] text-gray-300 px-5 py-10">
+      <div className="main-container grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 gap-x-6 text-center md:text-left">
         {/* Cột liên hệ */}
         <div className="space-y-4">
           <h3 className="text-white font-bold mb-2">Hotline</h3>

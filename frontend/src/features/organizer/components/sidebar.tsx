@@ -1,8 +1,12 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import { ListX, TicketCheck, ListChecks, DollarSign, CheckSquare, ShoppingCart } from 'lucide-react';
-
-import SidebarItem from '@/features/organizer/components/sidebar-item';
+import { NavLink } from 'react-router-dom';
+import {
+  ListX,
+  TicketCheck,
+  ListChecks,
+  DollarSign,
+  CheckSquare,
+  ShoppingCart,
+} from 'lucide-react';
 
 type MenuItem = {
   id: string;
@@ -10,8 +14,6 @@ type MenuItem = {
   icon?: React.ReactNode;
   path: string;
 };
-
-
 
 const menu: MenuItem[] = [
   {
@@ -45,49 +47,46 @@ type SidebarProps = {
   onRequestClose?: () => void;
 };
 
-export default function Sidebar({
-  mobileOpen = false,
-  onRequestClose,
-}: SidebarProps) {
-  const [activeId, setActiveId] = useState<string>('events');
-
+export default function Sidebar({ mobileOpen = false, onRequestClose }: SidebarProps) {
   return (
     <>
-      <aside
-        className="hidden min-[1150px]:flex w-[288px] sticky top-0 left-0 h-screen bg-gradient-to-b from-emerald-900/80 
-      to-gray-800/60 text-white p-6  flex-col justify-between">
+      {/* Desktop */}
+      <aside className="hidden min-[1150px]:flex w-[288px] sticky top-0 left-0 h-screen bg-gradient-to-b from-emerald-900/80 to-gray-800/60 text-white p-6 flex-col justify-between">
         <div>
-          <Link to="/" className="flex items-center gap-3 mb-8">
+          <NavLink to="/" className="flex items-center gap-3 mb-8">
             <TicketCheck size={24} />
             <span className="text-lg font-semibold">Organizer Center</span>
-          </Link>
+          </NavLink>
 
           <nav className="space-y-4">
             {menu.map(m => (
-              <SidebarItem
+              <NavLink
                 key={m.id}
-                id={m.id}
-                label={m.label}
-                icon={m.icon}
-                path={m.path}
-                active={m.id === activeId}
-                onClick={() => setActiveId(m.id)}
-              />
+                to={m.path}
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                    isActive ? 'bg-emerald-700 text-white font-semibold' : 'text-gray-300 hover:text-white'
+                  }`
+                }>
+                {m.icon}
+                <span>{m.label}</span>
+              </NavLink>
             ))}
           </nav>
         </div>
       </aside>
 
+      {/* Overlay mobile */}
       <div
         aria-hidden={!mobileOpen}
-        className={`fixed inset-0 z-50 transition-opacity duration-300 ${mobileOpen
-          ? 'opacity-100 pointer-events-auto'
-          : 'opacity-0 pointer-events-none'
-          }`}
+        className={`fixed inset-0 z-50 transition-opacity duration-300 ${
+          mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
         onClick={onRequestClose}>
         <div className="w-full h-full bg-black/50" />
       </div>
 
+      {/* Mobile */}
       <aside
         aria-hidden={!mobileOpen}
         className={`fixed z-50 top-0 left-0 h-full w-[288px] bg-gradient-to-b from-emerald-900/95 to-gray-800/95 text-white p-6 transform transition-transform duration-300 ease-in-out
@@ -96,10 +95,10 @@ export default function Sidebar({
         `}
         role="dialog">
         <div className="flex items-center justify-between mb-6">
-          <Link to="/" className="flex items-center gap-3">
+          <NavLink to="/" className="flex items-center gap-3">
             <TicketCheck size={24} />
             <span className="text-lg font-semibold">Organizer Center</span>
-          </Link>
+          </NavLink>
           <button
             onClick={onRequestClose}
             aria-label="Đóng menu"
@@ -110,18 +109,18 @@ export default function Sidebar({
 
         <nav className="space-y-4">
           {menu.map(m => (
-            <SidebarItem
-              path={m.path}
+            <NavLink
               key={m.id}
-              id={m.id}
-              label={m.label}
-              icon={m.icon}
-              active={m.id === activeId}
-              onClick={() => {
-                setActiveId(m.id);
-                onRequestClose?.();
-              }}
-            />
+              to={m.path}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
+                  isActive ? 'bg-emerald-700 text-white font-semibold' : 'text-gray-300 hover:text-white'
+                }`
+              }
+              onClick={onRequestClose}>
+              {m.icon}
+              <span>{m.label}</span>
+            </NavLink>
           ))}
         </nav>
       </aside>

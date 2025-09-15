@@ -39,16 +39,14 @@ export default function CreateProcessBar({ steps, currentStepId }: Props) {
             <div
               key={step.id}
               className="flex items-center gap-2 cursor-default"
-              aria-current={isActive ? 'step' : undefined}
-            >
+              aria-current={isActive ? 'step' : undefined}>
               <span
                 className={cn(
                   'flex items-center justify-center w-8 h-8 rounded-full border transition',
                   isActive
                     ? 'bg-green-500 text-white border-green-500'
                     : 'bg-white text-black border-gray-400'
-                )}
-              >
+                )}>
                 {idx + 1}
               </span>
 
@@ -56,8 +54,7 @@ export default function CreateProcessBar({ steps, currentStepId }: Props) {
                 className={cn(
                   'text-sm font-medium',
                   isActive ? 'text-white' : 'text-gray-400'
-                )}
-              >
+                )}>
                 {step.label}
               </span>
             </div>

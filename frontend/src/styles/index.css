@@ -161,7 +161,7 @@ body {
 }
 
 .navigation-container {
-  @apply max-w-[1050px] mx-auto;
+  @apply max-w-[1100px] px-10 py-5 mx-auto;
 }
 
 /*Override swiper & pagination container*/

@@ -30,8 +30,12 @@ export default function AvatarDropdown({
         align={align}
         className="w-48 bg-white rounded-xl shadow-lg p-2">
         <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
-          <Ticket className="w-4 h-4" />
-          Vé của tôi
+          <Link
+            to="/my/tickets"
+            className="flex items-center gap-2 cursor-pointer">
+            <Ticket className="w-4 h-4" />
+            Vé của tôi
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem>
@@ -44,8 +48,12 @@ export default function AvatarDropdown({
         </DropdownMenuItem>
 
         <DropdownMenuItem className="flex items-center gap-2 cursor-pointer">
-          <User className="w-4 h-4" />
-          Tài khoản của tôi
+          <Link
+            to="/my/info"
+            className="flex items-center gap-2 cursor-pointer">
+            <User className="w-4 h-4" />
+            Tài khoản của tôi
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuSeparator />

@@ -145,7 +145,7 @@ export default function TimeAndTicketTypeForm({
                 className="bg-transparent hover:bg-transparent  text-emerald-500 font-semibold text-base hover:text-emerald-500 cursor-pointer"
               >
                 <PlusCircle className="h-4 w-4" />
-                Tạo vé mới
+                Tạo hạng vé mới
               </Button>
             </div>
 
