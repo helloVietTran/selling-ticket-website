@@ -5,8 +5,10 @@ import InfoForm from "@/features/create-event/components/info-form";
 import TimeAndTicketForm from "@/features/create-event/components/time-ticket-type-form";
 import SettingForm from "@/features/create-event/components/setting-form";
 import PaymentForm from "@/features/create-event/components/payment-form";
-import type { CreateEventFormData } from "@/features/create-event/schemas";
+import { type CreateEventFormData } from "@/features/create-event/schemas";
 import CreateProcessBar from "@/features/create-event/components/create-process-bar";
+import { useApi } from "@/api/hooks/useApi";
+import { createFullEvent } from "@/api/eventApi";
 
 const steps = [
   { id: "eventInfo", label: "Thông tin sự kiện" }, // STEP 1
@@ -19,11 +21,13 @@ export default function CreateEventPage() {
   const [currentStepId, setCurrentStepId] = useState(steps[0].id);
   const [formData, setFormData] = useState<CreateEventFormData>({});
 
+  const { exec, isError, isSuccess } = useApi(createFullEvent);
+
   const handleNextFromStep = <T extends keyof CreateEventFormData>(
     stepId: T,
     data: CreateEventFormData[T]
   ) => {
-    console.log(data);
+
     const updatedData = { ...formData, [stepId]: data };
     setFormData(updatedData);
 
@@ -36,8 +40,28 @@ export default function CreateEventPage() {
     }
   };
 
-  const handleFinish = (finalData: CreateEventFormData) => {
-    console.log("Submit toàn bộ dữ liệu:", finalData);
+  const handleFinish = async (finalData: CreateEventFormData) => {
+    // format to easy handle
+    const creatEventData = {
+      organizer: finalData.eventInfo?.organizer,
+      venue: finalData.eventInfo?.venue,
+      event: {
+        ...finalData.eventInfo,
+        startTime: finalData.timeAndTicketTypeInfo?.startTime,
+        endTime: finalData.timeAndTicketTypeInfo?.endTime,
+      },
+      tickeTypes: finalData.timeAndTicketTypeInfo?.ticketTypes,
+      setting: {
+        messageToReceiver: finalData.settingInfo?.messageToReceiver
+      },
+      paymentInfo: finalData.paymentInfo
+    };
+
+    console.log(creatEventData);
+    await exec(creatEventData);
+
+
+
   };
 
   return (
@@ -60,6 +84,7 @@ export default function CreateEventPage() {
             initial={formData.eventInfo}
             onNext={(data) => handleNextFromStep("eventInfo", data)}
           />
+
         </TabsContent>
 
         <TabsContent value="timeAndTicketTypeInfo">

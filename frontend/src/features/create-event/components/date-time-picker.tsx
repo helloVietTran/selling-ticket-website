@@ -70,13 +70,11 @@ const DateTimePicker: React.FC<DateTimePickerProps> = ({ field, onClose }) => {
 
   return (
     <div className="flex gap-4">
-      <div>
-        <Calendar
-          mode="single"
-          selected={selectedDate}
-          onSelect={d => d && setSelectedDate(d)}
-        />
-      </div>
+      <Calendar
+        mode="single"
+        selected={selectedDate}
+        onSelect={d => d && setSelectedDate(d)}
+      />
 
       <div className="w-40 flex flex-col p-5">
         <div className="flex gap-2">

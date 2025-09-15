@@ -7,6 +7,9 @@ export class Organizer extends User {
   @Column({ nullable: true })
   organizationName?: string;
 
+  @Column({ nullable: true })
+  organizerInfo?: string;
+
   @OneToMany(() => Event, (event) => event.organizer)
   events!: Event[];
 }

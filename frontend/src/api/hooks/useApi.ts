@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { useApiStatus } from './useApiStatus';
-import { ERROR, PENDING, SUCCESS } from '../constants/apiStatus';
+import { useState } from "react";
+import { useApiStatus } from "./useApiStatus";
+import { ERROR, PENDING, SUCCESS } from "../constants/apiStatus";
 
 type UseApiConfig<T> = {
   initialData?: T;
@@ -44,6 +44,6 @@ export function useApi<TArgs extends any[] = any[], TData = unknown>(
     setApiStatus,
     error,
     exec,
-    ...normalisedStatuses,
+    ...normalisedStatuses, // isIdle, isPending, isSuccess, isError
   };
 }

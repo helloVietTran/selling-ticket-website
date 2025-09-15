@@ -41,12 +41,12 @@ export default function Step4Form({
             control={form.control}
             name="accountHolder"
             render={({ field }) => (
-              <FormItem className="flex">
+              <FormItem>
                 <FormLabel className="w-40 field-label required">Chủ tài khoản:</FormLabel>
                 <FormControl>
                   <Input {...field} maxLength={100} className="field-input"/>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-rose-500"/>
               </FormItem>
             )}
           />
@@ -55,12 +55,12 @@ export default function Step4Form({
             control={form.control}
             name="accountNumber"
             render={({ field }) => (
-              <FormItem className="flex">
+              <FormItem>
                 <FormLabel className="w-40 field-label required">Số tài khoản:</FormLabel>
                 <FormControl>
                   <Input {...field} maxLength={100} className="field-input"/>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-rose-500"/>
               </FormItem>
             )}
           />
@@ -69,12 +69,12 @@ export default function Step4Form({
             control={form.control}
             name="bankName"
             render={({ field }) => (
-              <FormItem className="flex">
+              <FormItem>
                 <FormLabel className="w-40 field-label required">Tên ngân hàng:</FormLabel>
                 <FormControl>
                   <Input {...field} maxLength={100} className="field-input"/>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-rose-500"/>
               </FormItem>
             )}
           />
@@ -83,12 +83,12 @@ export default function Step4Form({
             control={form.control}
             name="branch"
             render={({ field }) => (
-              <FormItem className="flex">
+              <FormItem>
                 <FormLabel className="w-40 field-label required">Chi nhánh:</FormLabel>
                 <FormControl>
                   <Input {...field} maxLength={100} className="field-input"/>
                 </FormControl>
-                <FormMessage />
+                <FormMessage className="text-rose-500"/>
               </FormItem>
             )}
           />
