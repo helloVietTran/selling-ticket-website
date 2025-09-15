@@ -16,8 +16,7 @@ import { EventDetailPage } from '@/features/event-detail';
 import { SelectTicketPage } from '@/features/select-ticket';
 import { BookingPage } from '@/features/booking';
 import { CreateEventPage } from '@/features/create-event';
-import { MyInfoPage } from '@/features/my-info';
-import MyTicketPage from '@/features/my-ticket/pages/my-ticket-page';
+import { MyInfoPage, MyTicketPage } from '@/features/account';
 import NotFoundPage from '@/components/not-found';
 
 export default function App() {

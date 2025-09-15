@@ -1,4 +1,4 @@
-import MyTicketList from '../components/ticket-list';
+import MyTicketList from '@/features/account/components/ticket-list';
 
 const MyTicketPage = () => {
   return (

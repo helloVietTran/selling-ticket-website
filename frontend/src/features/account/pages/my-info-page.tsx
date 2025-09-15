@@ -1,5 +1,5 @@
 import PageTitle from '@/components/page-title';
-import AccountInfoCard, { mockData } from '../components/account-info-card';
+import AccountInfoCard, { mockData } from '@/features/account/components/account-info-card';
 
 const MyInfoPage = () => {
   return (
