@@ -21,7 +21,7 @@ export default function CreateEventPage() {
   const [currentStepId, setCurrentStepId] = useState(steps[0].id);
   const [formData, setFormData] = useState<CreateEventFormData>({});
 
-  const { exec, isError, isSuccess } = useApi(createFullEvent);
+  const { exec, error, data } = useApi(createFullEvent);
 
   const handleNextFromStep = <T extends keyof CreateEventFormData>(
     stepId: T,
@@ -60,6 +60,13 @@ export default function CreateEventPage() {
     console.log(creatEventData);
     await exec(creatEventData);
 
+    if (error) {
+      alert("Gọi lỗi")
+      console.log(error)
+
+    } else {
+      alert("ok")
+    }
 
 
   };

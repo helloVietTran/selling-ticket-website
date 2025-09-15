@@ -22,7 +22,7 @@ export type TicketType = {
 };
 
 export type Event = {
-  title: string | undefined;
+  title: string;
   category: string;
   eventInfo: string;
   startTime: string;
@@ -40,11 +40,3 @@ export type PaymentInfo = {
   branch: string;
 };
 
-export type CreateEventPayload = {
-  organizer: Organizer | undefined;
-  venue: Venue | undefined;
-  event: Event | undefined;
-  tickeTypes: TicketType[] | undefined;
-  setting: Setting | undefined;
-  paymentInfo: PaymentInfo | undefined;
-};

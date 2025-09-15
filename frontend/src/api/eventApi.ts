@@ -1,8 +1,8 @@
 import api from "./api";
-import type { CreateEventPayload, Event } from "./types/types";
+import type { Event } from "./types/types";
 
 
-async function createFullEvent(payload: CreateEventPayload): Promise<Event> {
+async function createFullEvent(payload: any): Promise<Event> {
   const res = await api.post("/events", payload);
   return res.data;
 }
