@@ -9,68 +9,20 @@ import { EventStatus } from '../types/enum';
 import { Brackets } from 'typeorm';
 import ApiResponse from '../utils/ApiResponse';
 import { IErrorCode } from '../config/ErrorCode';
+import { createEventSchema } from '../validators/event.validate';
+
+import eventFacade from '../services/event.facade';
 
 class EventController {
   private eventRepository = AppDataSource.getRepository(Event);
 
-  // Tạo event
+  // giữ đoạn code này và triển khai tiếp
   createEvent = async (req: Request, res: Response) => {
-    try {
-      const { title, description, startTime, endTime, status, capacity, organizerId, venueId, categoryId } = req.body;
+    const parsed = createEventSchema.parse(req.body); 
+    const result = await eventFacade.createFullEvent(parsed);
 
-      if (!title || !startTime || !endTime || !organizerId) {
-        return res.status(400).json(
-          ApiResponse.error({
-            code: 'INVALID_INPUT',
-            message: 'Thiếu dữ liệu bắt buộc',
-            statusCode: 400
-          })
-        );
-      }
-
-      // Lấy các relation
-      const organizer = await AppDataSource.getRepository(Organizer).findOneBy({ id: organizerId });
-      const venue = venueId
-        ? ((await AppDataSource.getRepository(Venue).findOneBy({ id: venueId })) ?? undefined)
-        : undefined;
-      const category = categoryId
-        ? ((await AppDataSource.getRepository(Category).findOneBy({ categoryId })) ?? undefined)
-        : undefined;
-
-      if (!organizer) {
-        return res.status(400).json(
-          ApiResponse.error({
-            code: 'INVALID_ORGANIZER',
-            message: 'Organizer không tồn tại',
-            statusCode: 400
-          })
-        );
-      }
-
-      const newEvent = this.eventRepository.create({
-        title,
-        description,
-        startTime,
-        endTime,
-        status: status || EventStatus.Draft,
-        capacity,
-        organizer,
-        venue,
-        category
-      });
-
-      await this.eventRepository.save(newEvent);
-      return res.status(201).json(ApiResponse.success(newEvent, 'Tạo sự kiện thành công'));
-    } catch (error) {
-      console.error('Xảy ra lỗi khi tạo sự kiện:', error);
-      return res.status(500).json(
-        ApiResponse.error({
-          code: 'EVENT_CREATE_FAILED',
-          message: 'Không thể tạo sự kiện',
-          statusCode: 500
-        })
-      );
-    }
+    // ném thêm ngoại lệ
+    return res.status(201).json(result);
   };
 
   // Lấy danh sách event
@@ -216,15 +168,13 @@ class EventController {
       if (status) {
         const normalizedStatus = String(status).toUpperCase();
         if (!Object.values(EventStatus).includes(normalizedStatus as EventStatus)) {
-          return res
-            .status(400)
-            .json(
-              ApiResponse.error({
-                code: 'INVALID_STATUS',
-                message: 'Trạng thái tìm kiếm không hợp lệ',
-                statusCode: 400
-              })
-            );
+          return res.status(400).json(
+            ApiResponse.error({
+              code: 'INVALID_STATUS',
+              message: 'Trạng thái tìm kiếm không hợp lệ',
+              statusCode: 400
+            })
+          );
         }
         query.andWhere('event.status = :statusParam', { statusParam: normalizedStatus });
       }
@@ -243,57 +193,53 @@ class EventController {
     }
   };
 
-
   // Lọc sự kiện theo startTime, endTime, category, venue
-filterEvents = async (req: Request, res: Response) => {
-  try {
-    const { startTime, endTime, categoryId, venueId } = req.query;
+  filterEvents = async (req: Request, res: Response) => {
+    try {
+      const { startTime, endTime, categoryId, venueId } = req.query;
 
-    const query = this.eventRepository
-      .createQueryBuilder('event')
-      .leftJoinAndSelect('event.venue', 'venue')
-      .leftJoinAndSelect('event.organizer', 'organizer')
-      .leftJoinAndSelect('event.ticketTypes', 'ticketTypes')
-      .leftJoinAndSelect('event.category', 'category');
+      const query = this.eventRepository
+        .createQueryBuilder('event')
+        .leftJoinAndSelect('event.venue', 'venue')
+        .leftJoinAndSelect('event.organizer', 'organizer')
+        .leftJoinAndSelect('event.ticketTypes', 'ticketTypes')
+        .leftJoinAndSelect('event.category', 'category');
 
-    // Lọc theo khoảng thời gian
-     if (startTime && endTime) {
-      const start = new Date(startTime as string);
-      const end = new Date(endTime as string);
+      // Lọc theo khoảng thời gian
+      if (startTime && endTime) {
+        const start = new Date(startTime as string);
+        const end = new Date(endTime as string);
 
-      query.andWhere('event.startTime BETWEEN :start AND :end', {
-        start,
-        end,
-      });
+        query.andWhere('event.startTime BETWEEN :start AND :end', {
+          start,
+          end
+        });
+      }
+
+      // Lọc theo category
+      if (categoryId) {
+        query.andWhere('category.categoryId = :categoryId', { categoryId });
+      }
+
+      // Lọc theo venue
+      if (venueId) {
+        query.andWhere('venue.id = :venueId', { venueId });
+      }
+
+      const events = await query.orderBy('event.startTime', 'ASC').getMany();
+
+      return res.status(200).json(ApiResponse.success(events, 'Lọc sự kiện thành công'));
+    } catch (error) {
+      console.error('Lỗi khi lọc sự kiện:', error);
+      return res.status(500).json(
+        ApiResponse.error({
+          code: 'EVENT_FILTER_FAILED',
+          message: 'Không thể lọc sự kiện',
+          statusCode: 500
+        })
+      );
     }
-
-    // Lọc theo category
-    if (categoryId) {
-      query.andWhere('category.categoryId = :categoryId', { categoryId });
-    }
-
-    // Lọc theo venue
-    if (venueId) {
-      query.andWhere('venue.id = :venueId', { venueId });
-    }
-
-    const events = await query.orderBy('event.startTime', 'ASC').getMany();
-
-    return res
-      .status(200)
-      .json(ApiResponse.success(events, 'Lọc sự kiện thành công'));
-  } catch (error) {
-    console.error('Lỗi khi lọc sự kiện:', error);
-    return res.status(500).json(
-      ApiResponse.error({
-        code: 'EVENT_FILTER_FAILED',
-        message: 'Không thể lọc sự kiện',
-        statusCode: 500,
-      })
-    );
-  }
-};
-
+  };
 }
 
 export default new EventController();

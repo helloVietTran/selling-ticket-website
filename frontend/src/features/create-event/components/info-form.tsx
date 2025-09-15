@@ -41,10 +41,7 @@ export default function InfoForm({
     defaultValues: {
       title: initial?.title ?? "",
       eventImage: undefined,
-      province: initial?.province ?? "",
-      district: initial?.district ?? "",
-      ward: initial?.ward ?? "",
-      street: initial?.street ?? "",
+
       category: initial?.category ?? "",
       eventInfo: initial?.eventInfo ?? `
         <p><strong>Giới thiệu sự kiện:</strong></p>
@@ -58,14 +55,22 @@ export default function InfoForm({
         <p><strong>Điều khoản và điều kiện:</strong></p>
         <p>[TnC] sự kiện</p>
       `,
-      organizerInfo: initial?.organizerInfo ?? "",
-      organizerName: initial?.organizerName ?? "",
+
+      venue: {
+        province: initial?.venue?.province ?? "",
+        district: initial?.venue?.district ?? "",
+        ward: initial?.venue?.ward ?? "",
+        street: initial?.venue?.street ?? "",
+      },
+      organizer: {
+        organizerName: initial?.organizer?.organizerName ?? "",
+        organizerInfo: initial?.organizer?.organizerInfo ?? "",
+      }
     },
   });
 
-  // store codes so we can call subVn.getDistrictsByProvinceCode / getWardsByDistrictCode
-  const [provinceCode, setProvinceCode] = useState<string>(form.getValues("province") || "");
-  const [districtCode, setDistrictCode] = useState<string>(form.getValues("district") || "");
+  const [provinceCode, setProvinceCode] = useState<string>(form.getValues("venue.province") || "");
+  const [districtCode, setDistrictCode] = useState<string>(form.getValues("venue.district") || "");
 
   const provinces = subVn.getProvinces();
   const districts = provinceCode ? subVn.getDistrictsByProvinceCode(provinceCode) : [];
@@ -84,11 +89,10 @@ export default function InfoForm({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit((values) => {
-          // đảm bảo các trường address giữ code (province/district/ward) theo schema
           onNext(values);
         })}
       >
-        {/* Upload ảnh */}
+        {/* Upload image */}
         <div className="field-container">
           <FormField
             control={form.control}
@@ -120,9 +124,8 @@ export default function InfoForm({
                         className="hidden"
                         onChange={(e) => {
                           const file = e.target.files?.[0] ?? undefined;
-                          // cập nhật giá trị trong react-hook-form
+
                           field.onChange(file as any);
-                          // revoke previous preview nếu có
                           if (preview) {
                             URL.revokeObjectURL(preview);
                           }
@@ -162,7 +165,7 @@ export default function InfoForm({
           {/* Province */}
           <FormField
             control={form.control}
-            name="province"
+            name="venue.province"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="field-label required">Tỉnh/Thành</FormLabel>
@@ -172,8 +175,8 @@ export default function InfoForm({
                     field.onChange(value);
                     setProvinceCode(value);
                     // reset district + ward when province change
-                    form.setValue("district", "");
-                    form.setValue("ward", "");
+                    form.setValue("venue.district", "");
+                    form.setValue("venue.ward", "");
                     setDistrictCode("");
                   }}
                 >
@@ -198,7 +201,7 @@ export default function InfoForm({
           {/* District */}
           <FormField
             control={form.control}
-            name="district"
+            name="venue.district"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="field-label required">Quận/Huyện</FormLabel>
@@ -207,7 +210,7 @@ export default function InfoForm({
                   onValueChange={(value) => {
                     field.onChange(value);
                     setDistrictCode(value);
-                    form.setValue("ward", "");
+                    form.setValue("venue.ward", "");
                   }}
                   disabled={!provinceCode}
                 >
@@ -232,7 +235,7 @@ export default function InfoForm({
           {/* Ward */}
           <FormField
             control={form.control}
-            name="ward"
+            name="venue.ward"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="field-label">Phường/Xã</FormLabel>
@@ -262,7 +265,7 @@ export default function InfoForm({
           {/* Street */}
           <FormField
             control={form.control}
-            name="street"
+            name="venue.street"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="field-label required">Số nhà, đường</FormLabel>
@@ -323,7 +326,7 @@ export default function InfoForm({
         <div className="field-container space-y-6">
           <FormField
             control={form.control}
-            name="organizerName"
+            name="organizer.organizerName"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="field-label required">Tên ban tổ chức</FormLabel>
@@ -337,7 +340,7 @@ export default function InfoForm({
 
           <FormField
             control={form.control}
-            name="organizerInfo"
+            name="organizer.organizerInfo"
             render={({ field }) => (
               <FormItem>
                 <FormLabel className="field-label required">Thông tin ban tổ chức</FormLabel>

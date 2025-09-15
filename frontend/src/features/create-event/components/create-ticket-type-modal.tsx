@@ -8,15 +8,16 @@ import {
     FormItem,
     FormLabel,
     FormControl,
-    FormMessage 
+    FormMessage
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 
 import { tickeTypeSchema, type TicketType } from "@/features/create-event/schemas";
+import { Popover } from "@radix-ui/react-popover";
+import { PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import DateTimePicker from "./date-time-picker";
 
 type CreateTicketTypeModalProps = {
@@ -32,11 +33,9 @@ const CreateTicketTypeModal: React.FC<CreateTicketTypeModalProps> = ({ open, set
             name: "",
             price: "1",
             quantity: "1",
-            startSellDate: "",
-            endSellDate: "",
             description: "",
-            maxPerUser: "",
-            minPerUser: "",
+            maxPerUser: "1",
+            minPerUser: "1",
         },
     });
 
@@ -57,7 +56,7 @@ const CreateTicketTypeModal: React.FC<CreateTicketTypeModalProps> = ({ open, set
                 </DialogHeader>
 
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+                    <div className="space-y-4">
                         {/* Ticket type name*/}
                         <FormField
                             control={form.control}
@@ -72,6 +71,58 @@ const CreateTicketTypeModal: React.FC<CreateTicketTypeModalProps> = ({ open, set
                                 </FormItem>
                             )}
                         />
+
+                        <div className="grid grid-cols-2 gap-4">
+                            {/* Start time */}
+                            <FormField
+                                control={form.control}
+                                name="startSellDate"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="field-label required">Thời gian bắt đầu bán vé</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    className="w-full justify-start text-left font-normal text-foreground"
+                                                >
+                                                    {field.value ? new Date(field.value).toLocaleString() : "Chọn"}
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-4">
+                                                <DateTimePicker field={field} onClose={() => { }} />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage className="min-h-[20px]" />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* End time */}
+                            <FormField
+                                control={form.control}
+                                name="endSellDate"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel className="field-label required">Thời gian kết thúc bán vé</FormLabel>
+                                        <Popover>
+                                            <PopoverTrigger asChild>
+                                                <Button
+                                                    variant="outline"
+                                                    className="w-full justify-start text-left font-normal text-foreground"
+                                                >
+                                                    {field.value ? new Date(field.value).toLocaleString() : "Chọn"}
+                                                </Button>
+                                            </PopoverTrigger>
+                                            <PopoverContent className="w-auto p-4">
+                                                <DateTimePicker field={field} onClose={() => { }} />
+                                            </PopoverContent>
+                                        </Popover>
+                                        <FormMessage className="min-h-[20px]" />
+                                    </FormItem>
+                                )}
+                            />
+                        </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <FormField
@@ -111,7 +162,7 @@ const CreateTicketTypeModal: React.FC<CreateTicketTypeModalProps> = ({ open, set
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="field-label required">Số vé tối đa mỗi người</FormLabel>
-                                        <Input type="number" min={1} {...field} className="field-input no-spinner"/>
+                                        <Input type="number" min={1} {...field} className="field-input no-spinner" />
                                         <FormMessage className="text-rose-500 min-h-[20px]" />
                                     </FormItem>
                                 )}
@@ -123,56 +174,7 @@ const CreateTicketTypeModal: React.FC<CreateTicketTypeModalProps> = ({ open, set
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel className="field-label required">Số vé tối thiểu mỗi lần mua</FormLabel>
-                                        <Input type="number" min={1} {...field} className="field-input no-spinner"/>
-                                        <FormMessage className="text-rose-500 min-h-[20px]" />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                        {/* Thời gian  */}
-                        <div className="grid grid-cols-2 gap-4">
-                            <FormField
-                                control={form.control}
-                                name="startSellDate"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="field-label required">Thời gian mở bán</FormLabel>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <Button
-                                                    variant="outline"
-                                                    className="w-full justify-start text-left font-normal text-foreground"
-                                                >
-                                                    {field.value ? new Date(field.value).toLocaleString() : "Chọn"}
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-4">
-                                                <DateTimePicker field={field} onClose={() => { }} />
-                                            </PopoverContent>
-                                        </Popover>
-                                        <FormMessage className="text-rose-500 min-h-[20px]" />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="endSellDate"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel className="field-label required">Thời gian kết thúc mở bán</FormLabel>
-                                        <Popover>
-                                            <PopoverTrigger asChild>
-                                                <Button
-                                                    variant="outline"
-                                                    className="w-full justify-start text-left font-normal text-foreground"
-                                                >
-                                                    {field.value ? new Date(field.value).toLocaleString() : "Chọn"}
-                                                </Button>
-                                            </PopoverTrigger>
-                                            <PopoverContent className="w-auto p-4">
-                                                <DateTimePicker field={field} onClose={() => { }} />
-                                            </PopoverContent>
-                                        </Popover>
+                                        <Input type="number" min={1} {...field} className="field-input no-spinner" />
                                         <FormMessage className="text-rose-500 min-h-[20px]" />
                                     </FormItem>
                                 )}
@@ -195,11 +197,14 @@ const CreateTicketTypeModal: React.FC<CreateTicketTypeModalProps> = ({ open, set
                         />
 
                         <DialogFooter>
-                            <Button type="submit" className="bg-emerald-500 hover:bg-emerald-600 text-white w-full">
+                            <Button
+                                onClick={() => form.handleSubmit(handleSubmit)()}
+                                type="button"
+                                className="bg-emerald-500 hover:bg-emerald-600 text-white w-full">
                                 Lưu
                             </Button>
                         </DialogFooter>
-                    </form>
+                    </div>
                 </Form>
             </DialogContent>
         </Dialog>
