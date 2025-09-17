@@ -11,7 +11,7 @@ import ApiResponse from '../utils/ApiResponse';
 import { IErrorCode } from '../config/ErrorCode';
 import { createEventSchema } from '../validators/event.validate';
 
-import eventFacade from '../services/event.facade';
+
 
 class EventController {
   private eventRepository = AppDataSource.getRepository(Event);

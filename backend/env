@@ -1,0 +1,24 @@
+# (development | production | test)
+NODE_ENV=development
+
+# Server port
+PORT=3001
+
+# JWT secrets
+JWT_SECRET=mH7fVJJBuUiHHa9YUkimjrU0PYvUZbto2nxeLyZCIFWHXS66v1WhBl1eQ7RRzkxeN1bYERTM3leSPYDoPoNWr7uQBSeMwb0b2TzlwTFRjnApVQRLfLcSwtoQIqV9ae2h
+REFRESH_SECRET=tOb35gqYrYI2AVcRaAACY8wllZFm6aXVYDjFNMycvPdFKC5f05vB8zpaa5NbYxW3VnT9knpaWEiQbDprNtDk4GzTMFzFSHfx8VNxUAOL9g5XwhE4WT59Tg2cJl2XFk1G
+
+# API settings
+API_PREFIX=/api
+API_VERSION=/v1
+
+# Database settings
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASS=root
+DB_NAME=event_ticket_db
+
+# Admin settings
+ADMIN_EMAIL=admin@nhom1.com
+ADMIN_PASSWORD=admin
