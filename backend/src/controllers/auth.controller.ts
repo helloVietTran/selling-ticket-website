@@ -1,10 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+
 import { AppDataSource } from '../config/data-source';
+import { Role } from '../types/types';
+import { config } from '../config/config';
+
 import { User } from '../models/User.model';
-import { Role } from '../types/enum';
-import { DisabledToken } from '../models/disabletoken.model';
+import { DisabledToken } from '../models/DisabledToken.model';
 
 class AuthController {
   async register(req: Request, res: Response, next: NextFunction) {
@@ -23,7 +26,7 @@ class AuthController {
         email: email,
         userName: userName,
         passwordHash: hashedPassword,
-        roles: Role.Attendee
+        roles: Role.User
       });
 
       await userRepo.save(newUser);
@@ -35,7 +38,7 @@ class AuthController {
   }
   async login(req: Request, res: Response, next: NextFunction) {
     try {
-      const { email, userName, password } = req.body;
+      const { email, password } = req.body;
       const userRepo = AppDataSource.getRepository(User);
 
       const user = await userRepo.findOne({ where: { email } });
@@ -48,19 +51,20 @@ class AuthController {
         return res.status(400).json({ error: 'Mật khẩu không đúng' });
       }
 
-      const token = jwt.sign({ id: user.id, roles: user.roles }, process.env.JWT_SECRET || 'secret', {
+      const token = jwt.sign({ id: user.id, roles: user.roles }, config.jwt_secret, {
         expiresIn: '30m'
       });
 
-      return res.status(200).json({ message: 'Đăng nhập thành công', token });
+      return res.status(200).json({ message: 'Đăng nhập thành công', accessToken: token });
     } catch (error) {
       return res.status(500).json({ error: 'Lỗi server' });
     }
   }
+
   async logout(req: Request, res: Response, next: NextFunction) {
     try {
       const { accessToken } = req.body;
-      const decoded = jwt.verify(accessToken, process.env.JWT_SECRET as string) as {
+      const decoded = jwt.verify(accessToken, config.jwt_secret as string) as {
         id: number;
         role: string;
         exp: number;

@@ -1,16 +1,16 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-import { Attendee } from './Attendee.model';
 import { BookingItem } from './BookingItem.model';
 import { Payment } from './Payment.model';
-import { BookingStatus } from '../types/enum';
+import { BookingStatus } from '../types/types';
+import { User } from './User.model';
 
 @Entity('booking')
 export class Booking {
   @PrimaryGeneratedColumn()
   bookingId!: number;
 
-  @ManyToOne(() => Attendee, (a) => a.bookings)
-  attendee!: Attendee;
+  @ManyToOne(() => User, (a) => a.bookings)
+  attendee!: User;
 
   @OneToMany(() => BookingItem, (bi) => bi.booking, { cascade: true })
   bookingItems!: BookingItem[];

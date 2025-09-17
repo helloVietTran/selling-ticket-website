@@ -1,4 +1,4 @@
-import { IErrorCode } from '../config/ErrorCode';
+import { IErrorCode } from '../config/ErrorMap';
 
 export default class ApiResponse {
   static success<T>(data: T, message = 'Success') {
@@ -10,15 +10,16 @@ export default class ApiResponse {
     };
   }
 
-  static error(error: IErrorCode) {
+  static error(errorCode: IErrorCode, error?: any) {
     return {
       success: false,
-      code: error.code,
-      message: error.message || 'Error',
-      statusCode: error.statusCode
+      code: errorCode.code,
+      message: errorCode.message || '',
+      statusCode: errorCode.statusCode,
+      error
     };
   }
-  
+
   static paginate<T>(data: T[], total: number, page: number, limit: number, message = 'Success') {
     return {
       success: true,

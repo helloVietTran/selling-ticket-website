@@ -1,8 +1,5 @@
-import { boolean } from "zod";
-
 export enum Role {
-  Attendee = 'ATTENDEE',
-  Organizer = 'ORGANIZER',
+  User = 'USER',
   Admin = 'ADMIN'
 }
 
@@ -28,3 +25,10 @@ export enum TicketState {
   Held = 'HELD'
 }
 
+export interface Requester {
+  id: string;
+  email: string;
+  role: Role;
+  iat?: number;
+  exp?: number;
+}

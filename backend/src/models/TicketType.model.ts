@@ -1,34 +1,41 @@
-// file: src/entities/TicketType.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany,JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Event } from './Event.model';
 import { Ticket } from './Ticket.model';
-import { boolean } from 'zod';
 
 @Entity('ticket_type')
 export class TicketType {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ name: 'ticket_type_id' })
   ticketTypeId!: number;
 
-  @Column()
+  @Column({ type: 'varchar', length: 100 })
   ticketTypeName!: string;
 
-  @Column({ nullable: true })
-  stand?: string;
+  @Column({ type: 'varchar', length: 1000, nullable: true })
+  description?: string;
 
-  @Column('int')
+  @Column({ type: 'int', default: 0 })
   totalQuantity!: number;
-  
-  @Column("int")
-  soldTicket!:number;
-  
-  @Column('int')
-  availableQuantity!: number;
 
-  @Column('double precision')
+  @Column({ type: 'int', default: 0 })
+  soldTicket!: number;
+
+  @Column({ type: 'int', default: 1 })
+  maxPerUser!: number;
+
+  @Column({ type: 'int', default: 1 })
+  minPerUser!: number;
+
+  @Column({ type: 'decimal', default: 0 })
   price!: number;
-  
+
+  @Column({ type: 'timestamp' })
+  startSellDate!: Date;
+
+  @Column({ type: 'timestamp' })
+  endSellDate!: Date;
+
   @ManyToOne(() => Event, (e) => e.ticketTypes)
-  @JoinColumn({ name: "event" }) 
+  @JoinColumn({ name: 'eventId', referencedColumnName: 'eventId' })
   event!: Event;
 
   @OneToMany(() => Ticket, (t) => t.ticketType)
