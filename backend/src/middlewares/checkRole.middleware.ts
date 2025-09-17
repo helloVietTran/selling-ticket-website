@@ -1,6 +1,6 @@
 import { Handler, NextFunction, Request, Response } from 'express';
-import { Role } from '../types/enum';
-import { Requester } from '../types/request';
+import { Role } from '../types/types';
+import { Requester } from '../types/types';
 
 const checkRole = (roles: Role[]): Handler => {
   return (req: Request, res: Response, next: NextFunction): any => {

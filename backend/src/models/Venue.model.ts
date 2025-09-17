@@ -1,20 +1,23 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne } from 'typeorm';
 import { Event } from './Event.model';
 
 @Entity('venue')
 export class Venue {
   @PrimaryGeneratedColumn()
-  id!: number;
+  venueId!: number;
 
   @Column()
   province!: string;
 
   @Column()
-  city!: string;
+  district!: string;
 
   @Column()
   street!: string;
 
-  @OneToMany(() => Event, (event) => event.venue)
-  events!: Event[];
+  @Column()
+  ward!: string;
+
+  @OneToOne(() => Event, (event) => event.venue)
+  event!: Event;
 }
