@@ -1,9 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn  } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn, OneToOne } from 'typeorm';
 import { Organizer } from './Organizer.model';
 import { Venue } from './Venue.model';
 import { TicketType } from './TicketType.model';
-import { EventStatus } from '../types/enum';
+import { EventStatus } from '../types/types';
 import { Category } from './Category.model';
+import { EmailSetting } from './EmailSetting.model';
 
 @Entity('event')
 export class Event {
@@ -12,9 +13,6 @@ export class Event {
 
   @Column()
   title!: string;
-
-  @Column({ nullable: true })
-  description?: string;
 
   @Column({ type: 'timestamp' })
   startTime!: Date;
@@ -25,21 +23,28 @@ export class Event {
   @Column({ type: 'enum', enum: EventStatus, default: EventStatus.Draft })
   status!: EventStatus;
 
+  @Column({ type: 'text' })
+  eventInfo!: string;
+
   @Column({ nullable: true })
   capacity?: number;
 
-  @ManyToOne(() => Venue, (v) => v.events, { nullable: true })
-  venue?: Venue;
+  @OneToOne(() => Venue, (v) => v.event, { nullable: false, cascade: true })
+  @JoinColumn({ name: 'venueId', referencedColumnName: 'venueId' })
+  venue!: Venue;
 
-  @ManyToOne(() => Organizer, (o) => o.events, { nullable: true })
+  @ManyToOne(() => Organizer, (o) => o.events, { nullable: false })
+  @JoinColumn({ name: 'organizerId' })
   organizer!: Organizer;
 
-  @OneToMany(() => TicketType, (tt) => tt.event)
+  @OneToMany(() => TicketType, (ticket) => ticket.event, { cascade: true })
   ticketTypes!: TicketType[];
 
+  @ManyToOne(() => Category, (c) => c.events, { nullable: false })
+  @JoinColumn({ name: 'categoryId', referencedColumnName: 'categoryId' })
+  category!: Category;
 
-  @ManyToOne(() => Category, (c) => c.events, { nullable: true })   
-  @JoinColumn({ name: 'category_id' })
-  category?: Category;
-
+  @OneToOne(() => EmailSetting, { nullable: true, cascade: true })
+  @JoinColumn({ name: 'emailSettingId', referencedColumnName: 'emailSettingId' })
+  emailSetting?: EmailSetting | null;
 }

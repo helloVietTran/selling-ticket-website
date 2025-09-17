@@ -10,7 +10,7 @@ export const validate = (schema: ZodObject) => (req: Request, res: Response, nex
       return res.status(400).json({
         message: 'Validation error',
         errors: err.issues.map((issue) => ({
-          field: issue.path.join('.'), 
+          field: issue.path.join('.'),
           message: issue.message
         }))
       });

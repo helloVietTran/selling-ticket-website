@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-import { Requester } from '../types/request';
+import { Requester } from '../types/types';
 
 dotenv.config();
 
@@ -35,5 +35,3 @@ export const auth = async (req: Request, res: Response, next: NextFunction) => {
     return res.status(401).json({ message: 'Unauthorized', error: err });
   }
 };
-
-// const requester = res.locals.requester;

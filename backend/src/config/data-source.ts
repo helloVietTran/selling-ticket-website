@@ -1,8 +1,6 @@
 import 'reflect-metadata';
 import { DataSource } from 'typeorm';
 
-import { config } from './config';
-
 import { User } from '../models/User.model';
 import { QrCode } from '../models/QrCode.model';
 import { Ticket } from '../models/Ticket.model';
@@ -13,9 +11,9 @@ import { BookingItem } from '../models/BookingItem.model';
 import { Payment } from '../models/Payment.model';
 import { Event } from '../models/Event.model';
 import { Organizer } from '../models/Organizer.model';
-import { Attendee } from '../models/Attendee.model';
-import { DisabledToken } from '../models/disabletoken.model';
-import { Category } from "../models/Category.model";
+import { DisabledToken } from '../models/DisabledToken.model';
+import { Category } from '../models/Category.model';
+import { EmailSetting } from '../models/EmailSetting.model';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -25,7 +23,7 @@ export const AppDataSource = new DataSource({
   password: 'root',
   database: 'event_ticket_db',
   synchronize: true, // dev only
-  logging: false,
+  logging: ['error', 'info', 'query'],
   entities: [
     User,
     QrCode,
@@ -37,9 +35,9 @@ export const AppDataSource = new DataSource({
     BookingItem,
     Payment,
     Organizer,
-    Attendee,
     DisabledToken,
-    Category
+    Category,
+    EmailSetting
   ],
   migrations: [],
   subscribers: []

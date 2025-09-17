@@ -1,4 +1,4 @@
-import express, { Application, Request, Response } from 'express';
+import express, { Application, NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 
@@ -8,6 +8,7 @@ import ticketRoutes from './routes/ticket.route'
 
 import route from './routes';
 import { AppDataSource } from './config/data-source';
+import { responseErr } from './config/exception';
 
 const app: Application = express();
 
@@ -29,6 +30,12 @@ AppDataSource.initialize()
   .catch((err) => {
     console.error('ERROR: Error during Data Source initialization:', err);
   });
+
+// handle global error
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  responseErr(err, res);
+  return next();
+});
 
 // test endpoint
 app.get('/ping', (req: Request, res: Response) => {
