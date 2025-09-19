@@ -1,3 +1,9 @@
+export interface BaseResponse<T>{
+    message: string;
+    status?: string;
+    data?: T
+}
+
 export type Organizer = {
   organizerName: string;
   organizerInfo: string;

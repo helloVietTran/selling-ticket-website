@@ -74,34 +74,7 @@ class TicketTypeController {
       return res.status(500).json(ApiResponse.error(err));
     }
   }
-  async updateTicketType(req: Request, res: Response, next: NextFunction) {
-    // try {
-    //   const ticketTypeId=parseInt(req.params.id);
-    //   const {ticketTypeName,stand,totalQuantity,soldTicket,availableQuantity,price,event}=req.body
-    //   const ticketType= await ticketTypeRepo.findOneBy({ ticketTypeId:ticketTypeId });
-    //   if (!ticketType) return res.status(404).json({ message: "Ticket Type not found" });
-    //   const updateTicketType=  await ticketTypeRepo.update(
-    //     {ticketTypeId:ticketTypeId},
-    //     {
-    //        ticketTypeName: ticketTypeName ?? ticketType.ticketTypeName,
-    //        stand: stand ?? ticketType.stand,
-    //        totalQuantity: totalQuantity ?? ticketType.totalQuantity,
-    //        soldTicket: soldTicket ?? ticketType.soldTicket,
-    //        availableQuantity: availableQuantity ?? ticketType.availableQuantity,
-    //        price: price ?? ticketType.price,
-    //        event: event ?? ticketType.event,
-    //     })
-    //     return res.json(ApiResponse.success(updateTicketType, "Cập nhật hạng vé thành công"));
-    // } catch (error) {
-    //         console.error("Lỗi khi cập nhật hạng vé:", error);
-    //         const err: IErrorCode = {
-    //           code: "TICKETTYPE_UPDATE_FAILED",
-    //           message: "Không thể cập nhật hạng vé",
-    //           statusCode: 500,
-    //         };
-    //         return res.status(500).json(ApiResponse.error(err));
-    // }
-  }
+
   async deleteTicketType(req: Request, res: Response, next: NextFunction) {
     try {
       const ticketTypeId = parseInt(req.params.id);

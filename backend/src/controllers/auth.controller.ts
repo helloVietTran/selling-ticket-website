@@ -3,7 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 import { AppDataSource } from '../config/data-source';
-import { Role } from '../types/types';
+import { Role } from '../types/enum';
 import { config } from '../config/config';
 
 import { User } from '../models/User.model';

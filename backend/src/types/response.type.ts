@@ -1,4 +1,4 @@
-import { Role } from "../types/types";
+import { EventStatus, Role } from "./enum";
 
 export interface BaseResponse<T> {
     message: string
@@ -6,6 +6,14 @@ export interface BaseResponse<T> {
     data?: T
 }
 
+export interface PaginateResponse<T> extends BaseResponse<T[]> {
+  pagination: {
+    page: number;     
+    limit: number;     
+    totalItems: number; 
+    totalPages: number; 
+  };
+}
 
 export interface UserOutput{
     id: number;
@@ -14,3 +22,5 @@ export interface UserOutput{
     phoneNumber: string;
     roles: Role
 }
+
+

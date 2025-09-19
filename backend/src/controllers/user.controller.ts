@@ -1,15 +1,19 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { AppDataSource } from '../config/data-source';
 import { User } from '../models/User.model';
 import ApiResponse from '../utils/ApiResponse';
-import { Role } from '../types/types';
+import { Role } from '../types/enum';
 import bcrypt from 'bcrypt';
 import { Organizer } from '../models/Organizer.model';
-import { BaseResponse } from '../validators/response.type';
+import { BaseResponse } from '../types/response.type';
+import { UpdateUserInput } from '../validators/user.validate';
+import { Requester } from '../types';
 
 class UserController {
   private userRepository = AppDataSource.getRepository(User);
-  getUserById = async (req: Request, res: Response<BaseResponse<User>>) => {
+
+  // chưa trả về data
+  getUserById = async (req: Request, res: Response<BaseResponse<User>>, next: NextFunction) => {
     try {
       const { id } = req.params;
       const user = await this.userRepository.findOneBy({ id: Number(id) });
@@ -25,75 +29,74 @@ class UserController {
       }
 
       const { passwordHash, ...userWithoutPassword } = user;
-      return res.json({message:'Lấy thông tin user thành công'});
+      return res.json({ message: 'Lấy thông tin user thành công' });
     } catch (error) {
-      console.error('Lỗi khi lấy user:', error);
-      return res.status(500).json(
-        ApiResponse.error({
-          code: 'USER_FETCH_FAILED',
-          message: 'Không thể lấy thông tin user',
-          statusCode: 500
-        })
-      );
+      next(error);
     }
   };
 
-  updateUser = async (req: Request, res: Response) => {
+  getMyInfo = async (req: Request, res: Response<BaseResponse<User>>, next: NextFunction) => {
     try {
-      const { id } = req.params;
-      const { email, userName, phoneNumber, organizationName } = req.body;
+      const requester = res.locals.requester as Requester;
+    } catch (error) {}
+  };
 
-      const user = await this.userRepository.findOneBy({ id: Number(id) });
-      if (!user) {
-        return res.status(404).json(
-          ApiResponse.error({
-            code: 'USER_NOT_FOUND',
-            message: 'Không tìm thấy user',
-            statusCode: 404
-          })
-        );
-      }
+  updateMyInfo = async (
+    req: Request<{}, {}, UpdateUserInput>,
+    res: Response<BaseResponse<User>>,
+    next: NextFunction
+  ) => {
+    try {
+      const requester = res.locals.requester as Requester;
+      // const { id } = req.params;
+      // const { email, userName, phoneNumber, organizationName } = req.body;
 
-      // Check email trùng
-      if (email && email !== user.email) {
-        const existing = await this.userRepository.findOneBy({ email });
-        if (existing) {
-          return res.status(400).json(
-            ApiResponse.error({
-              code: 'EMAIL_EXISTS',
-              message: 'Email đã tồn tại',
-              statusCode: 400
-            })
-          );
-        }
-        user.email = email;
-      }
-
-      if (userName !== undefined) user.userName = userName;
-
-      // // Nếu là attendee → update phoneNumber
-      // if (user.roles === 'ATTENDEE' && phoneNumber !== undefined) {
-      //     (user as Attendee).phoneNumber = phoneNumber;
+      // const user = await this.userRepository.findOneBy({ id: Number(id) });
+      // if (!user) {
+      //   return res.status(404).json(
+      //     ApiResponse.error({
+      //       code: 'USER_NOT_FOUND',
+      //       message: 'Không tìm thấy user',
+      //       statusCode: 404
+      //     })
+      //   );
       // }
 
-      // // Nếu là organizer → update organizationName
-      // if (user.roles === 'ORGANIZER' && organizationName !== undefined) {
-      //     (user as Organizer).organizationName = organizationName;
+      // // Check email trùng
+      // if (email && email !== user.email) {
+      //   const existing = await this.userRepository.findOneBy({ email });
+      //   if (existing) {
+      //     return res.status(400).json(
+      //       ApiResponse.error({
+      //         code: 'EMAIL_EXISTS',
+      //         message: 'Email đã tồn tại',
+      //         statusCode: 400
+      //       })
+      //     );
+      //   }
+      //   user.email = email;
       // }
 
-      const updatedUser = await this.userRepository.save(user);
+      // if (userName !== undefined) user.userName = userName;
 
-      const { passwordHash, ...userWithoutPassword } = updatedUser;
-      return res.json(ApiResponse.success(userWithoutPassword, 'Cập nhật user thành công'));
+      // // // Nếu là attendee → update phoneNumber
+      // // if (user.roles === 'ATTENDEE' && phoneNumber !== undefined) {
+      // //     (user as Attendee).phoneNumber = phoneNumber;
+      // // }
+
+      // // // Nếu là organizer → update organizationName
+      // // if (user.roles === 'ORGANIZER' && organizationName !== undefined) {
+      // //     (user as Organizer).organizationName = organizationName;
+      // // }
+
+      // const updatedUser = await this.userRepository.save(user);
+
+      // const { passwordHash, ...userWithoutPassword } = updatedUser;
+      return res.json({
+        message: 'Update user successfully'
+      });
     } catch (error) {
-      console.error('Lỗi khi cập nhật user:', error);
-      return res.status(500).json(
-        ApiResponse.error({
-          code: 'USER_UPDATE_FAILED',
-          message: 'Không thể cập nhật user',
-          statusCode: 500
-        })
-      );
+      next(error);
     }
   };
 }

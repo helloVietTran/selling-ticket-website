@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { BookingItem } from './BookingItem.model';
 import { Payment } from './Payment.model';
-import { BookingStatus } from '../types/types';
+import { BookingStatus } from '../types/enum';
 import { User } from './User.model';
 
 @Entity('booking')

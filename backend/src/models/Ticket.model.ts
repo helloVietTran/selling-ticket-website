@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { QrCode } from './QrCode.model';
-import { TicketState } from '../types/types';
+import { TicketState } from '../types/enum';
 import { TicketType } from './TicketType.model';
 import { User } from './User.model';
 

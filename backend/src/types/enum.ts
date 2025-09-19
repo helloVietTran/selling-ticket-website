@@ -25,10 +25,9 @@ export enum TicketState {
   Held = 'HELD'
 }
 
-export interface Requester {
-  id: string;
-  email: string;
-  role: Role;
-  iat?: number;
-  exp?: number;
+export enum Category{
+  Music = 'Âm nhạc',
+  Other = 'Khác',
+  Sport = 'Thể thao',
+  Art = 'Nghệ thuật'
 }
