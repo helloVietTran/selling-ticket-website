@@ -1,0 +1,61 @@
+<!-- ticket-email.html -->
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    /* Inline-friendly styles; keep simple for email clients */
+    body { margin:0; padding:0; font-family: Arial, Helvetica, sans-serif; background:#f4f4f6; color:#222; }
+    .container { width:100%; max-width:620px; margin:24px auto; background:#ffffff; border-radius:8px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.08); }
+    .header { padding:18px 24px; background:linear-gradient(90deg,#0d6efd,#6f42c1); color:#fff; }
+    .header h1 { margin:0; font-size:20px; }
+    .content { padding:20px 24px; }
+    .ticket { border:1px dashed #e0e0e0; padding:16px; border-radius:6px; display:flex; gap:16px; align-items:center; }
+    .ticket-info { flex:1; }
+    .ticket-info h2 { margin:0 0 6px 0; font-size:18px; }
+    .meta { font-size:14px; color:#555; margin:8px 0; line-height:1.35; }
+    .btn { display:inline-block; padding:10px 14px; background:#0d6efd; color:#fff; text-decoration:none; border-radius:6px; margin-top:6px; }
+    .qr { width:140px; height:140px; background:#fff; display:block; border-radius:6px; }
+    .small { font-size:12px; color:#888; margin-top:12px; }
+    .footer { padding:14px 24px; font-size:12px; color:#888; background:#fafafa; text-align:center; }
+    @media (max-width:480px) {
+      .ticket { flex-direction:column; align-items:flex-start; }
+      .qr { width:120px; height:120px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Vé sự kiện: {{eventName}}</h1>
+    </div>
+
+    <div class="content">
+      <p>Xin chào <strong>{{userName}}</strong>,</p>
+      <p class="meta">Cảm ơn bạn đã đặt vé. Dưới đây là thông tin vé của bạn — vui lòng xuất trình mã QR khi tới sự kiện.</p>
+
+      <div class="ticket">
+        <div class="ticket-info">
+          <h2>{{ticketType}}</h2>
+          <div class="meta">
+            <div><strong>Sự kiện:</strong> {{eventName}}</div>
+            <div><strong>Ngày & Giờ:</strong> {{eventDate}}</div>
+            <div><strong>Vị trí/chỗ ngồi:</strong> {{seat}}</div>
+            <div><strong>Giá:</strong> {{price}}</div>
+          </div>
+        <!-- QR: thay src bằng data-uri hoặc cid -->
+        <div>
+          <img src="{{qrSrc}}" alt="QR code" class="qr" />
+        </div>
+      </div>
+
+      <p class="small">Lưu ý: Vé hợp lệ khi có mã QR hợp lệ và tên người giữ trùng với thông tin trên vé.</p>
+    </div>
+
+    <div class="footer">
+      © {{year}} {{organizerName}}
+    </div>
+  </div>
+</body>
+</html>
