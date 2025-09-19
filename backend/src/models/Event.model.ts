@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColum
 import { Organizer } from './Organizer.model';
 import { Venue } from './Venue.model';
 import { TicketType } from './TicketType.model';
-import { EventStatus } from '../types/types';
+import { EventStatus } from '../types/enum';
 import { Category } from './Category.model';
 import { EmailSetting } from './EmailSetting.model';
 
@@ -25,9 +25,6 @@ export class Event {
 
   @Column({ type: 'text' })
   eventInfo!: string;
-
-  @Column({ nullable: true })
-  capacity?: number;
 
   @OneToOne(() => Venue, (v) => v.event, { nullable: false, cascade: true })
   @JoinColumn({ name: 'venueId', referencedColumnName: 'venueId' })

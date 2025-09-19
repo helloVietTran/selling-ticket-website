@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import { Request, Response, NextFunction } from 'express';
 
-import { Requester } from '../types/types';
+import { Requester } from '../types';
 
 dotenv.config();
 
