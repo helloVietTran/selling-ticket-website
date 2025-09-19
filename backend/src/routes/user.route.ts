@@ -1,10 +1,10 @@
 // src/routes/user.route.ts
 import { Router } from 'express';
-import UserController from '../controllers/user.controller';
+import userController from '../controllers/user.controller';
 
 const router = Router();
 
-router.get('/:id', UserController.getUserById);
-router.put('/:id', UserController.updateUser);
+router.get('/:id', userController.getUserById);
+router.put('/:id', userController.updateUser);
 
 export default router;

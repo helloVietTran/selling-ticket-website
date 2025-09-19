@@ -5,10 +5,11 @@ import ApiResponse from '../utils/ApiResponse';
 import { Role } from '../types/types';
 import bcrypt from 'bcrypt';
 import { Organizer } from '../models/Organizer.model';
+import { BaseResponse } from '../validators/response.type';
 
 class UserController {
   private userRepository = AppDataSource.getRepository(User);
-  getUserById = async (req: Request, res: Response) => {
+  getUserById = async (req: Request, res: Response<BaseResponse<User>>) => {
     try {
       const { id } = req.params;
       const user = await this.userRepository.findOneBy({ id: Number(id) });
@@ -24,7 +25,7 @@ class UserController {
       }
 
       const { passwordHash, ...userWithoutPassword } = user;
-      return res.json(ApiResponse.success(userWithoutPassword, 'Lấy thông tin user thành công'));
+      return res.json({message:'Lấy thông tin user thành công'});
     } catch (error) {
       console.error('Lỗi khi lấy user:', error);
       return res.status(500).json(
