@@ -2,7 +2,9 @@ import authRoute from './auth.route';
 import { config } from '../config/config';
 import { Application } from 'express';
 import eventRoutes from './event.route';
-import ticketTypeRoutes from './ticketType.route';
+import ticketTypeRoutes from './TicketType.route';
+import ticketRoutes from './ticket.route';
+
 
 function route(app: Application) {
   const urlPrefix = config.api_prefix + config.api_version;
@@ -10,6 +12,9 @@ function route(app: Application) {
   app.use(`${urlPrefix}/auth`, authRoute);
   app.use(`${urlPrefix}/events`, eventRoutes);
   app.use(`${urlPrefix}/tickettypes`, ticketTypeRoutes);
+  app.use(`${urlPrefix}/ticket`, ticketRoutes);
+
+
 }
 
 export default route;
