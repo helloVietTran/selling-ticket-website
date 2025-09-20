@@ -4,7 +4,7 @@ import { Application } from 'express';
 import eventRoutes from './event.route';
 import ticketTypeRoutes from './TicketType.route';
 import ticketRoutes from './ticket.route';
-
+import userRoute from './user.route';
 
 function route(app: Application) {
   const urlPrefix = config.api_prefix + config.api_version;
@@ -13,7 +13,7 @@ function route(app: Application) {
   app.use(`${urlPrefix}/events`, eventRoutes);
   app.use(`${urlPrefix}/tickettypes`, ticketTypeRoutes);
   app.use(`${urlPrefix}/ticket`, ticketRoutes);
-
+  app.use(`${urlPrefix}/user` , userRoute);
 
 }
 

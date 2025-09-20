@@ -236,14 +236,15 @@ class EventController {
     }
   };
 
-  getEventsByOrganizer = async (req: Request<{}, {}, {}, { status: EventStatus }>, res: Response<PaginateResponse<Event>>, next: NextFunction) => {
+
+  getEventsByOrganizer = async (req: Request<{ organizerId: string }, {}, {}, { status: EventStatus }>, res: Response<PaginateResponse<Event>>, next: NextFunction) => {
     try {
       const requester = res.locals.requester as Requester;
+      const { organizerId } = req.params;
       const { status } = req.query;
 
-
-      const eventRepo = AppDataSource.getRepository(Event);
       const userRepo = AppDataSource.getRepository(User);
+      const eventRepo = AppDataSource.getRepository(Event);
 
       const user = await userRepo.findOne({
         where: { id: Number(requester.id) },
@@ -251,18 +252,24 @@ class EventController {
       });
 
       if (!user || !user.organizer) {
-        throw AppError.fromErrorCode(ErrorMap.VIEW_EVENTS_FORBIDDEN)
+        throw AppError.fromErrorCode(ErrorMap.VIEW_EVENTS_FORBIDDEN);
       }
 
+
+      // so sánh với organizerId
+      if (user.organizer.organizerId !== Number(organizerId)) {
+        throw AppError.fromErrorCode(ErrorMap.VIEW_EVENTS_FORBIDDEN);
+      }
+
+      // lấy events
       const events = await eventRepo.find({
         where: {
           organizer: { organizerId: user.organizer.organizerId },
-          ...(status && { status }),
+          ...(status ? { status } : {}),
         },
         relations: ["venue", "ticketTypes", "category"],
         order: { startTime: "DESC" },
       });
-
       return res.status(200).json({
         message: "Get events by organizer successfully",
         data: events,
@@ -273,14 +280,12 @@ class EventController {
           totalPages: 1,
         },
       });
+
+
     } catch (error) {
       next(error);
     }
-  };
-
-
-
- 
+  }
 }
 
 export default new EventController();
