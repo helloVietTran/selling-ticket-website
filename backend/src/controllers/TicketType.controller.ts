@@ -115,7 +115,6 @@ class TicketTypeController {
       await queryRunner.commitTransaction();
 
       cron.schedule('*/15 * * * *', async () => {
-
         // Lấy booking đã hết hạn nhưng vẫn đang ở trạng thái "Waiting"
         const expiredBookings = await bookingRepo.find({
           where: {
@@ -146,7 +145,6 @@ class TicketTypeController {
         data: savedBooking
       });
     } catch (error) {
-      console.log("loiox")
       // Nếu có lỗi, rollback tất cả các thay đổi
       await queryRunner.rollbackTransaction();
       next(error);

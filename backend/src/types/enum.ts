@@ -15,7 +15,7 @@ export enum BookingStatus {
   Paid = 'PAID',
   Cancelled = 'CANCELLED',
   Waiting = 'Wait',
-  Expired="EXPIRED"
+  Expired = 'EXPIRED'
 }
 
 export enum TicketState {

@@ -12,7 +12,7 @@ import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
 
 class AuthController {
-  async register(req: Request<{}, RegisterInput>, res: Response<BaseResponse<{}>>, next: NextFunction) {
+   register:RequestHandler=async (req: Request<{}, RegisterInput>, res: Response<BaseResponse<{}>>, next: NextFunction)=>{
     try {
       const { email, userName, password } = req.body;
       const userRepo = AppDataSource.getRepository(User);
@@ -38,7 +38,7 @@ class AuthController {
       next(error);
     }
   }
-   login: RequestHandler= async (req: Request<{}, LoginInput>, res: Response<BaseResponse<{}>>, next: NextFunction)=>{
+  login: RequestHandler = async (req: Request<{}, LoginInput>, res: Response<BaseResponse<{}>>, next: NextFunction) => {
     try {
       const { email, password } = req.body;
       const userRepo = AppDataSource.getRepository(User);
@@ -61,9 +61,9 @@ class AuthController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  async logout(req: Request<{}, LogoutInput>, res: Response<BaseResponse<{}>>, next: NextFunction) {
+  logout:RequestHandler=async(req: Request<{}, LogoutInput>, res: Response<BaseResponse<{}>>, next: NextFunction)=>{
     try {
       const { accessToken } = req.body;
       const decoded = jwt.verify(accessToken, config.jwt_secret as string) as {
