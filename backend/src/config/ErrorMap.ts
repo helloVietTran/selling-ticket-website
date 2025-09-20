@@ -30,5 +30,10 @@ export const ErrorMap = {
     statusCode: 500,
     message: 'Something went wrong, please try again later.'
   } as IErrorCode,
-  INVALID_REQUEST: { code: 'INVALID_REQUEST', statusCode: 400, message: 'Invalid request' } as IErrorCode
+  INVALID_REQUEST: { code: 'INVALID_REQUEST', statusCode: 400, message: 'Invalid request' } as IErrorCode,
+  DELETE_EVENT_FORBIDDEN:{code: "DELETE_EVENT_FORBIDDEN",message: "You are not allowed to delete this event",statusCode: 403,}as IErrorCode,
+  EVENT_NOT_FOUND: { code: "EVENT_NOT_FOUND", message: "event not found", statusCode: 404 } as IErrorCode,
+  ORGANIZER_MISMATCH: {code: "ORGANIZER_MISMATCH",message: "Organizer mismatch. Cannot delete this event",statusCode: 403,} as IErrorCode,
+  VIEW_EVENTS_FORBIDDEN:{code: "VIEW_EVENTS_FORBIDDEN",message: "You are not allowed to view events",statusCode: 403,} as IErrorCode,
+  EMAIL_ALREADY_EXISTS:{code: "EMAIL_ALREADY_EXISTS",message: "Email đã tồn tại",statusCode: 400,} as IErrorCode,
 };

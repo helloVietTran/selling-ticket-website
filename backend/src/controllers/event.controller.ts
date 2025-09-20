@@ -18,6 +18,7 @@ import { AppError } from '../config/exception';
 import { BaseResponse, PaginateResponse } from '../types/response.type';
 import { Requester } from '../types';
 import { DeleteEventParams, EventQueries } from '../types/query.type';
+import { areIntervalsOverlapping } from 'date-fns';
 
 class EventController {
   private eventRepository = AppDataSource.getRepository(Event);
@@ -125,10 +126,42 @@ class EventController {
   deleteEvent = async (req: Request, res: Response<BaseResponse<undefined>>, next: NextFunction) => {
     try {
       const requester = res.locals.requester as Requester;
-      // yêu cầu: lấy user và liên kết với bảng organizer
-      // nếu không có  organizer hoặc organizerId không khớp sẽ Lỗi
-      // nếu đúng cho phép xóa
+      const eventId = Number(req.params.id);
+      const organizerId = Number(req.params.organizerId);
 
+      const userRepo = AppDataSource.getRepository(User);
+      const eventRepo = AppDataSource.getRepository(Event);
+
+      // yêu cầu: lấy user và liên kết với bảng organizer
+
+      const user = await userRepo.findOne({
+        where: { id: Number(requester.id) },
+        relations: ["organizer"],
+      });
+
+      if (!user) {
+        throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
+      }
+
+      // nếu không có  organizer hoặc organizerId không khớp sẽ Lỗi
+      if (!user.organizer || user.organizer.organizerId !== organizerId) {
+        throw AppError.fromErrorCode(ErrorMap.DELETE_EVENT_FORBIDDEN)
+      }
+
+
+      const event = await eventRepo.findOne({
+        where: { eventId },
+        relations: ["organizer"],
+      });
+      if (!event) {
+        throw AppError.fromErrorCode(ErrorMap.EVENT_NOT_FOUND);
+      }
+
+      if (event.organizer.organizerId !== organizerId) {
+        throw AppError.fromErrorCode(ErrorMap.ORGANIZER_MISMATCH);
+      }
+      // nếu đúng cho phép xóa
+      await eventRepo.remove(event);
       return res.json({
         message: 'Delete your event successfully'
       });
@@ -137,103 +170,58 @@ class EventController {
     }
   };
 
-  // searchEvents = async (req: Request, res: Response) => {
-  //   try {
-  //     const { keyword, status } = req.query;
-
-  //     const query = this.eventRepository
-  //       .createQueryBuilder('event')
-  //       .leftJoinAndSelect('event.venue', 'venue')
-  //       .leftJoinAndSelect('event.organizer', 'organizer')
-  //       .leftJoinAndSelect('event.ticketTypes', 'ticketTypes')
-  //       .leftJoinAndSelect('event.category', 'category');
-
-  //     if (keyword) {
-  //       query.andWhere(
-  //         new Brackets((qb) => {
-  //           qb.where('event.title LIKE :keyword', { keyword: `%${keyword}%` }).orWhere(
-  //             'event.description LIKE :keyword',
-  //             { keyword: `%${keyword}%` }
-  //           );
-  //         })
-  //       );
-  //     }
-
-  //     if (status) {
-  //       const normalizedStatus = String(status).toUpperCase();
-  //       if (!Object.values(EventStatus).includes(normalizedStatus as EventStatus)) {
-  //         return res.status(400).json(
-  //           ApiResponse.error({
-  //             code: 'INVALID_STATUS',
-  //             message: 'Trạng thái tìm kiếm không hợp lệ',
-  //             statusCode: 400
-  //           })
-  //         );
-  //       }
-  //       query.andWhere('event.status = :statusParam', { statusParam: normalizedStatus });
-  //     }
-
-  //     const events = await query.orderBy('event.startTime', 'ASC').getMany();
-  //     return res.status(200).json(ApiResponse.success(events, 'Tìm kiếm sự kiện thành công'));
-  //   } catch (error) {
-  //     console.error('Lỗi khi search sự kiện:', error);
-  //     return res.status(500).json(
-  //       ApiResponse.error({
-  //         code: 'EVENT_SEARCH_FAILED',
-  //         message: 'Không thể tìm kiếm sự kiện',
-  //         statusCode: 500
-  //       })
-  //     );
-  //   }
-  // };
-
+  
   // lọc theo nhiều tiêu chí
   // sắp xếp theo startTime mới nhất
-  filterEvents = async (
-    req: Request<any, any, any, EventQueries>,
-    res: Response<PaginateResponse<Event>>,
-    next: NextFunction
-  ) => {
+  filterEvents = async (req: Request<any, any, any, EventQueries>, res: Response<PaginateResponse<Event>>, next: NextFunction) => {
     try {
-      // const { startTime, endTime, categoryId, venueId } = req.query;
+      const { startTime, endTime, category, district, keyword, page, limit, status } = req.query;
 
-      // const query = this.eventRepository
-      //   .createQueryBuilder('event')
-      //   .leftJoinAndSelect('event.venue', 'venue')
-      //   .leftJoinAndSelect('event.organizer', 'organizer')
-      //   .leftJoinAndSelect('event.ticketTypes', 'ticketTypes')
-      //   .leftJoinAndSelect('event.category', 'category');
+      const pageNumber = page ? parseInt(page as string, 10) : 1;
+      const pageSize = limit ? parseInt(limit as string, 10) : 10;
 
-      // // Lọc theo khoảng thời gian
-      // if (startTime && endTime) {
-      //   const start = new Date(startTime as string);
-      //   const end = new Date(endTime as string);
+      const query = this.eventRepository
+        .createQueryBuilder("event")
+        .leftJoinAndSelect("event.venue", "venue")
+        .leftJoinAndSelect("event.organizer", "organizer")
+        .leftJoinAndSelect("event.ticketTypes", "ticketTypes")
+        .leftJoinAndSelect("event.category", "category");
 
-      //   query.andWhere('event.startTime BETWEEN :start AND :end', {
-      //     start,
-      //     end
-      //   });
-      // }
+      // Lọc theo khoảng thời gian
+      if (startTime && endTime) {
+        const start = new Date(startTime as string);
+        const end = new Date(endTime as string);
 
-      // // Lọc theo category
-      // if (categoryId) {
-      //   query.andWhere('category.categoryId = :categoryId', { categoryId });
-      // }
+        query.andWhere('event.startTime BETWEEN :start AND :end', {
+          start,
+          end
+        });
+      }
+      // Lọc theo category
+      if (category) {
+        query.andWhere("category.categoryId = :categoryId", { categoryId: Number(category) });
+      }
 
-      // // Lọc theo venue
-      // if (venueId) {
-      //   query.andWhere('venue.id = :venueId', { venueId });
-      // }
+      if (district) {
+        query.andWhere("venue.district ILIKE :district", { district: `%${district}%` });
+      }
+      if (status) {
+        query.andWhere("event.status = :status", { status });
+      }
+      query.orderBy("event.startTime", "DESC");
 
-      // const events = await query.orderBy('event.startTime', 'ASC').getMany();
+      query.skip((pageNumber - 1) * pageSize).take(pageSize);
+      const [events, totalItems] = await query.getManyAndCount();
+
 
       return res.status(200).json({
         message: 'Get event successfully',
+        data: events,
         pagination: {
-          page: 1,
-          limit: 1,
-          totalItems: 1,
-          totalPages: 1
+          page: pageNumber,
+          limit: pageSize,
+          totalItems,
+          totalPages: Math.ceil(totalItems / pageSize)
         }
       });
     } catch (error) {
@@ -241,11 +229,43 @@ class EventController {
     }
   };
 
-  getEventsByOrganizer(req: Request<{}, {}, {}, {status: EventStatus}>, res: Response<PaginateResponse<Event>>, next: NextFunction) {
+  getEventsByOrganizer = async (req: Request<{}, {}, {}, { status: EventStatus }>, res: Response<PaginateResponse<Event>>, next: NextFunction) => {
     try {
       const requester = res.locals.requester as Requester;
+      const { status } = req.query;
 
 
+      const eventRepo = AppDataSource.getRepository(Event);
+      const userRepo = AppDataSource.getRepository(User);
+
+      const user = await userRepo.findOne({
+        where: { id: Number(requester.id) },
+        relations: ["organizer"],
+      });
+
+      if (!user || !user.organizer) {
+        throw AppError.fromErrorCode(ErrorMap.VIEW_EVENTS_FORBIDDEN)
+      }
+
+      const events = await eventRepo.find({
+        where: {
+          organizer: { organizerId: user.organizer.organizerId },
+          ...(status && { status }),
+        },
+        relations: ["venue", "ticketTypes", "category"],
+        order: { startTime: "DESC" },
+      });
+
+      return res.status(200).json({
+        message: "Get events by organizer successfully",
+        data: events,
+        pagination: {
+          page: 1,
+          limit: events.length,
+          totalItems: events.length,
+          totalPages: 1,
+        },
+      });
     } catch (error) {
       next(error);
     }
