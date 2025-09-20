@@ -170,7 +170,7 @@ class EventController {
     }
   };
 
-  
+
   // lọc theo nhiều tiêu chí
   // sắp xếp theo startTime mới nhất
   filterEvents = async (req: Request<any, any, any, EventQueries>, res: Response<PaginateResponse<Event>>, next: NextFunction) => {
@@ -203,7 +203,14 @@ class EventController {
       }
 
       if (district) {
-        query.andWhere("venue.district ILIKE :district", { district: `%${district}%` });
+        query.andWhere("venue.district LIKE :district", { district: `%${district}%` });
+      }
+
+      if (keyword) {
+        query.andWhere(
+          '(event.title LIKE :keyword OR event.eventInfo LIKE :keyword)',
+          { keyword: `%${keyword}%` }
+        );
       }
       if (status) {
         query.andWhere("event.status = :status", { status });
@@ -269,7 +276,11 @@ class EventController {
     } catch (error) {
       next(error);
     }
-  }
+  };
+
+
+
+ 
 }
 
 export default new EventController();

@@ -12,6 +12,8 @@ const router = Router();
 router.post('/', auth, validate(createEventSchema), eventController.createEvent.bind(eventController));
 router.get('/filter', eventController.filterEvents);
 router.delete('/:id/organizer/:organizerId', auth, eventController.deleteEvent);
-router.get('/organizer/:organizerId', auth, eventController.getEventsByOrganizer )
+// router.get('/organizer/:organizerId', auth, eventController.getEventsByOrganizer )
+
+router.get('/organizer/my-events', auth, eventController.getEventsByOrganizer);
 
 export default router;

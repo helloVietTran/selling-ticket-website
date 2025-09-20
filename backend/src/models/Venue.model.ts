@@ -18,6 +18,6 @@ export class Venue {
   @Column()
   ward!: string;
 
-  @OneToOne(() => Event, (event) => event.venue,{cascade: true,onDelete: 'CASCADE' })
+  @OneToOne(() => Event, (event) => event.venue)
   event!: Event;
 }

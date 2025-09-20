@@ -9,6 +9,6 @@ export class EmailSetting {
   @Column({ nullable: false })
   messageToReceiver!: string;
 
-  @OneToOne(() => Event, (tt) => tt.emailSetting,{  cascade: true,onDelete: 'CASCADE' })
+  @OneToOne(() => Event, (tt) => tt.emailSetting)
   event!: Event;
 }
