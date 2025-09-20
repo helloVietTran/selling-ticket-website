@@ -2,7 +2,7 @@ import authRoute from './auth.route';
 import { config } from '../config/config';
 import { Application } from 'express';
 import eventRoutes from './event.route';
-import ticketTypeRoutes from './TicketType.route';
+import ticketTypeRoutes from './ticketType.route';
 import ticketRoutes from './ticket.route';
 
 function route(app: Application) {

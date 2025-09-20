@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { AppDataSource } from '../config/data-source';
@@ -38,7 +38,7 @@ class AuthController {
       next(error);
     }
   }
-  async login(req: Request<{}, LoginInput>, res: Response<BaseResponse<{}>>, next: NextFunction) {
+   login: RequestHandler= async (req: Request<{}, LoginInput>, res: Response<BaseResponse<{}>>, next: NextFunction)=>{
     try {
       const { email, password } = req.body;
       const userRepo = AppDataSource.getRepository(User);

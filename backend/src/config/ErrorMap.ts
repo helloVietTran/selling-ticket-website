@@ -32,8 +32,12 @@ export const ErrorMap = {
     message: 'Something went wrong, please try again later.'
   } as IErrorCode,
   INVALID_REQUEST: { code: 'INVALID_REQUEST', statusCode: 400, message: 'Invalid request' } as IErrorCode,
-  TICKET_TYPE_IMPOSITIVE: { code: 'TICKET_TYPE_IMPOSITIVE', statusCode: 400, message: 'ticket type impositive' } as IErrorCode,
-  NOT_AVAILABLE_AT_TIME: { code: 'NOT_AVAILABLE', statusCode: 400, message: '' } as IErrorCode,
+  TICKET_TYPE_IMPOSITIVE: {
+    code: 'TICKET_TYPE_IMPOSITIVE',
+    statusCode: 400,
+    message: 'ticket type impositive'
+  } as IErrorCode,
+  NOT_AVAILABLE_AT_TIME: { code: 'NOT_AVAILABLE', statusCode: 400, message: 'ticket type not available at this time' } as IErrorCode,
   NOT_ENOUGH_STOCK: { code: 'NOT_ENOUGH_STOCK', statusCode: 400, message: 'not enough stock for ticket' } as IErrorCode,
   QUANTITY_OVER_LIMIT: { code: 'QUANTITY_OVER_LIMIT', statusCode: 400, message: 'Quantity over limit' } as IErrorCode
 };

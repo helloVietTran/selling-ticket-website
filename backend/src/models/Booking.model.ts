@@ -18,10 +18,9 @@ export class Booking {
   @Column({ type: 'timestamp', nullable: false })
   expiresAt?: Date;
 
-  @Column({type: 'int', nullable: false})
+  @Column({ type: 'int', nullable: false })
   amount!: number;
 
-  
   @ManyToOne(() => User, (a) => a.bookings)
   attendee!: User;
 

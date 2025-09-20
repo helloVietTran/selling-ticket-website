@@ -13,7 +13,6 @@ export class BookingItem {
   @Column('int')
   quantity!: number;
 
-
   @ManyToOne(() => Booking, (b) => b.bookingItems)
   booking!: Booking;
 }
