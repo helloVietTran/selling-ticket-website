@@ -5,16 +5,13 @@ import eventRoutes from './event.route';
 import ticketTypeRoutes from './TicketType.route';
 import ticketRoutes from './ticket.route';
 
-
 function route(app: Application) {
   const urlPrefix = config.api_prefix + config.api_version;
 
   app.use(`${urlPrefix}/auth`, authRoute);
   app.use(`${urlPrefix}/events`, eventRoutes);
-  app.use(`${urlPrefix}/tickettypes`, ticketTypeRoutes);
+  app.use(`${urlPrefix}/ticket-types`, ticketTypeRoutes);
   app.use(`${urlPrefix}/ticket`, ticketRoutes);
-
-
 }
 
 export default route;

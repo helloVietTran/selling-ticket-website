@@ -2,7 +2,6 @@ import express, { Application, NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
 
-
 import route from './routes';
 import { AppDataSource } from './config/data-source';
 import { responseErr } from './config/exception';
@@ -14,7 +13,6 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-
 
 // routes
 route(app);

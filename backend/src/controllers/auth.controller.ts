@@ -1,23 +1,25 @@
 import { NextFunction, Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
 import { AppDataSource } from '../config/data-source';
 import { Role } from '../types/enum';
 import { config } from '../config/config';
-
 import { User } from '../models/User.model';
 import { DisabledToken } from '../models/DisabledToken.model';
+import { LoginInput, LogoutInput, RegisterInput } from '../validators/auth.validate';
+import { BaseResponse } from '../types/response.type';
+import { AppError } from '../config/exception';
+import { ErrorMap } from '../config/ErrorMap';
 
 class AuthController {
-  async register(req: Request, res: Response, next: NextFunction) {
+  async register(req: Request<{}, RegisterInput>, res: Response<BaseResponse<{}>>, next: NextFunction) {
     try {
       const { email, userName, password } = req.body;
       const userRepo = AppDataSource.getRepository(User);
 
       const existedUser = await userRepo.findOne({ where: { email } });
       if (existedUser) {
-        return res.status(400).json({ error: 'Tên đăng nhập đã tồn tại' });
+        throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -33,22 +35,22 @@ class AuthController {
 
       return res.status(201).json({ message: 'Đăng ký thành công!' });
     } catch (error) {
-      return res.status(500).json({ error: 'Lỗi server' });
+      next(error);
     }
   }
-  async login(req: Request, res: Response, next: NextFunction) {
+  async login(req: Request<{}, LoginInput>, res: Response<BaseResponse<{}>>, next: NextFunction) {
     try {
       const { email, password } = req.body;
       const userRepo = AppDataSource.getRepository(User);
 
       const user = await userRepo.findOne({ where: { email } });
       if (!user) {
-        return res.status(400).json({ error: 'Tên đăng nhập không tồn tại' });
+        throw AppError.fromErrorCode(ErrorMap.USER_ALREADY_EXISTS);
       }
 
       const isMatch = await bcrypt.compare(password, user.passwordHash);
       if (!isMatch) {
-        return res.status(400).json({ error: 'Mật khẩu không đúng' });
+        throw AppError.fromErrorCode(ErrorMap.PASSWORD_INCORRECT);
       }
 
       const token = jwt.sign({ id: user.id, roles: user.roles }, config.jwt_secret, {
@@ -57,11 +59,11 @@ class AuthController {
 
       return res.status(200).json({ message: 'Đăng nhập thành công', accessToken: token });
     } catch (error) {
-      return res.status(500).json({ error: 'Lỗi server' });
+      next(error);
     }
   }
 
-  async logout(req: Request, res: Response, next: NextFunction) {
+  async logout(req: Request<{}, LogoutInput>, res: Response<BaseResponse<{}>>, next: NextFunction) {
     try {
       const { accessToken } = req.body;
       const decoded = jwt.verify(accessToken, config.jwt_secret as string) as {
@@ -81,9 +83,9 @@ class AuthController {
 
       await repo.save(disabledToken);
 
-      return { message: 'Đăng xuất thành công, token đã bị vô hiệu hóa.' };
+      return res.status(200).json({ message: 'Đăng xuất thành công, token đã bị vô hiệu hóa.' });
     } catch (error) {
-      return { error: 'Token không hợp lệ hoặc đã hết hạn.' };
+      next(error);
     }
   }
 }

@@ -1,11 +1,13 @@
 import { Router } from 'express';
-import ticket_typeController from '../controllers/ticketType.controller';
+import ticketTypeController from '../controllers/TicketType.controller';
+import { auth } from '../middlewares/auth.middleware';
+import { validate } from '../middlewares/validate.middleware';
+import { selectTicketSchema } from '../validators/ticket.validate';
+
 
 const router = Router();
 
-router.post('/', ticket_typeController.createTicketType);
-router.get('/', ticket_typeController.readTicketType);
-router.put('/:id', ticket_typeController.updateTicketType);
-router.delete('/:id', ticket_typeController.deleteTicketType);
+router.get('/all/events/:eventId', ticketTypeController.getTicketTypesByEventId);
+router.post('/select-ticket-type',auth, validate(selectTicketSchema) ,ticketTypeController.bookingTicket);
 
 export default router;
