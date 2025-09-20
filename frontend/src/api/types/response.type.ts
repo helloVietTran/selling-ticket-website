@@ -1,7 +1,7 @@
-export interface BaseResponse<T>{
-    message: string;
-    status?: string;
-    data?: T
+export interface BaseResponse<T> {
+  message: string;
+  status?: string;
+  data?: T;
 }
 
 export type Organizer = {
@@ -46,3 +46,22 @@ export type PaymentInfo = {
   branch: string;
 };
 
+export type TokenResponse = {
+  accessToken: string;
+};
+
+export interface UserResponse {
+  id: number;
+  email: string;
+  UserName: string;
+  phoneNumber: string;
+  roles: string;
+}
+
+
+export interface BookingResponse {
+  bookingId: number;
+  status: string;
+  createdAt?: Date;
+  expiresAt?: Date;
+}
