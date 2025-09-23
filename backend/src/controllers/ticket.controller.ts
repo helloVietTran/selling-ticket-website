@@ -1,12 +1,12 @@
-import { Request, Response } from "express";
-import { AppDataSource } from "../config/data-source";
-import { Booking } from "../models/Booking.model";
-import { Ticket } from "../models/Ticket.model";
-import { QrCode } from "../models/QrCode.model";
-import { v4 as uuidv4 } from "uuid";
-import QRCode from "qrcode";
-import { Repository } from "typeorm";
-import ApiResponse from "../utils/ApiResponse";
+import { Request, Response } from 'express';
+import { AppDataSource } from '../config/data-source';
+import { Booking } from '../models/Booking.model';
+import { Ticket } from '../models/Ticket.model';
+import { QrCode } from '../models/QrCode.model';
+import { v4 as uuidv4 } from 'uuid';
+import QRCode from 'qrcode';
+import { Repository } from 'typeorm';
+import ApiResponse from '../utils/ApiResponse';
 
 class TicketController {
   private bookingRepo: Repository<Booking> = AppDataSource.getRepository(Booking);
@@ -24,15 +24,15 @@ class TicketController {
 
       const booking = await queryRunner.manager.findOne(Booking, {
         where: { bookingId },
-        relations: ["attendee", "bookingItems", "bookingItems.ticketType"], 
+        relations: ['attendee', 'bookingItems', 'bookingItems.ticketType']
       });
 
       if (!booking) {
         return res.status(404).json(
           ApiResponse.error({
-            code: "BOOKING_NOT_FOUND",
-            message: "Booking not found",
-            statusCode: 404,
+            code: 'BOOKING_NOT_FOUND',
+            message: 'Booking not found',
+            statusCode: 404
           })
         );
       }
@@ -45,7 +45,7 @@ class TicketController {
           const ticket = queryRunner.manager.create(Ticket, {
             ticketType: item.ticketType,
             owner: booking.attendee,
-            checkedIn: false,
+            checkedIn: false
           });
           await queryRunner.manager.save(ticket);
 
@@ -58,7 +58,7 @@ class TicketController {
             ticket,
             issuedAt,
             expiresAt,
-            randomCode,
+            randomCode
           });
           await queryRunner.manager.save(qrEntity);
 
@@ -77,22 +77,22 @@ class TicketController {
               issuedAt,
               expiresAt,
               randomCode,
-              image: qrImage,
-            },
+              image: qrImage
+            }
           });
         }
       }
 
       await queryRunner.commitTransaction();
 
-      return res.json(ApiResponse.success(ticketsResponse, "Tickets generated successfully"));
+      return res.json(ApiResponse.success(ticketsResponse, 'Tickets generated successfully'));
     } catch (error: any) {
       await queryRunner.rollbackTransaction();
       return res.status(500).json(
         ApiResponse.error({
-          code: "ERROR_GENERATING_TICKETS",
-          message: error.message || "Error generating tickets",
-          statusCode: 500,
+          code: 'ERROR_GENERATING_TICKETS',
+          message: error.message || 'Error generating tickets',
+          statusCode: 500
         })
       );
     } finally {

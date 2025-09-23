@@ -7,12 +7,12 @@ export class BookingItem {
   @PrimaryGeneratedColumn()
   bookingItemId!: number;
 
-  @ManyToOne(() => Booking, (b) => b.bookingItems)
-  booking!: Booking;
-
   @ManyToOne(() => TicketType)
   ticketType!: TicketType;
 
   @Column('int')
   quantity!: number;
+
+  @ManyToOne(() => Booking, (b) => b.bookingItems)
+  booking!: Booking;
 }

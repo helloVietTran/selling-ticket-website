@@ -1,4 +1,4 @@
-import { Role } from "./enum";
+import { Role } from './enum';
 
 export interface Requester {
   id: string;
@@ -7,5 +7,3 @@ export interface Requester {
   iat?: number;
   exp?: number;
 }
-
-

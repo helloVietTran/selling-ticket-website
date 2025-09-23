@@ -9,22 +9,24 @@ export class Booking {
   @PrimaryGeneratedColumn()
   bookingId!: number;
 
+  @Column({ type: 'enum', enum: BookingStatus, default: BookingStatus.Waiting })
+  status!: BookingStatus;
+
+  @Column({ type: 'timestamp', nullable: false })
+  createdAt?: Date;
+
+  @Column({ type: 'timestamp', nullable: false })
+  expiresAt?: Date;
+
+  @Column({ type: 'int', nullable: false })
+  amount!: number;
+
   @ManyToOne(() => User, (a) => a.bookings)
   attendee!: User;
 
   @OneToMany(() => BookingItem, (bi) => bi.booking, { cascade: true })
   bookingItems!: BookingItem[];
 
-  @Column({ type: 'enum', enum: BookingStatus, default: BookingStatus.Created })
-  status!: BookingStatus;
-
-  @Column({ type: 'timestamp', nullable: true })
-  createdAt?: Date;
-
-  @Column({ type: 'timestamp', nullable: true })
-  expiresAt?: Date;
-
-  // optional one-to-one to Payment
   @OneToOne(() => Payment, (p) => p.booking, { nullable: true })
   payment?: Payment;
 }

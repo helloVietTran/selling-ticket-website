@@ -241,11 +241,13 @@ class EventController {
     }
   };
 
-  getEventsByOrganizer(req: Request<{}, {}, {}, {status: EventStatus}>, res: Response<PaginateResponse<Event>>, next: NextFunction) {
+  getEventsByOrganizer(
+    req: Request<{}, {}, {}, { status: EventStatus }>,
+    res: Response<PaginateResponse<Event>>,
+    next: NextFunction
+  ) {
     try {
       const requester = res.locals.requester as Requester;
-
-
     } catch (error) {
       next(error);
     }
