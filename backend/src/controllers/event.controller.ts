@@ -236,7 +236,6 @@ class EventController {
     }
   };
 
-
   getEventsByOrganizer = async (req: Request<{ organizerId: string }, {}, {}, { status: EventStatus }>, res: Response<PaginateResponse<Event>>, next: NextFunction) => {
     try {
       const requester = res.locals.requester as Requester;
@@ -280,8 +279,6 @@ class EventController {
           totalPages: 1,
         },
       });
-
-
     } catch (error) {
       next(error);
     }

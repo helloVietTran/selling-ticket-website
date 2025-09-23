@@ -14,7 +14,8 @@ export enum EventStatus {
 export enum BookingStatus {
   Paid = 'PAID',
   Cancelled = 'CANCELLED',
-  Created = 'CREATED'
+  Waiting = 'Wait',
+  Expired = 'EXPIRED'
 }
 
 export enum TicketState {
@@ -25,7 +26,7 @@ export enum TicketState {
   Held = 'HELD'
 }
 
-export enum Category{
+export enum Category {
   Music = 'Âm nhạc',
   Other = 'Khác',
   Sport = 'Thể thao',

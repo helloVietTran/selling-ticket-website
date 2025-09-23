@@ -1,3 +1,4 @@
+import { access } from 'fs';
 import { z } from 'zod';
 
 export const registerSchema = z.object({
@@ -13,6 +14,10 @@ export const loginSchema = z.object({
   email: z.string().email({ message: 'Email không hợp lệ' }),
   password: z.string().min(1, { message: 'Mật khẩu là bắt buộc' })
 });
+export const logoutSchema = z.object({
+  accessToken: z.string().nonempty()
+});
 
 export type RegisterInput = z.infer<typeof registerSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+export type LogoutInput = z.infer<typeof logoutSchema>;
