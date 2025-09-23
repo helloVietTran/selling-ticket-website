@@ -6,6 +6,10 @@ import route from './routes';
 import { AppDataSource } from './config/data-source';
 import { responseErr } from './config/exception';
 
+import { startCronTicketBooking } from "./controllers/cron/booking.cron";
+
+
+
 const app: Application = express();
 
 // middleware
@@ -21,6 +25,7 @@ route(app);
 AppDataSource.initialize()
   .then(() => {
     console.log('INFO: Data Source has been initialized!');
+    startCronTicketBooking();
   })
   .catch((err) => {
     console.error('ERROR: Error during Data Source initialization:', err);

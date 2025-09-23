@@ -1,6 +1,9 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, JoinColumn } from 'typeorm';
 import { Event } from './Event.model';
 import { Ticket } from './Ticket.model';
+import { AppError } from '../config/exception';
+import { ErrorMap } from '../config/ErrorMap';
+import { BookingItem } from './BookingItem.model';
 
 @Entity('ticket_type')
 export class TicketType {
@@ -40,4 +43,41 @@ export class TicketType {
 
   @OneToMany(() => Ticket, (t) => t.ticketType)
   tickets!: Ticket[];
+
+  validate = async (
+    ticketTypes: any[],
+    query: any,
+    bookingItem: BookingItem[],
+    now: Date,): Promise<number> => {
+      let totalAmount=0;
+    for (const item of ticketTypes) {
+      const ticketType = await query.findOneBy(TicketType, { ticketTypeId: Number(item.ticketTypeId) });
+      if (!ticketType) {
+        throw AppError.fromErrorCode(ErrorMap.TICKET_TYPE_NOT_FOUND);
+      }
+      if (item.quantity <= 0) {
+        throw AppError.fromErrorCode(ErrorMap.TICKET_TYPE_IMPOSITIVE);
+      }
+      if (now < ticketType.startSellDate || now > ticketType.endSellDate) {
+        throw AppError.fromErrorCode(ErrorMap.NOT_AVAILABLE_AT_TIME);
+      }
+      if (ticketType.totalQuantity - ticketType.soldTicket < item.quantity) {
+        throw AppError.fromErrorCode(ErrorMap.NOT_ENOUGH_STOCK);
+      }
+      if (item.quantity < ticketType.minPerUser || item.quantity > ticketType.maxPerUser) {
+        throw AppError.fromErrorCode(ErrorMap.QUANTITY_OVER_LIMIT);
+      }
+
+      ticketType.soldTicket += item.quantity;
+      await query.save(ticketType);
+
+      totalAmount += Number(ticketType.price) * item.quantity;
+
+      const newBookingItem = new BookingItem();
+      newBookingItem.ticketType = ticketType;
+      newBookingItem.quantity = item.quantity;
+      bookingItem.push(newBookingItem);
+    }
+    return totalAmount;
+  };
 }

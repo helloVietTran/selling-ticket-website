@@ -8,20 +8,20 @@ import { MoreThan } from 'typeorm';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
 
-const userRepo=AppDataSource.getRepository(User);
-const bookingRepo=AppDataSource.getRepository(Booking)
+const userRepo = AppDataSource.getRepository(User);
+const bookingRepo = AppDataSource.getRepository(Booking);
 
 class BookingController {
   async getMyBooking(req: Request, res: Response<BaseResponse<Booking[]>>, next: NextFunction) {
     try {
       const requester = res.locals.requester as Requester;
-      const user=await userRepo.findOneBy({id:Number(requester.id)})
-      if (!user) return AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND)
-      const myBooking=await bookingRepo.findBy({
-        attendee:user,
-        expiresAt:MoreThan(new Date())
-      })
-      return res.status(200).json({message:"danh sách booking",data:myBooking})
+      const user = await userRepo.findOneBy({ id: Number(requester.id) });
+      if (!user) return AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
+      const myBooking = await bookingRepo.findBy({
+        attendee: user,
+        expiresAt: MoreThan(new Date())
+      });
+      return res.status(200).json({ message: 'danh sách booking', data: myBooking });
     } catch (error) {
       next(error);
     }
