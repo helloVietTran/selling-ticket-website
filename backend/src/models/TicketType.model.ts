@@ -34,10 +34,10 @@ export class TicketType {
   @Column({ type: 'timestamp' })
   endSellDate!: Date;
 
-  @ManyToOne(() => Event, (e) => e.ticketTypes)
+  @ManyToOne(() => Event, (e) => e.ticketTypes,{onDelete: 'CASCADE'})
   @JoinColumn({ name: 'eventId', referencedColumnName: 'eventId' })
   event!: Event;
 
-  @OneToMany(() => Ticket, (t) => t.ticketType)
+  @OneToMany(() => Ticket, (t) => t.ticketType, { cascade: true })
   tickets!: Ticket[];
 }

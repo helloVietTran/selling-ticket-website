@@ -8,92 +8,92 @@ import { Organizer } from '../models/Organizer.model';
 import { BaseResponse } from '../types/response.type';
 import { UpdateUserInput } from '../validators/user.validate';
 import { Requester } from '../types';
+import { AppError } from '../config/exception';
+import { ErrorMap } from '../config/ErrorMap';
 
+type UserResponse = Omit<User, 'passwordHash'>; // vì trong data ko được để pass
 class UserController {
   private userRepository = AppDataSource.getRepository(User);
 
-  // chưa trả về data
-  getUserById = async (req: Request, res: Response<BaseResponse<User>>, next: NextFunction) => {
+  getUserById = async (req: Request, res: Response<BaseResponse<UserResponse>>, next: NextFunction) => {
     try {
       const { id } = req.params;
       const user = await this.userRepository.findOneBy({ id: Number(id) });
 
       if (!user) {
-        return res.status(404).json(
-          ApiResponse.error({
-            code: 'USER_NOT_FOUND',
-            message: 'Không tìm thấy user',
-            statusCode: 404
-          })
-        );
+        throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
       }
 
       const { passwordHash, ...userWithoutPassword } = user;
-      return res.json({ message: 'Lấy thông tin user thành công' });
+      return res.json({
+        message: 'User information retrieved successfully',
+        status: 200,
+        data: userWithoutPassword
+      });
     } catch (error) {
       next(error);
     }
   };
 
-  getMyInfo = async (req: Request, res: Response<BaseResponse<User>>, next: NextFunction) => {
+  getMyInfo = async (req: Request, res: Response<BaseResponse<UserResponse>>, next: NextFunction) => {
     try {
       const requester = res.locals.requester as Requester;
-    } catch (error) {}
+      const userRepo = AppDataSource.getRepository(User);
+      const user = await userRepo.findOne({
+        where: { id: Number(requester.id) }
+      });
+
+      if (!user) {
+        throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
+      }
+
+      const { passwordHash, ...userWithoutPassword } = user;
+
+      return res.status(200).json({
+        message: "Get my info successfully",
+        data: userWithoutPassword,
+      });
+
+    } catch (error) { }
   };
 
   updateMyInfo = async (
     req: Request<{}, {}, UpdateUserInput>,
-    res: Response<BaseResponse<User>>,
+    res: Response<BaseResponse<UserResponse>>,
     next: NextFunction
   ) => {
     try {
+      const { email, userName, phoneNumber } = req.body;
       const requester = res.locals.requester as Requester;
-      // const { id } = req.params;
-      // const { email, userName, phoneNumber, organizationName } = req.body;
+      const userRepo = AppDataSource.getRepository(User);
 
-      // const user = await this.userRepository.findOneBy({ id: Number(id) });
-      // if (!user) {
-      //   return res.status(404).json(
-      //     ApiResponse.error({
-      //       code: 'USER_NOT_FOUND',
-      //       message: 'Không tìm thấy user',
-      //       statusCode: 404
-      //     })
-      //   );
-      // }
+      const user = await userRepo.findOne({
+        where: { id: Number(requester.id) }
+      });
 
-      // // Check email trùng
-      // if (email && email !== user.email) {
-      //   const existing = await this.userRepository.findOneBy({ email });
-      //   if (existing) {
-      //     return res.status(400).json(
-      //       ApiResponse.error({
-      //         code: 'EMAIL_EXISTS',
-      //         message: 'Email đã tồn tại',
-      //         statusCode: 400
-      //       })
-      //     );
-      //   }
-      //   user.email = email;
-      // }
+      if (!user) {
+        throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
+      };
 
-      // if (userName !== undefined) user.userName = userName;
+      if (email && email !== user.email) {
+        const existedUser = await userRepo.findOne({ where: { email } });
+        if (existedUser) {
+          throw AppError.fromErrorCode(ErrorMap.EMAIL_ALREADY_EXISTS)
+        }
+        user.email = email;
+      }
 
-      // // // Nếu là attendee → update phoneNumber
-      // // if (user.roles === 'ATTENDEE' && phoneNumber !== undefined) {
-      // //     (user as Attendee).phoneNumber = phoneNumber;
-      // // }
+      if (userName) user.userName = userName;
+      if (phoneNumber) user.phoneNumber = phoneNumber;
 
-      // // // Nếu là organizer → update organizationName
-      // // if (user.roles === 'ORGANIZER' && organizationName !== undefined) {
-      // //     (user as Organizer).organizationName = organizationName;
-      // // }
+      const updatedUser = await userRepo.save(user);
 
-      // const updatedUser = await this.userRepository.save(user);
+      const { passwordHash, ...userWithoutPassword } = updatedUser;
 
-      // const { passwordHash, ...userWithoutPassword } = updatedUser;
       return res.json({
-        message: 'Update user successfully'
+        message: 'Update user successfully',
+        status: 200,
+        data: userWithoutPassword
       });
     } catch (error) {
       next(error);
