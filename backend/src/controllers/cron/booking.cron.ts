@@ -12,7 +12,7 @@ export const startCronTicketBooking = () => {
   cron.schedule('*/15 * * * *', async () => {
     const expiredBookings = await bookingRepo.find({
       where: { status: BookingStatus.Waiting, expiresAt: LessThan(new Date()) },
-      relations: ['bookingItems', 'bookingItems.ticketType'],
+      relations: ['bookingItems', 'bookingItems.ticketType']
     });
 
     for (const booking of expiredBookings) {

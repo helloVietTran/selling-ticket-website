@@ -13,30 +13,32 @@ import { Requester } from '../types';
 import { User } from '../models/User.model';
 import { BookingStatus } from '../types/enum';
 import { BookingItem } from '../models/BookingItem.model';
-
-const ticketTypeRepo = AppDataSource.getRepository(TicketType);
+import { startCronTicketBooking } from './cron/booking.cron';
 
 class TicketTypeController {
-  async getTicketTypesByEventId(req: Request, res: Response<BaseResponse<TicketType[]>>, next: NextFunction) {
+  private ticketTypeRepo = AppDataSource.getRepository(TicketType);
+
+  getTicketTypesByEventId = async (req: Request, res: Response<BaseResponse<TicketType[]>>, next: NextFunction) => {
     try {
       const { eventId } = req.params;
       if (!eventId) return AppError.fromErrorCode(ErrorMap.EVENT_NOT_EXISTS);
-      const ticketTypes = await ticketTypeRepo.findBy({ event: { eventId: Number(eventId) } });
+      const ticketTypes = await this.ticketTypeRepo.findBy({ event: { eventId: Number(eventId) } });
       return res.status(200).json({ message: 'Lấy danh sách thành công', data: ticketTypes });
     } catch (error) {
       next(error);
     }
-  }
-  async bookingTicket(
+  };
+  bookingTicket = async (
     req: Request<{}, {}, SelectTicketInput>,
     res: Response<BaseResponse<Booking>>,
     next: NextFunction
-  ) {
+  ) => {
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
+      startCronTicketBooking();
       const requester = res.locals.requester as Requester;
       const userId = requester.id;
       const { ticketTypes } = req.body;
@@ -49,15 +51,30 @@ class TicketTypeController {
       if (!user) {
         throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
       }
-;
+      let totalAmount = 0;
       const bookingItems: BookingItem[] = [];
       const now = new Date();
-      const ticketTypeEntity= new TicketType();
-      const totalAmount=await ticketTypeEntity.validate(ticketTypes, queryRunner.manager, bookingItems, now);
+      const ticketTypeEntity = new TicketType();
+      for (const item of ticketTypes) {
+        const ticketType = await queryRunner.manager.findOneBy(TicketType, { ticketTypeId: Number(item.ticketTypeId) });
+        if (!ticketType) {
+          throw AppError.fromErrorCode(ErrorMap.TICKET_TYPE_NOT_FOUND);
+        }
+        await ticketTypeEntity.validate(ticketType, item, now);
+        ticketType.soldTicket += item.quantity;
+        await queryRunner.manager.save(ticketType);
+
+        totalAmount += Number(ticketType.price) * item.quantity;
+
+        const newBookingItem = new BookingItem();
+        newBookingItem.ticketType = ticketType;
+        newBookingItem.quantity = item.quantity;
+        bookingItems.push(newBookingItem);
+      }
 
       const newBooking = new Booking();
       newBooking.attendee = user;
-      newBooking.bookingItems = bookingItems; 
+      newBooking.bookingItems = bookingItems;
       newBooking.amount = totalAmount;
       newBooking.status = BookingStatus.Waiting;
       newBooking.createdAt = new Date();
@@ -67,20 +84,19 @@ class TicketTypeController {
       const savedBooking = await queryRunner.manager.save(newBooking);
 
       savedBooking.bookingItems.forEach((bi) => delete (bi as any).booking);
-      
+
       await queryRunner.commitTransaction();
       res.status(201).json({
         message: 'Booking created successfully. Please proceed to payment.',
         data: savedBooking
       });
-      
     } catch (error) {
       await queryRunner.rollbackTransaction();
       next(error);
     } finally {
       await queryRunner.release();
     }
-  }
+  };
 }
 
 export default new TicketTypeController();
