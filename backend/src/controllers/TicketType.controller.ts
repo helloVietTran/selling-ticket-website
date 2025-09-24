@@ -13,7 +13,6 @@ import { Requester } from '../types';
 import { User } from '../models/User.model';
 import { BookingStatus } from '../types/enum';
 import { BookingItem } from '../models/BookingItem.model';
-import { startCronTicketBooking } from './cron/booking.cron';
 
 class TicketTypeController {
   private ticketTypeRepo = AppDataSource.getRepository(TicketType);
@@ -38,7 +37,6 @@ class TicketTypeController {
     await queryRunner.startTransaction();
 
     try {
-      startCronTicketBooking();
       const requester = res.locals.requester as Requester;
       const userId = requester.id;
       const { ticketTypes } = req.body;

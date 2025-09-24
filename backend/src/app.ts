@@ -5,7 +5,7 @@ import cors from 'cors';
 import route from './routes';
 import { AppDataSource } from './config/data-source';
 import { responseErr } from './config/exception';
-
+import { startCronTicketBooking } from './controllers/cron/booking.cron';
 const app: Application = express();
 
 // middleware
@@ -14,6 +14,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+startCronTicketBooking();
 // routes
 route(app);
 
