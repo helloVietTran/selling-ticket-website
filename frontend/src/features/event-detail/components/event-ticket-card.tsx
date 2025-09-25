@@ -7,9 +7,9 @@ type EventTicketCardProps = {
   title: string;
   date: string;
   time: string;
-  location: string;
+  province: string;
   address: string;
-  price: string;
+  price: number;
   image: string;
 };
 
@@ -17,7 +17,7 @@ const EventTicketCard: React.FC<EventTicketCardProps> = ({
   title,
   date,
   time,
-  location,
+  province,
   address,
   price,
   image,
@@ -71,7 +71,7 @@ const EventTicketCard: React.FC<EventTicketCardProps> = ({
             <div className="flex items-start gap-2 text-gray-300 mt-2">
               <MapPin className="w-5 h-5 mt-1" />
               <div>
-                <p className="font-semibold text-white">{location}</p>
+                <p className="font-semibold text-white">{province}</p>
                 <p className="text-sm">{address}</p>
               </div>
             </div>

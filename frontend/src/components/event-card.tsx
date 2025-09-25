@@ -7,7 +7,7 @@ type EventCardProps = {
   price: string;
   date: string;
   img: string;
-  status?: string; // thêm status
+  status?: string;
   href?: string;
 };
 

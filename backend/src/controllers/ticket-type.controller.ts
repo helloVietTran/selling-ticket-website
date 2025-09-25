@@ -2,9 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { TicketType } from '../models/TicketType.model';
 import { AppDataSource } from '../config/data-source';
 import { Ticket } from '../models/Ticket.model';
-import ApiResponse from '../utils/ApiResponse';
 import { ErrorMap } from '../config/ErrorMap';
-import { IErrorCode } from '../config/ErrorMap';
+
 import { BaseResponse } from '../types/response.type';
 import { SelectTicketInput } from '../validators/ticket.validate';
 import { Booking } from '../models/Booking.model';

@@ -1,14 +1,5 @@
 import api from "./api";
-
-
-
-
-export type SelectTicketTypePayload = {
-   ticketTypes: {
-    ticketTypeId: string;
-    quantity: number;
-  }[];
-}
+import type { SelectTicketTypePayload }  from '@/types';
 
 
 async function getTicketTypesByEventId(eventId: string) {

@@ -2,74 +2,111 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
+import type { TicketType } from '@/types';
 
-interface TicketType {
-  name: string;
-  price: string;
-}
+type TicketTypeListProps = {
+  ticketTypes: TicketType[];
+};
 
-interface Ticket {
-  id: string;
-  time: string;
-  soldOut?: boolean;
-  types: TicketType[];
-}
 
-interface TicketTypeListProps {
-  tickets: Ticket[];
-}
+export default function TicketTypeList({ ticketTypes }: TicketTypeListProps) {
+  const [openId, setOpenId] = useState<number | null>(null);
+  const now = new Date();
 
-export default function TicketTypeList({ tickets }: TicketTypeListProps) {
-  const [openId, setOpenId] = useState<string | null>(null);
-
-  const toggleDetails = (id: string) => {
+  const toggleDetails = (id: number) => {
     setOpenId(openId === id ? null : id);
+  };
+
+  const renderButton = (ticketType: TicketType) => {
+    const startDate = new Date(ticketType.startSellDate);
+    const endDate = new Date(ticketType.endSellDate);
+
+    if (ticketType.soldTicket >= ticketType.totalQuantity) {
+      return (
+        <Button
+          disabled
+          className="bg-red-500 text-white font-semibold cursor-not-allowed"
+        >
+          Hết vé
+        </Button>
+      );
+    }
+
+    if (now < startDate) {
+      return (
+        <Button
+          disabled
+          className="bg-gray-400 text-black font-semibold cursor-not-allowed"
+        >
+          Chưa mở bán
+        </Button>
+      );
+    }
+
+    if (now > endDate) {
+      return (
+        <Button
+          disabled
+          className="bg-gray-400 text-black font-semibold cursor-not-allowed"
+        >
+          Đã đóng bán
+        </Button>
+      );
+    }
+
+    return (
+      <Button className="bg-emerald-500 hover:bg-emerald-600 font-semibold text-white">
+        Mua vé ngay
+      </Button>
+    );
   };
 
   return (
     <Card className="bg-neutral-900 text-white rounded-2xl shadow-md border border-neutral-800 w-full max-w-3xl">
-      <div className="px-6 text-lg font-semibold">Thông tin vé</div>
+      <div className="px-6 py-4 text-lg font-semibold">Thông tin vé</div>
 
-      {tickets.map(ticket => (
-        <div key={ticket.id} className="border-t border-neutral-800">
-          {/* Ticket Item */}
+      {ticketTypes.map((ticketType) => (
+        <div
+          key={ticketType.ticketTypeId}
+          className="border-t border-neutral-800"
+        >
           <div
             className="flex justify-between items-center px-6 py-4 cursor-pointer hover:bg-neutral-800/60"
-            onClick={() => toggleDetails(ticket.id)}>
+            onClick={() => toggleDetails(ticketType.ticketTypeId)}
+          >
             <div className="flex items-center gap-3">
               <ChevronRight
-                className={`w-5 h-5 transition-transform ${
-                  openId === ticket.id ? 'rotate-90' : ''
-                }`}
+                className={`w-5 h-5 transition-transform ${openId === ticketType.ticketTypeId ? 'rotate-90' : ''
+                  }`}
               />
-              <span>{ticket.time}</span>
+              <span>{ticketType.ticketTypeName}</span>
             </div>
-            {ticket.soldOut ? (
-              <Button
-                disabled
-                className="bg-white text-black font-semibold cursor-not-allowed">
-                Hết vé
-              </Button>
-            ) : (
-              <Button className="bg-emerald-500 hover:bg-emerald-600 font-semibold text-white">
-                Mua vé ngay
-              </Button>
-            )}
+            {renderButton(ticketType)}
           </div>
 
-          {/* Ticket Details */}
-          {openId === ticket.id && (
+          {openId === ticketType.ticketTypeId && (
             <CardContent className="bg-neutral-800 px-6 py-4 space-y-3">
-              {ticket.types.map((type, idx) => (
-                <div
-                  key={idx}
-                  className="flex justify-between text-sm text-neutral-200">
-                  <span>{type.name}</span>
-                  <span className="font-semibold text-emerald-400">
-                    {type.price}
-                  </span>
-                </div>
-              ))}
+
+              <div className="flex justify-between text-sm text-neutral-200">
+                <span>Giá vé</span>
+                <span className="font-semibold text-emerald-400">
+                  {ticketType.price.toLocaleString()} VND
+                </span>
+              </div>
+              <div className="flex justify-between text-sm text-neutral-200">
+                <span>Còn lại</span>
+                <span>
+                  {ticketType.totalQuantity - ticketType.soldTicket} vé
+                </span>
+              </div>
+
+              <div className="flex justify-between text-sm text-neutral-200">
+                <span>Thời gian mở bán</span>
+                <span>
+                  {new Date(ticketType.startSellDate).toLocaleString('vi-VN')}
+                </span>
+              </div>
+
             </CardContent>
           )}
         </div>
