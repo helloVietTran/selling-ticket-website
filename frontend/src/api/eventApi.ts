@@ -1,6 +1,6 @@
 import api from "./api";
-import type { GetEventsParams } from "./types/params.type";
-import type { BaseResponse, Event } from "./types/response.type";
+import type { GetEventsParams }  from '@/types';
+import type { BaseResponse, Event }  from '@/types';
 
 async function createFullEvent(payload: any): Promise<BaseResponse<Event>> {
   const res = await api.post("/events", payload);
@@ -25,8 +25,22 @@ async function deleteEvent(eventId: string): Promise<void>{
   await api.delete(`/events/${eventId}`);
 }
 
+async function getMyEvents(eventId: string, organizerId: string): Promise<BaseResponse<Event[]>>{
+  const res =  await api.delete(`/events/${eventId}/organizer/${organizerId}`);
+
+  return res.data;
+}
+
+async function getEventById(id: string | number): Promise<BaseResponse<Event>> {
+  const res =  await api.get(`/events/${id}`);
+
+  return res.data;
+}
+
 export {
   createFullEvent, 
   getEvents,
-  deleteEvent
+  deleteEvent,
+  getMyEvents,
+  getEventById
 }

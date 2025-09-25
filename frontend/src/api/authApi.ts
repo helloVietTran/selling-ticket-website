@@ -1,6 +1,6 @@
 import api from './api';
-import type { LoginPayLoad, LogoutPayload, RegisterPayload } from './types/request.type';
-import type { TokenResponse } from './types/response.type';
+import type { LoginPayLoad, LogoutPayload, RegisterPayload } from '@/types';
+import type { TokenResponse }  from '@/types';
 
 async function register(payload: RegisterPayload) {
     const res = await api.post("/auth/register", payload);
