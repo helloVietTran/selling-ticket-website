@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+
 import ticketTypeController from '../controllers/TicketType.controller';
 import { auth } from '../middlewares/auth.middleware';
 import { validate } from '../middlewares/validate.middleware';

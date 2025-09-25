@@ -1,14 +1,12 @@
-import { useState } from "react";
-import { useApiStatus } from "./useApiStatus";
-import { ERROR, PENDING, SUCCESS } from "../constants/apiStatus";
+import { useState } from 'react';
+import { useApiStatus } from './useApiStatus';
+import { ERROR, PENDING, SUCCESS } from '../constants/apiStatus';
 
 type UseApiConfig<T> = {
   initialData?: T;
 };
 
-type ExecResult<T> =
-  | { data: T; error: null }
-  | { data: null; error: unknown };
+type ExecResult<T> = { data: T; error: null } | { data: null; error: unknown };
 
 export function useApi<TArgs extends any[] = any[], TData = unknown>(
   fn: (...args: TArgs) => Promise<TData>,
