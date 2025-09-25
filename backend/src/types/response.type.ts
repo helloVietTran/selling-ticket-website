@@ -23,3 +23,8 @@ export interface UserOutput {
   phoneNumber: string;
   roles: Role;
 }
+
+export interface RevenueResponse {
+  revenueLastWeek: number;
+  revenueLastMonth: number;
+}

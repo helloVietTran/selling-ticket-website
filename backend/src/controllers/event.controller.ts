@@ -127,7 +127,7 @@ class EventController {
     try {
       const requester = res.locals.requester as Requester;
       const eventId = Number(req.params.eventId);
-      const organizerId = Number(req.params.organizerId);
+      const organizerId = Number(req.params.organizerId); 
 
       const userRepo = AppDataSource.getRepository(User);
       const eventRepo = AppDataSource.getRepository(Event);
