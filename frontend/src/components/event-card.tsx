@@ -3,25 +3,27 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 type EventCardProps = {
+  eventId: number;
   title: string;
-  price: string;
+  minPrice: number;
   date: string;
   img: string;
-  status?: string;
-  href?: string;
+  status: string;
+
 };
 
 const EventCard: React.FC<EventCardProps> = ({
   title,
-  price,
+  minPrice,
   date,
   img,
-  status = 'test',
-  href = '#',
+  status,
+  eventId
+
 }) => {
   return (
     <Link
-      to={href}
+      to={`/events/${eventId}`}
       className="rounded-lg overflow-hidden hover:-translate-y-1 transition-transform duration-300 cursor-pointer text-white no-underline">
       <div className="relative">
         <img
@@ -38,7 +40,7 @@ const EventCard: React.FC<EventCardProps> = ({
       <div className="py-3">
         <div className="font-bold text-sm mb-2 min-h-10">{title}</div>
         <div className="text-green-500 font-semibold mb-2 text-sm">
-          Từ {price}
+          Chỉ từ {minPrice}
         </div>
         <div className="flex items-center text-sm text-gray-300">
           <span className="mr-2">
