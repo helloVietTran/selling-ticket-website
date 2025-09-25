@@ -38,7 +38,7 @@ export const ErrorMap = {
   ORGANIZER_MISMATCH: {code: "ORGANIZER_MISMATCH",message: "Organizer mismatch. Cannot delete this event",statusCode: 403,} as IErrorCode,
   VIEW_EVENTS_FORBIDDEN:{code: "VIEW_EVENTS_FORBIDDEN",message: "You are not allowed to view events",statusCode: 403,} as IErrorCode,
   EMAIL_ALREADY_EXISTS:{code: "EMAIL_ALREADY_EXISTS",message: "Email đã tồn tại",statusCode: 400,} as IErrorCode,
-
+  ERROR_GENERATING_TICKETS:{code: 'ERROR_GENERATING_TICKETS',message:'Error generating tickets',statusCode: 500}  as IErrorCode,
   TICKET_TYPE_IMPOSITIVE: {
     code: 'TICKET_TYPE_IMPOSITIVE',
     statusCode: 400,

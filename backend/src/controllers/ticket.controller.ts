@@ -7,6 +7,8 @@ import { v4 as uuidv4 } from 'uuid';
 import QRCode from 'qrcode';
 import { Repository } from 'typeorm';
 import ApiResponse from '../utils/ApiResponse';
+import { AppError } from '../config/exception';
+import { ErrorMap } from '../config/ErrorMap';
 
 class TicketController {
   private bookingRepo: Repository<Booking> = AppDataSource.getRepository(Booking);
@@ -28,13 +30,7 @@ class TicketController {
       });
 
       if (!booking) {
-        return res.status(404).json(
-          ApiResponse.error({
-            code: 'BOOKING_NOT_FOUND',
-            message: 'Booking not found',
-            statusCode: 404
-          })
-        );
+       throw AppError.fromErrorCode(ErrorMap.BOOKING_NOT_FOUND);
       }
 
       const ticketsResponse: any[] = [];

@@ -5,6 +5,7 @@ import { TicketType } from './TicketType.model';
 import { EventStatus } from '../types/enum';
 import { Category } from './Category.model';
 import { EmailSetting } from './EmailSetting.model';
+import { TransactionHistory } from './TransactionHistory.model';
 
 @Entity('event')
 export class Event {
@@ -44,4 +45,7 @@ export class Event {
   @OneToOne(() => EmailSetting, { nullable: true, cascade: true,onDelete: 'CASCADE' })
   @JoinColumn({ name: 'emailSettingId', referencedColumnName: 'emailSettingId' })
   emailSetting?: EmailSetting | null;
+
+   @OneToMany(() => TransactionHistory, (t) => t.event)
+  transactions!: TransactionHistory[];
 }
