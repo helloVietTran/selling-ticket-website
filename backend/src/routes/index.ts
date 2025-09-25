@@ -18,7 +18,6 @@ function route(app: Application) {
   app.use(`${urlPrefix}/user`, userRoute);
   app.use(`${urlPrefix}/booking`, bookingRoute);
 
-
 }
 
 export default route;
