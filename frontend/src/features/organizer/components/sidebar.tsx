@@ -47,7 +47,10 @@ type SidebarProps = {
   onRequestClose?: () => void;
 };
 
-export default function Sidebar({ mobileOpen = false, onRequestClose }: SidebarProps) {
+export default function Sidebar({
+  mobileOpen = false,
+  onRequestClose,
+}: SidebarProps) {
   return (
     <>
       {/* Desktop */}
@@ -65,7 +68,9 @@ export default function Sidebar({ mobileOpen = false, onRequestClose }: SidebarP
                 to={m.path}
                 className={({ isActive }) =>
                   `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                    isActive ? 'bg-emerald-700 text-white font-semibold' : 'text-gray-300 hover:text-white'
+                    isActive
+                      ? 'bg-emerald-700 text-white font-semibold'
+                      : 'text-gray-300 hover:text-white'
                   }`
                 }>
                 {m.icon}
@@ -80,7 +85,9 @@ export default function Sidebar({ mobileOpen = false, onRequestClose }: SidebarP
       <div
         aria-hidden={!mobileOpen}
         className={`fixed inset-0 z-50 transition-opacity duration-300 ${
-          mobileOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+          mobileOpen
+            ? 'opacity-100 pointer-events-auto'
+            : 'opacity-0 pointer-events-none'
         }`}
         onClick={onRequestClose}>
         <div className="w-full h-full bg-black/50" />
@@ -114,7 +121,9 @@ export default function Sidebar({ mobileOpen = false, onRequestClose }: SidebarP
               to={m.path}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-md transition-colors ${
-                  isActive ? 'bg-emerald-700 text-white font-semibold' : 'text-gray-300 hover:text-white'
+                  isActive
+                    ? 'bg-emerald-700 text-white font-semibold'
+                    : 'text-gray-300 hover:text-white'
                 }`
               }
               onClick={onRequestClose}>
