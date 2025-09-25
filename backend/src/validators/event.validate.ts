@@ -66,7 +66,10 @@ const paymentSchema = z.object({
   accountHolder: z.string().min(1, 'Vui lòng nhập tên chủ tài khoản').max(100),
   accountNumber: z.string().min(1, 'Vui lòng nhập số tài khoản').max(100),
   bankName: z.string().min(1, 'Vui lòng nhập tên ngân hàng').max(100),
-  branch: z.string().min(1, 'Vui lòng nhập chi nhánh').max(100)
+  branch: z.string().min(1, 'Vui lòng nhập chi nhánh').max(100),
+  organizerId: z.string().min(1,'Vui lòng nhập mã ban tổ chức').optional(),
+  organizationName: z.string().min(1,'Vui lòng nhập tên ban tổ chức').optional(),
+  organizerInfo: z.string().min(1,'Vui lòng nhập thông tin ban tổ chức').optional()
 });
 
 export const createEventSchema = z.object({
@@ -79,3 +82,4 @@ export const createEventSchema = z.object({
 });
 
 export type CreateEventInput = z.infer<typeof createEventSchema>;
+export type paymentInput = z.infer<typeof paymentSchema>;

@@ -41,7 +41,7 @@ class TicketTypeController {
       const { ticketTypes } = req.body;
 
       if (!ticketTypes || ticketTypes.length === 0) {
-        throw AppError.fromErrorCode(ErrorMap.TICKET_TYPE_NOT_FOUND);
+        throw AppError.fromErrorCode(ErrorMap.INVALID_REQUEST);
       }
       if (!userId) return 0;
       const user = await queryRunner.manager.findOneBy(User, { id: Number(userId) });
@@ -83,7 +83,7 @@ class TicketTypeController {
       savedBooking.bookingItems.forEach((bi) => delete (bi as any).booking);
 
       await queryRunner.commitTransaction();
-      res.status(201).json({
+      return res.status(201).json({
         message: 'Booking created successfully. Please proceed to payment.',
         data: savedBooking
       });
@@ -123,7 +123,7 @@ class TicketTypeController {
         totalsoldTicket: totalSoldTicket,
         percentage: percentage.toFixed(2)
       };
-      return res.json({
+      return res.status(201).json({
         message: 'statistical featch successfully',
         data: statistical
       });
