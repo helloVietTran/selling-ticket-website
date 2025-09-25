@@ -3,7 +3,7 @@ import { config } from '../config/config';
 import { Application } from 'express';
 import eventRoutes from './event.route';
 
-import ticketTypeRoutes from './TicketType.route';
+import ticketTypeRoutes from './ticket-type.route';
 
 import ticketRoutes from './ticket.route';
 import userRoute from './user.route';
