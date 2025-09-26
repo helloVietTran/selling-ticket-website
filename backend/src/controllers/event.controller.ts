@@ -283,6 +283,38 @@ class EventController {
       next(error);
     }
   }
-}
 
+  
+getEventById = async (
+  req: Request<{ eventId: string }>,
+  res: Response<BaseResponse<Event>>,
+  next: NextFunction
+) => {
+  try {
+    const eventId = Number(req.params.eventId);
+
+    const event = await this.eventRepository.findOne({
+      where: { eventId },
+      relations: [
+        "venue",
+        "organizer",
+        "ticketTypes",
+        "category",
+        "emailSetting"
+      ],
+    });
+
+    if (!event) {
+      throw AppError.fromErrorCode(ErrorMap.EVENT_NOT_FOUND);
+    }
+
+    return res.status(200).json({
+      message: "Get event by id successfully",
+      data: event,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+}
 export default new EventController();
