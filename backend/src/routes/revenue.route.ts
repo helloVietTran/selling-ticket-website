@@ -4,6 +4,6 @@ import { auth } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.get('/revenue',auth, RevenueController.getMyRevenue);
+router.get('/',auth, RevenueController.getMyRevenue);
 
 export default router;
