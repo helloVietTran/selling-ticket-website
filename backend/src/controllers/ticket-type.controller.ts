@@ -3,8 +3,8 @@ import { TicketType } from '../models/TicketType.model';
 import { AppDataSource } from '../config/data-source';
 import { Ticket } from '../models/Ticket.model';
 import { ErrorMap } from '../config/ErrorMap';
-
-import { BaseResponse } from '../types/response.type';
+import { statsData } from '../types';
+import { BaseResponse, statsResponse } from '../types/response.type';
 import { SelectTicketInput } from '../validators/ticket.validate';
 import { Booking } from '../models/Booking.model';
 import { AppError } from '../config/exception';
@@ -95,12 +95,12 @@ class TicketTypeController {
     }
   };
 
-  statisticalTicketType = async (req: Request, res: Response<BaseResponse<any>>, next: NextFunction) => {
+  statisticalTicketType = async (req: Request, res: Response<statsResponse<any>>, next: NextFunction) => {
     try {
-      const ticketTypeId = req.body.ticketTypeId;
+      const eventId= parseInt(req.params.eventId, 10);
 
       const existedEvent = await this.ticketTypeRepo.findOne({
-        where: { ticketTypeId },
+        where: { event:{eventId }},
         relations: ['event']
       });
       if (!existedEvent) {
@@ -115,7 +115,7 @@ class TicketTypeController {
       });
 
       const percentage = totalTicket && totalSoldTicket ? (totalSoldTicket / totalTicket) * 100 : 0;
-      const statistical = {
+      const statistical:statsData = {
         ticketType: existedEvent.ticketTypeName,
         totalQuantity: existedEvent.totalQuantity,
         soldTicket: existedEvent.soldTicket,

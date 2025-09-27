@@ -2,9 +2,7 @@ import authRoute from './auth.route';
 import { config } from '../config/config';
 import { Application } from 'express';
 import eventRoutes from './event.route';
-
 import ticketTypeRoutes from './ticket-type.route';
-
 import ticketRoutes from './ticket.route';
 import userRoute from './user.route';
 import bookingRoute from './booking.route'
@@ -20,7 +18,6 @@ function route(app: Application) {
   app.use(`${urlPrefix}/user`, userRoute);
   app.use(`${urlPrefix}/booking`, bookingRoute);
   app.use(`${urlPrefix}/organizer`,organizerRoute)
-  
 }
 
 export default route;
