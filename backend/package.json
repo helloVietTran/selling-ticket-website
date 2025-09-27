@@ -7,7 +7,9 @@
     "dev": "nodemon",
     "start": "node dist/index.js",
     "build": "tsc",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "test": "jest --config jest.config.ts --runInBand",
+    "test:watch": "jest --config jest.config.ts --watch"
   },
   "keywords": [],
   "author": "",
