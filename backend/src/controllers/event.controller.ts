@@ -127,7 +127,7 @@ class EventController {
     try {
       const requester = res.locals.requester as Requester;
       const eventId = Number(req.params.eventId);
-      const organizerId = Number(req.params.organizerId); 
+      const organizerId = Number(req.params.organizerId);
 
       const userRepo = AppDataSource.getRepository(User);
       const eventRepo = AppDataSource.getRepository(Event);
@@ -161,7 +161,7 @@ class EventController {
       }
       // nếu đúng cho phép xóa
       await eventRepo.remove(event);
-      return res.json({
+      return res.status(200).json({
         message: 'Delete your event successfully'
       });
     } catch (error) {
@@ -235,7 +235,7 @@ class EventController {
   };
 
   getEventsByOrganizer = async (
-    req: Request<{ organizerId: string }, {}, {}, { status: EventStatus }>,
+    req: Request<{ organizerId: string }, {}, {}, { status?: EventStatus }>,
     res: Response<PaginateResponse<Event>>,
     next: NextFunction
   ) => {
@@ -285,36 +285,36 @@ class EventController {
     }
   };
 
-getEventById = async (
-  req: Request<{ eventId: string }>,
-  res: Response<BaseResponse<Event>>,
-  next: NextFunction
-) => {
-  try {
-    const eventId = Number(req.params.eventId);
+  getEventById = async (
+    req: Request<{ eventId: string }>,
+    res: Response<BaseResponse<Event>>,
+    next: NextFunction
+  ) => {
+    try {
+      const eventId = Number(req.params.eventId);
 
-    const event = await this.eventRepository.findOne({
-      where: { eventId },
-      relations: [
-        "venue",
-        "organizer",
-        "ticketTypes",
-        "category",
-        "emailSetting"
-      ],
-    });
+      const event = await this.eventRepository.findOne({
+        where: { eventId },
+        relations: [
+          "venue",
+          "organizer",
+          "ticketTypes",
+          "category",
+          "emailSetting"
+        ],
+      });
 
-    if (!event) {
-      throw AppError.fromErrorCode(ErrorMap.EVENT_NOT_FOUND);
+      if (!event) {
+        throw AppError.fromErrorCode(ErrorMap.EVENT_NOT_FOUND);
+      }
+
+      return res.status(200).json({
+        message: "Get event by id successfully",
+        data: event,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    return res.status(200).json({
-      message: "Get event by id successfully",
-      data: event,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  };
 }
 export default new EventController();
