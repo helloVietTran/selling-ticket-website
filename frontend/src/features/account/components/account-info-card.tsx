@@ -1,5 +1,5 @@
-import { useRef } from 'react';
-import { Camera, User, Check } from 'lucide-react';
+import { useEffect, useRef } from 'react';
+import { Camera, Check, Loader2, User } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -9,7 +9,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Label } from '@/components/ui/label';
-
 import {
   Form,
   FormField,
@@ -18,67 +17,106 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 
-interface AccountInfoData {
-  fullName?: string;
-  phoneCountry?: string;
-  phoneNumber?: string;
-  email?: string;
-  dob?: string;
-  gender?: string;
-  avatar?: string;
-}
-
-interface Props {
-  initialData?: AccountInfoData;
-}
+import type { UpdateUserPayload } from '@/types';
+import { useApi } from '@/api/hooks/useApi';
+import { getMyInfo, updateMyInfo } from '@/api/userApi';
 
 const formSchema = z.object({
-  fullName: z.string().min(1, 'Vui lòng nhập họ và tên'),
+  userName: z.string().min(1, 'Vui lòng nhập họ và tên'),
   phoneNumber: z.string().min(1, 'Vui lòng nhập số điện thoại'),
   email: z.string().email('Email không hợp lệ'),
   dob: z.string().optional(),
   avatarUrl: z.string().optional(),
-  avatarFile: z
-    .instanceof(File)
-    .nullable()
-    .optional(),
+  avatarFile: z.instanceof(File).nullable().optional(),
 });
 
-export default function AccountInfoCard({ initialData }: Props) {
-  const data: AccountInfoData = initialData || mockData;
-  const fileInputRef = useRef<HTMLInputElement | null>(null);
+type FormSchemaType = z.infer<typeof formSchema>;
 
-  const form = useForm<z.infer<typeof formSchema>>({
+export default function AccountInfoCard() {
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+  const {
+    data: userData,
+    exec: fetchMyInfo,
+    apiStatus: getStatus,
+  } = useApi(getMyInfo);
+
+
+  const {
+    exec: executeUpdate,
+    apiStatus: updateStatus,
+    error: updateError,
+  } = useApi(updateMyInfo);
+
+  const form = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      fullName: data.fullName || '',
-      phoneNumber: data.phoneNumber || '',
-      email: data.email || '',
-      dob: data.dob || '',
-      avatarUrl: data.avatar || '',
+      userName: '',
+      phoneNumber: '',
+      email: '',
+      dob: '',
+      avatarUrl: '',
       avatarFile: null,
     },
   });
 
+  useEffect(() => {
+    fetchMyInfo();
+  }, []);
+
+  useEffect(() => {
+    if (userData?.data) {
+      const user = userData.data;
+
+      form.reset({
+        userName: user.userName || '',
+        phoneNumber: user.phoneNumber || '',
+        email: user.email || '',
+        dob: user.dob ? new Date(user.dob).toISOString().split('T')[0] : '',
+        avatarUrl: user.avatar || '',
+      });
+    }
+  }, [userData, form.reset]);
+
   function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
+
     const url = URL.createObjectURL(file);
-    form.setValue('avatarUrl', url);
-    form.setValue('avatarFile', file);
+    form.setValue('avatarUrl', url, { shouldValidate: true });
+    form.setValue('avatarFile', file, { shouldValidate: true });
   }
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
-    const payload = {
-      fullName: values.fullName,
-      phone: `+84 ${values.phoneNumber}`,
+  async function onSubmit(values: FormSchemaType) {
+
+    const payload: UpdateUserPayload = {
+      userName: values.userName,
+      phoneNumber: values.phoneNumber,
       email: values.email,
-      dob: values.dob,
+      dob: values.dob || '',
       avatarFile: values.avatarFile,
     };
 
     console.log('Submit payload:', payload);
-    alert('Cập nhật thông tin thành công!');
+
+    const result = await executeUpdate(payload);
+
+    if (result.data) {
+      alert('Cập nhật thông tin thành công!');
+
+      fetchMyInfo();
+    } else {
+alert('Cập nhật thất bại. Vui lòng thử lại.');
+      console.error('Update failed:', result.error || updateError);
+    }
+  }
+
+  if (getStatus === 'PENDING') {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+        <span>Đang tải dữ liệu...</span>
+      </div>
+    );
   }
 
   return (
@@ -91,14 +129,16 @@ export default function AccountInfoCard({ initialData }: Props) {
                 <div className="relative">
                   <Avatar className="size-20">
                     {form.watch('avatarUrl') ? (
-                      <AvatarImage src={form.watch('avatarUrl')} alt="avatar" />
+                      <AvatarImage
+                        src={form.watch('avatarUrl')}
+                        alt="avatar"
+                      />
                     ) : (
                       <AvatarFallback>
                         <User />
                       </AvatarFallback>
                     )}
                   </Avatar>
-
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
@@ -106,7 +146,6 @@ export default function AccountInfoCard({ initialData }: Props) {
                     aria-label="Upload avatar">
                     <Camera size={16} />
                   </button>
-
                   <input
                     ref={fileInputRef}
                     type="file"
@@ -119,7 +158,7 @@ export default function AccountInfoCard({ initialData }: Props) {
 
               <FormField
                 control={form.control}
-                name="fullName"
+                name="userName"
                 render={({ field }) => (
                   <FormItem>
                     <Label className="text-sm font-bold mb-0">Họ và tên</Label>
@@ -147,7 +186,7 @@ export default function AccountInfoCard({ initialData }: Props) {
                       <Input
                         {...field}
                         placeholder="Nhập số điện thoại"
-                        className="field-input"
+className="field-input"
                       />
                     </FormControl>
                     <FormMessage />
@@ -192,10 +231,18 @@ export default function AccountInfoCard({ initialData }: Props) {
 
               <Button
                 type="submit"
-                className="w-full bg-green-600 hover:bg-green-500 mt-4 py-5">
-                <span className="flex items-center justify-center gap-2">
-                  <Check size={16} /> Hoàn thành
-                </span>
+                className="w-full bg-green-600 hover:bg-green-500 mt-4 py-5"
+                disabled={updateStatus === 'PENDING'}>
+                {updateStatus === 'PENDING' ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Đang cập nhật...
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <Check size={16} /> Hoàn thành
+                  </span>
+                )}
               </Button>
             </form>
           </Form>
@@ -204,13 +251,3 @@ export default function AccountInfoCard({ initialData }: Props) {
     </div>
   );
 }
-
-export const mockData: AccountInfoData = {
-  fullName: 'Nguyễn Văn A',
-  phoneCountry: '+84',
-  phoneNumber: '912345678',
-  email: 'nguyenvana@example.com',
-  dob: '1990-05-21',
-  gender: 'male',
-  avatar: 'https://i.pravatar.cc/150?img=12',
-};
