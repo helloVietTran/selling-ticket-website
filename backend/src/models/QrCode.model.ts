@@ -6,7 +6,7 @@ export class QrCode {
   @PrimaryColumn()
   ticketId!: number;
 
-  @OneToOne(() => Ticket, (t) => t.qrCode, )
+  @OneToOne(() => Ticket, (t) => t.qrCode)
   ticket!: Ticket;
 
   @Column({ type: 'timestamp', nullable: true })

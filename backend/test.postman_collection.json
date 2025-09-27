@@ -1,0 +1,191 @@
+{
+  "info": {
+    "_postman_id": "a976b272-a7ce-4234-8b37-18555491eff8",
+    "name": "selling-ticket-website",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47997928",
+    "_collection_link": "https://havanthe-832197.postman.co/workspace/hathe's-Workspace~4dbefc59-59b0-4543-8523-0c7c8f7796f6/collection/47997928-a976b272-a7ce-4234-8b37-18555491eff8?action=share&source=collection_link&creator=47997928"
+  },
+  "item": [
+    {
+      "name": "register",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"nam.nguyen@example.com\",\r\n  \"userName\": \"nguyenvannam\",\r\n  \"password\": \"12345678\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseURL}}/auth/register",
+          "host": ["{{baseURL}}"],
+          "path": ["auth", "register"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "login",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"email\": \"nam.nguyen@example.com\",\r\n  \"password\": \"12345678\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseURL}}/auth/login",
+          "host": ["{{baseURL}}"],
+          "path": ["auth", "login"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "create event",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZXMiOiJBVFRFTkRFRSIsImlhdCI6MTc1ODAzMTEzMSwiZXhwIjoxNzU4MDMyOTMxfQ.850OQt52IpGEggFQjH8S6lcAIM9ezOOHVzqszt7fz54",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"organizer\": {\r\n    \"organizerName\": \"Ban Tổ Chức Đại Nhạc Hội\",\r\n    \"organizerInfo\": \"Chuyên tổ chức sự kiện âm nhạc quy mô lớn\"\r\n  },\r\n  \"venue\": {\r\n    \"province\": \"Hà Nội\",\r\n    \"district\": \"Quận Hoàn Kiếm\",\r\n    \"ward\": \"Phường Tràng Tiền\",\r\n    \"street\": \"Số 1 Tràng Tiền\"\r\n  },\r\n  \"event\": {\r\n    \"title\": \"Đại Nhạc Hội 2025\",\r\n    \"category\": \"Âm nhạc\",\r\n    \"eventInfo\": \"Sự kiện âm nhạc lớn nhất trong năm với sự góp mặt của nhiều nghệ sĩ nổi tiếng\",\r\n    \"startTime\": \"2025-12-01T18:00:00.000Z\",\r\n    \"endTime\": \"2025-12-01T23:00:00.000Z\"\r\n  },\r\n  \"tickeTypes\": [\r\n    {\r\n      \"name\": \"Vé Thường\",\r\n      \"price\": \"300000\",\r\n      \"quantity\": \"500\",\r\n      \"description\": \"Ghế ngồi khu vực thường\",\r\n      \"maxPerUser\": \"5\",\r\n      \"minPerUser\": \"1\",\r\n      \"startSellDate\": \"2025-11-01T00:00:00.000Z\",\r\n      \"endSellDate\": \"2025-11-30T23:59:59.000Z\"\r\n    },\r\n    {\r\n      \"name\": \"Vé VIP\",\r\n      \"price\": \"1000000\",\r\n      \"quantity\": \"100\",\r\n      \"description\": \"Ghế ngồi khu vực VIP gần sân khấu\",\r\n      \"maxPerUser\": \"2\",\r\n      \"minPerUser\": \"1\",\r\n      \"startSellDate\": \"2025-11-01T00:00:00.000Z\",\r\n      \"endSellDate\": \"2025-11-30T23:59:59.000Z\"\r\n    }\r\n  ],\r\n  \"setting\": {\r\n    \"messageToReceiver\": \"Vui lòng đến sớm trước 30 phút để làm thủ tục vào cổng.\"\r\n  },\r\n  \"paymentInfo\": {\r\n    \"accountHolder\": \"Nguyen Van A\",\r\n    \"accountNumber\": \"123456789\",\r\n    \"bankName\": \"Vietcombank\",\r\n    \"branch\": \"Chi nhánh Hà Nội\"\r\n  }\r\n}\r\n",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{baseURL}}/events",
+          "host": ["{{baseURL}}"],
+          "path": ["events"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "delete event",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZXMiOiJVU0VSIiwiaWF0IjoxNzU4MzM4MDA5LCJleHAiOjE3NTgzMzk4MDl9.qwQyWIkA1fZ9Wns2f7aAcbK3f-ovg9JSH3xEwnK7wmg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"organizer\": {\r\n    \"organizerName\": \"Ban Tổ Chức Đại Nhạc Hội\",\r\n    \"organizerInfo\": \"Chuyên tổ chức sự kiện âm nhạc quy mô lớn\"\r\n  },\r\n  \"venue\": {\r\n    \"province\": \"Hà Nội\",\r\n    \"district\": \"Quận Hoàn Kiếm\",\r\n    \"ward\": \"Phường Tràng Tiền\",\r\n    \"street\": \"Số 1 Tràng Tiền\"\r\n  },\r\n  \"event\": {\r\n    \"title\": \"Đại Nhạc Hội 2025\",\r\n    \"category\": \"Âm nhạc\",\r\n    \"eventInfo\": \"Sự kiện âm nhạc lớn nhất trong năm với sự góp mặt của nhiều nghệ sĩ nổi tiếng\",\r\n    \"startTime\": \"2025-12-01T18:00:00.000Z\",\r\n    \"endTime\": \"2025-12-01T23:00:00.000Z\"\r\n  },\r\n  \"tickeTypes\": [\r\n    {\r\n      \"name\": \"Vé Thường\",\r\n      \"price\": \"300000\",\r\n      \"quantity\": \"500\",\r\n      \"description\": \"Ghế ngồi khu vực thường\",\r\n      \"maxPerUser\": \"5\",\r\n      \"minPerUser\": \"1\",\r\n      \"startSellDate\": \"2025-11-01T00:00:00.000Z\",\r\n      \"endSellDate\": \"2025-11-30T23:59:59.000Z\"\r\n    },\r\n    {\r\n      \"name\": \"Vé VIP\",\r\n      \"price\": \"1000000\",\r\n      \"quantity\": \"100\",\r\n      \"description\": \"Ghế ngồi khu vực VIP gần sân khấu\",\r\n      \"maxPerUser\": \"2\",\r\n      \"minPerUser\": \"1\",\r\n      \"startSellDate\": \"2025-11-01T00:00:00.000Z\",\r\n      \"endSellDate\": \"2025-11-30T23:59:59.000Z\"\r\n    }\r\n  ],\r\n  \"setting\": {\r\n    \"messageToReceiver\": \"Vui lòng đến sớm trước 30 phút để làm thủ tục vào cổng.\"\r\n  },\r\n  \"paymentInfo\": {\r\n    \"accountHolder\": \"Nguyen Van A\",\r\n    \"accountNumber\": \"123456789\",\r\n    \"bankName\": \"Vietcombank\",\r\n    \"branch\": \"Chi nhánh Hà Nội\"\r\n  }\r\n}\r\n"
+        },
+        "url": {
+          "raw": "{{baseURL}}/events/1/organizer/1",
+          "host": ["{{baseURL}}"],
+          "path": ["events", "1", "organizer", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "filter event",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sZXMiOiJVU0VSIiwiaWF0IjoxNzU4MzM4MDA5LCJleHAiOjE3NTgzMzk4MDl9.qwQyWIkA1fZ9Wns2f7aAcbK3f-ovg9JSH3xEwnK7wmg",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n  \"organizer\": {\r\n    \"organizerName\": \"Ban Tổ Chức Đại Nhạc Hội\",\r\n    \"organizerInfo\": \"Chuyên tổ chức sự kiện âm nhạc quy mô lớn\"\r\n  },\r\n  \"venue\": {\r\n    \"province\": \"Hà Nội\",\r\n    \"district\": \"Quận Hoàn Kiếm\",\r\n    \"ward\": \"Phường Tràng Tiền\",\r\n    \"street\": \"Số 1 Tràng Tiền\"\r\n  },\r\n  \"event\": {\r\n    \"title\": \"Đại Nhạc Hội 2025\",\r\n    \"category\": \"Âm nhạc\",\r\n    \"eventInfo\": \"Sự kiện âm nhạc lớn nhất trong năm với sự góp mặt của nhiều nghệ sĩ nổi tiếng\",\r\n    \"startTime\": \"2025-12-01T18:00:00.000Z\",\r\n    \"endTime\": \"2025-12-01T23:00:00.000Z\"\r\n  },\r\n  \"tickeTypes\": [\r\n    {\r\n      \"name\": \"Vé Thường\",\r\n      \"price\": \"300000\",\r\n      \"quantity\": \"500\",\r\n      \"description\": \"Ghế ngồi khu vực thường\",\r\n      \"maxPerUser\": \"5\",\r\n      \"minPerUser\": \"1\",\r\n      \"startSellDate\": \"2025-11-01T00:00:00.000Z\",\r\n      \"endSellDate\": \"2025-11-30T23:59:59.000Z\"\r\n    },\r\n    {\r\n      \"name\": \"Vé VIP\",\r\n      \"price\": \"1000000\",\r\n      \"quantity\": \"100\",\r\n      \"description\": \"Ghế ngồi khu vực VIP gần sân khấu\",\r\n      \"maxPerUser\": \"2\",\r\n      \"minPerUser\": \"1\",\r\n      \"startSellDate\": \"2025-11-01T00:00:00.000Z\",\r\n      \"endSellDate\": \"2025-11-30T23:59:59.000Z\"\r\n    }\r\n  ],\r\n  \"setting\": {\r\n    \"messageToReceiver\": \"Vui lòng đến sớm trước 30 phút để làm thủ tục vào cổng.\"\r\n  },\r\n  \"paymentInfo\": {\r\n    \"accountHolder\": \"Nguyen Van A\",\r\n    \"accountNumber\": \"123456789\",\r\n    \"bankName\": \"Vietcombank\",\r\n    \"branch\": \"Chi nhánh Hà Nội\"\r\n  }\r\n}\r\n"
+        },
+        "url": {
+          "raw": "{{baseURL}}/events/filter?page=2&limit=1",
+          "host": ["{{baseURL}}"],
+          "path": ["events", "filter"],
+          "query": [
+            {
+              "key": "page",
+              "value": "2"
+            },
+            {
+              "key": "limit",
+              "value": "1"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getUserById",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseURL}}/user/1",
+          "host": ["{{baseURL}}"],
+          "path": ["user", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "getMyInfo",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "updateMyInfo",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "getEventsByOrganizer",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}

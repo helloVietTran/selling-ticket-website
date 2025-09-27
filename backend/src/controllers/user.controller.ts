@@ -50,11 +50,10 @@ class UserController {
       const { passwordHash, ...userWithoutPassword } = user;
 
       return res.status(200).json({
-        message: "Get my info successfully",
-        data: userWithoutPassword,
+        message: 'Get my info successfully',
+        data: userWithoutPassword
       });
-
-    } catch (error) { }
+    } catch (error) {}
   };
 
   updateMyInfo = async (
@@ -73,12 +72,12 @@ class UserController {
 
       if (!user) {
         throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
-      };
+      }
 
       if (email && email !== user.email) {
         const existedUser = await userRepo.findOne({ where: { email } });
         if (existedUser) {
-          throw AppError.fromErrorCode(ErrorMap.EMAIL_ALREADY_EXISTS)
+          throw AppError.fromErrorCode(ErrorMap.EMAIL_ALREADY_EXISTS);
         }
         user.email = email;
       }
