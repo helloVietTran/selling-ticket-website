@@ -28,6 +28,7 @@ export type UpdateUserPayload = {
   phoneNumber: string;
   userName: string;
   dob: string;
+  avatarFile?: File | null;
 };
 
 export type SelectTicketTypePayload = {
@@ -36,6 +37,8 @@ export type SelectTicketTypePayload = {
     quantity: number;
   }[];
 };
+
+
 
 // dùng chung
 export interface BaseResponse<T> {
@@ -100,9 +103,11 @@ export type TokenResponse = {
 export interface User {
   id: number;
   email: string;
-  UserName: string;
+  userName: string;
   phoneNumber: string;
   roles: string;
+  dob: string
+  avatar: string;
 }
 
 export interface Booking {
@@ -110,4 +115,12 @@ export interface Booking {
   status: string;
   createdAt?: Date;
   expiresAt?: Date;
+}
+
+export interface StatsTicketType {
+  type: string;       
+  price: number;    
+  checkedIn: number;  
+  sold: number;       
+  total: number;      
 }

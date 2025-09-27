@@ -1,5 +1,5 @@
 import api from "./api";
-import type { SelectTicketTypePayload }  from '@/types';
+import type { BaseResponse, SelectTicketTypePayload, StatsTicketType }  from '@/types';
 
 
 async function getTicketTypesByEventId(eventId: string) {
@@ -13,7 +13,14 @@ async function selectTicket(payload: SelectTicketTypePayload){
     return res.data;
 }
 
+async function statsTicketType(eventId: string | number): Promise<BaseResponse<StatsTicketType[]>> {
+  const res = await api.get(`/ticket-types/stats/events/${eventId}`)
+  
+  return res.data;
+}
+
 export {
    getTicketTypesByEventId,
-   selectTicket
+   selectTicket,
+   statsTicketType
 }
