@@ -136,7 +136,7 @@ class EventController {
 
       const user = await userRepo.findOne({
         where: { id: Number(requester.id) },
-        relations: ["organizer"],
+        relations: ['organizer']
       });
 
       if (!user) {
@@ -145,13 +145,12 @@ class EventController {
 
       // nếu không có  organizer hoặc organizerId không khớp sẽ Lỗi
       if (!user.organizer || user.organizer.organizerId !== organizerId) {
-        throw AppError.fromErrorCode(ErrorMap.DELETE_EVENT_FORBIDDEN)
+        throw AppError.fromErrorCode(ErrorMap.DELETE_EVENT_FORBIDDEN);
       }
-
 
       const event = await eventRepo.findOne({
         where: { eventId },
-        relations: ["organizer"],
+        relations: ['organizer']
       });
       if (!event) {
         throw AppError.fromErrorCode(ErrorMap.EVENT_NOT_FOUND);
@@ -170,10 +169,13 @@ class EventController {
     }
   };
 
-
   // lọc theo nhiều tiêu chí
   // sắp xếp theo startTime mới nhất
-  filterEvents = async (req: Request<any, any, any, EventQueries>, res: Response<PaginateResponse<Event>>, next: NextFunction) => {
+  filterEvents = async (
+    req: Request<any, any, any, EventQueries>,
+    res: Response<PaginateResponse<Event>>,
+    next: NextFunction
+  ) => {
     try {
       const { startTime, endTime, category, district, keyword, page, limit, status } = req.query;
 
@@ -181,11 +183,11 @@ class EventController {
       const pageSize = limit ? parseInt(limit as string, 10) : 10;
 
       const query = this.eventRepository
-        .createQueryBuilder("event")
-        .leftJoinAndSelect("event.venue", "venue")
-        .leftJoinAndSelect("event.organizer", "organizer")
-        .leftJoinAndSelect("event.ticketTypes", "ticketTypes")
-        .leftJoinAndSelect("event.category", "category");
+        .createQueryBuilder('event')
+        .leftJoinAndSelect('event.venue', 'venue')
+        .leftJoinAndSelect('event.organizer', 'organizer')
+        .leftJoinAndSelect('event.ticketTypes', 'ticketTypes')
+        .leftJoinAndSelect('event.category', 'category');
 
       // Lọc theo khoảng thời gian
       if (startTime && endTime) {
@@ -199,27 +201,23 @@ class EventController {
       }
       // Lọc theo category
       if (category) {
-        query.andWhere("category.categoryId = :categoryId", { categoryId: Number(category) });
+        query.andWhere('category.categoryId = :categoryId', { categoryId: Number(category) });
       }
 
       if (district) {
-        query.andWhere("venue.district LIKE :district", { district: `%${district}%` });
+        query.andWhere('venue.district LIKE :district', { district: `%${district}%` });
       }
 
       if (keyword) {
-        query.andWhere(
-          '(event.title LIKE :keyword OR event.eventInfo LIKE :keyword)',
-          { keyword: `%${keyword}%` }
-        );
+        query.andWhere('(event.title LIKE :keyword OR event.eventInfo LIKE :keyword)', { keyword: `%${keyword}%` });
       }
       if (status) {
-        query.andWhere("event.status = :status", { status });
+        query.andWhere('event.status = :status', { status });
       }
-      query.orderBy("event.startTime", "DESC");
+      query.orderBy('event.startTime', 'DESC');
 
       query.skip((pageNumber - 1) * pageSize).take(pageSize);
       const [events, totalItems] = await query.getManyAndCount();
-
 
       return res.status(200).json({
         message: 'Get event successfully',
@@ -236,7 +234,11 @@ class EventController {
     }
   };
 
-  getEventsByOrganizer = async (req: Request<{ organizerId: string }, {}, {}, { status: EventStatus }>, res: Response<PaginateResponse<Event>>, next: NextFunction) => {
+  getEventsByOrganizer = async (
+    req: Request<{ organizerId: string }, {}, {}, { status: EventStatus }>,
+    res: Response<PaginateResponse<Event>>,
+    next: NextFunction
+  ) => {
     try {
       const requester = res.locals.requester as Requester;
       const { organizerId } = req.params;
@@ -247,13 +249,12 @@ class EventController {
 
       const user = await userRepo.findOne({
         where: { id: Number(requester.id) },
-        relations: ["organizer"],
+        relations: ['organizer']
       });
 
       if (!user || !user.organizer) {
         throw AppError.fromErrorCode(ErrorMap.VIEW_EVENTS_FORBIDDEN);
       }
-
 
       // so sánh với organizerId
       if (user.organizer.organizerId !== Number(organizerId)) {
@@ -264,27 +265,26 @@ class EventController {
       const events = await eventRepo.find({
         where: {
           organizer: { organizerId: user.organizer.organizerId },
-          ...(status ? { status } : {}),
+          ...(status ? { status } : {})
         },
-        relations: ["venue", "ticketTypes", "category"],
-        order: { startTime: "DESC" },
+        relations: ['venue', 'ticketTypes', 'category'],
+        order: { startTime: 'DESC' }
       });
       return res.status(200).json({
-        message: "Get events by organizer successfully",
+        message: 'Get events by organizer successfully',
         data: events,
         pagination: {
           page: 1,
           limit: events.length,
           totalItems: events.length,
-          totalPages: 1,
-        },
+          totalPages: 1
+        }
       });
     } catch (error) {
       next(error);
     }
-  }
+  };
 
-  
 getEventById = async (
   req: Request<{ eventId: string }>,
   res: Response<BaseResponse<Event>>,

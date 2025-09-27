@@ -2,9 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import { TicketType } from '../models/TicketType.model';
 import { AppDataSource } from '../config/data-source';
 import { Ticket } from '../models/Ticket.model';
-import ApiResponse from '../utils/ApiResponse';
 import { ErrorMap } from '../config/ErrorMap';
-import { IErrorCode } from '../config/ErrorMap';
+
 import { BaseResponse } from '../types/response.type';
 import { SelectTicketInput } from '../validators/ticket.validate';
 import { Booking } from '../models/Booking.model';
@@ -93,6 +92,43 @@ class TicketTypeController {
       next(error);
     } finally {
       await queryRunner.release();
+    }
+  };
+
+  statisticalTicketType = async (req: Request, res: Response<BaseResponse<any>>, next: NextFunction) => {
+    try {
+      const ticketTypeId = req.body.ticketTypeId;
+
+      const existedEvent = await this.ticketTypeRepo.findOne({
+        where: { ticketTypeId },
+        relations: ['event']
+      });
+      if (!existedEvent) {
+        throw AppError.fromErrorCode(ErrorMap.TICKET_TYPE_NOT_FOUND);
+      }
+      const totalTicket = await this.ticketTypeRepo.sum('totalQuantity', {
+        event: { eventId: existedEvent.event.eventId }
+      });
+
+      const totalSoldTicket = await this.ticketTypeRepo.sum('soldTicket', {
+        event: { eventId: existedEvent.event.eventId }
+      });
+
+      const percentage = totalTicket && totalSoldTicket ? (totalSoldTicket / totalTicket) * 100 : 0;
+      const statistical = {
+        ticketType: existedEvent.ticketTypeName,
+        totalQuantity: existedEvent.totalQuantity,
+        soldTicket: existedEvent.soldTicket,
+        totalTicket: totalTicket,
+        totalsoldTicket: totalSoldTicket,
+        percentage: percentage.toFixed(2)
+      };
+      return res.json({
+        message: 'statistical featch successfully',
+        data: statistical
+      });
+    } catch (error) {
+      next(error);
     }
   };
 }

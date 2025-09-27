@@ -27,22 +27,22 @@ export class Event {
   @Column({ type: 'text' })
   eventInfo!: string;
 
-  @OneToOne(() => Venue, (v) => v.event, { nullable: false, cascade: true,onDelete: 'CASCADE' })
+  @OneToOne(() => Venue, (v) => v.event, { nullable: false, cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'venueId', referencedColumnName: 'venueId' })
   venue!: Venue;
 
-  @ManyToOne(() => Organizer, (o) => o.events, { nullable: false, })
+  @ManyToOne(() => Organizer, (o) => o.events, { nullable: false })
   @JoinColumn({ name: 'organizerId' })
   organizer!: Organizer;
 
-  @OneToMany(() => TicketType, (ticket) => ticket.event, { cascade: true})
+  @OneToMany(() => TicketType, (ticket) => ticket.event, { cascade: true })
   ticketTypes!: TicketType[];
 
   @ManyToOne(() => Category, (c) => c.events, { nullable: false })
   @JoinColumn({ name: 'categoryId', referencedColumnName: 'categoryId' })
   category!: Category;
 
-  @OneToOne(() => EmailSetting, { nullable: true, cascade: true,onDelete: 'CASCADE' })
+  @OneToOne(() => EmailSetting, { nullable: true, cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'emailSettingId', referencedColumnName: 'emailSettingId' })
   emailSetting?: EmailSetting | null;
 

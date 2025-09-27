@@ -1,8 +1,8 @@
 import api from "./api";
-import type { UpdateUserPayload } from "./types/request.type";
-import type { BaseResponse, UserResponse } from "./types/response.type";
+import type { UpdateUserPayload } from '@/types';
+import type { BaseResponse, User }  from '@/types';
 
-async function updateMyInfo(payload: UpdateUserPayload): Promise<BaseResponse<UserResponse>> {
+async function updateMyInfo(payload: UpdateUserPayload): Promise<BaseResponse<User>> {
   const res = await api.put("/users", payload);
 
   return res.data;

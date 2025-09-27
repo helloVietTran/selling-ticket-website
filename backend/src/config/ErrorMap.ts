@@ -33,6 +33,7 @@ export const ErrorMap = {
   } as IErrorCode,
   INVALID_REQUEST: { code: 'INVALID_REQUEST', statusCode: 400, message: 'Invalid request' } as IErrorCode,
 
+
   DELETE_EVENT_FORBIDDEN:{code: "DELETE_EVENT_FORBIDDEN",message: "You are not allowed to delete this event",statusCode: 403,}as IErrorCode,
   EVENT_NOT_FOUND: { code: "EVENT_NOT_FOUND", message: "event not found", statusCode: 404 } as IErrorCode,
   ORGANIZER_MISMATCH: {code: "ORGANIZER_MISMATCH",message: "Organizer mismatch. Cannot delete this event",statusCode: 403,} as IErrorCode,
@@ -52,5 +53,4 @@ export const ErrorMap = {
   NOT_ENOUGH_STOCK: { code: 'NOT_ENOUGH_STOCK', statusCode: 400, message: 'not enough stock for ticket' } as IErrorCode,
   QUANTITY_OVER_LIMIT: { code: 'QUANTITY_OVER_LIMIT', statusCode: 400, message: 'Quantity over limit' } as IErrorCode,
   BOOKING_NOT_FOUND: { code: 'BOOKING_NOT_FOUND', statusCode: 400, message: 'booking not found' } as IErrorCode
-
 };
