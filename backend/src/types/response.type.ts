@@ -6,6 +6,10 @@ export interface BaseResponse<T> {
   data?: T;
   accessToken?: string;
 }
+export interface statsResponse<T>{
+  message:String;
+  data:T
+}
 
 export interface PaginateResponse<T> extends BaseResponse<T[]> {
   pagination: {
