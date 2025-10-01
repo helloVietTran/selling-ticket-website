@@ -3,8 +3,8 @@ import { TicketType } from '../models/TicketType.model';
 import { AppDataSource } from '../config/data-source';
 import { Ticket } from '../models/Ticket.model';
 import { ErrorMap } from '../config/ErrorMap';
-
-import { BaseResponse } from '../types/response.type';
+import { statsData } from '../types';
+import { BaseResponse, statsResponse } from '../types/response.type';
 import { SelectTicketInput } from '../validators/ticket.validate';
 import { Booking } from '../models/Booking.model';
 import { AppError } from '../config/exception';
@@ -41,7 +41,7 @@ class TicketTypeController {
       const { ticketTypes } = req.body;
 
       if (!ticketTypes || ticketTypes.length === 0) {
-        throw AppError.fromErrorCode(ErrorMap.TICKET_TYPE_NOT_FOUND);
+        throw AppError.fromErrorCode(ErrorMap.INVALID_REQUEST);
       }
       if (!userId) return 0;
       const user = await queryRunner.manager.findOneBy(User, { id: Number(userId) });
@@ -83,7 +83,7 @@ class TicketTypeController {
       savedBooking.bookingItems.forEach((bi) => delete (bi as any).booking);
 
       await queryRunner.commitTransaction();
-      res.status(201).json({
+      return res.status(201).json({
         message: 'Booking created successfully. Please proceed to payment.',
         data: savedBooking
       });
@@ -95,12 +95,12 @@ class TicketTypeController {
     }
   };
 
-  statisticalTicketType = async (req: Request, res: Response<BaseResponse<any>>, next: NextFunction) => {
+  statisticalTicketType = async (req: Request, res: Response<statsResponse<any>>, next: NextFunction) => {
     try {
-      const ticketTypeId = req.body.ticketTypeId;
+      const eventId= parseInt(req.params.eventId, 10);
 
       const existedEvent = await this.ticketTypeRepo.findOne({
-        where: { ticketTypeId },
+        where: { event:{eventId }},
         relations: ['event']
       });
       if (!existedEvent) {
@@ -115,7 +115,7 @@ class TicketTypeController {
       });
 
       const percentage = totalTicket && totalSoldTicket ? (totalSoldTicket / totalTicket) * 100 : 0;
-      const statistical = {
+      const statistical:statsData = {
         ticketType: existedEvent.ticketTypeName,
         totalQuantity: existedEvent.totalQuantity,
         soldTicket: existedEvent.soldTicket,
@@ -123,7 +123,7 @@ class TicketTypeController {
         totalsoldTicket: totalSoldTicket,
         percentage: percentage.toFixed(2)
       };
-      return res.json({
+      return res.status(201).json({
         message: 'statistical featch successfully',
         data: statistical
       });

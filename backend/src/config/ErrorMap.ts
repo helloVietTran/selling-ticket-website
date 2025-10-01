@@ -6,6 +6,7 @@ export interface IErrorCode {
 
 export const ErrorMap = {
   USER_NOT_FOUND: { code: 'USER_NOT_FOUND', statusCode: 404, message: 'Not found user' } as IErrorCode,
+  ORGANIZER_NOT_FOUND: { code: 'ORGANIZER_NOT_FOUND', statusCode: 404, message: 'Not found organizer' } as IErrorCode,
   USER_ALREADY_EXISTS: { code: 'USER_ALREADY_EXISTS', statusCode: 400, message: 'User already exists' } as IErrorCode,
   EVENT_NOT_EXISTS: { code: ' EVENT_NOT_EXISTS', statusCode: 400, message: 'event not exist' } as IErrorCode,
   PASSWORD_INCORRECT: { code: 'PASSWORD_INCORRECT', statusCode: 400, message: 'password incorrect' } as IErrorCode,

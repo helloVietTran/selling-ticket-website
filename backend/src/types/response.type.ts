@@ -6,6 +6,10 @@ export interface BaseResponse<T> {
   data?: T;
   accessToken?: string;
 }
+export interface statsResponse<T> {
+  message: String;
+  data: T
+}
 
 export interface PaginateResponse<T> extends BaseResponse<T[]> {
   pagination: {
@@ -25,6 +29,8 @@ export interface UserOutput {
 }
 
 export interface RevenueResponse {
-  revenueLastWeek: number;
-  revenueLastMonth: number;
+  weeklyRevenue: Record<string, number>;
+  totalWeeklyRevenue: number;
+  monthlyRevenue: Record<string, number>;
+  totalMonthlyRevenue: number;
 }
