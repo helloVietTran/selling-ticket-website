@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import {
   Table,
   TableBody,
@@ -7,21 +8,57 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Progress } from '@/components/ui/progress';
+import { Loader2, AlertCircle } from 'lucide-react';
 
-type TicketDetail = {
-  type: string;
-  price: number;
-  checkedIn: number;
-  sold: number;
-};
-
-const fakeData: TicketDetail[] = [
-  { type: '1234', price: 0, checkedIn: 0, sold: 0 },
-  { type: 'VIP', price: 500000, checkedIn: 20, sold: 100 },
-  { type: 'Standard', price: 200000, checkedIn: 50, sold: 200 },
-];
+import type { StatsTicketType } from '@/types';
+import { useApi } from '@/api/hooks/useApi';
+import { statsTicketType } from '@/api/ticketTypeApi';
+import { useParams } from 'react-router-dom';
 
 const CheckinTable = () => {
+
+  const { eventId } = useParams<{ eventId: string }>();
+  const {
+    data: statsData,
+    apiStatus,
+    exec: fetchStats,
+  } = useApi(statsTicketType);
+
+  useEffect(() => {
+    if (eventId) {
+      fetchStats(eventId);
+    }
+  }, [eventId, fetchStats]);
+
+  if (apiStatus === 'PENDING') {
+    return (
+      <div className="flex justify-center items-center h-48 bg-[#282629] border border-[#1f1d1f] rounded-lg text-white">
+        <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+        <span>Đang tải thống kê...</span>
+      </div>
+    );
+  }
+
+  if (apiStatus === 'ERROR') {
+    return (
+      <div className="flex flex-col justify-center items-center h-48 bg-[#282629] border border-[#1f1d1f] rounded-lg text-red-400">
+        <AlertCircle className="mr-2 h-6 w-6" />
+        <span>Không thể tải dữ liệu. Vui lòng thử lại.</span>
+      </div>
+    );
+  }
+
+  if (!statsData?.data || statsData.data.length === 0) {
+    return (
+      <div className="flex justify-center items-center h-48 bg-[#282629] border border-[#1f1d1f] rounded-lg text-white">
+        <span>Chưa có dữ liệu thống kê check-in.</span>
+      </div>
+    );
+  }
+
+
+  const tickets: StatsTicketType[] = statsData.data;
+
   return (
     <div className="bg-[#282629] border border-[#1f1d1f] rounded-lg overflow-hidden text-white">
       <Table>
@@ -36,7 +73,8 @@ const CheckinTable = () => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {fakeData.map((ticket, index) => {
+
+          {tickets.map((ticket) => {
             const percent =
               ticket.sold > 0
                 ? Math.round((ticket.checkedIn / ticket.sold) * 100)
@@ -44,7 +82,7 @@ const CheckinTable = () => {
 
             return (
               <TableRow
-                key={index}
+                key={ticket.type}
                 className="bg-[#2c2f35] border-b border-[#1f1d1f] hover:bg-[#383c44]">
                 <TableCell className="px-4 py-2">{ticket.type}</TableCell>
                 <TableCell className="px-4 py-2">
