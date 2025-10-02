@@ -2,13 +2,12 @@ import authRoute from './auth.route';
 import { config } from '../config/config';
 import { Application } from 'express';
 import eventRoutes from './event.route';
-
 import ticketTypeRoutes from './ticket-type.route';
-
 import ticketRoutes from './ticket.route';
 import userRoute from './user.route';
-
 import bookingRoute from './booking.route'
+import organizerRoute from './organizer.route'
+import uploadRoute from './upload.route'
 import revenueRoute from './revenue.route';
 function route(app: Application) {
   const urlPrefix = config.api_prefix + config.api_version;
@@ -20,6 +19,9 @@ function route(app: Application) {
   app.use(`${urlPrefix}/user`, userRoute);
   app.use(`${urlPrefix}/booking`, bookingRoute);
   app.use(`${urlPrefix}/revenue`, revenueRoute);
+  app.use(`${urlPrefix}/organizer`,organizerRoute);
+  app.use(`${urlPrefix}/upload`,uploadRoute);
+
 
 }
 

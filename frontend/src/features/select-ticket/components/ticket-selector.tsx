@@ -1,6 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+import { getTicketTypesByEventId } from '@/api/ticketTypeApi';
+import { useApi } from '@/api/hooks/useApi';
 import TicketItem from './ticket-item';
 import TicketSummary from './ticket-summary';
+import type { TicketType } from '@/types';
 
 const MOCK_TICKETS = [
   { id: 'standard', name: 'Vé Thường (Workshop Nước Hoa Lăn)', price: 310000 },
@@ -15,34 +20,79 @@ const MOCK_TICKETS = [
 const formatVND = (n: number) =>
   n.toLocaleString('vi-VN', { maximumFractionDigits: 0 }) + ' đ';
 
-export default function TicketSelector() {
-  const [qty, setQty] = useState<Record<string, number>>({
-    standard: 0,
-    discount: 0,
-  });
 
-  const changeQty = (id: string, delta: number) =>
+export default function TicketSelector() {
+  const { eventId } = useParams<{ eventId: string }>();
+  const [qty, setQty] = useState<Record<number, number>>({});
+
+  const {
+    data,
+    exec,
+  } = useApi(getTicketTypesByEventId);
+
+  useEffect(() => {
+    if (eventId) {
+      exec(eventId);
+    }
+  }, [eventId]);
+
+  const ticketTypes = data?.data || [];
+
+  useEffect(() => {
+    if (!ticketTypes || ticketTypes.length === 0) return;
     setQty(prev => {
-      const next = Math.max(0, (prev[id] || 0) + delta);
-      return { ...prev, [id]: next };
+      const next = { ...prev };
+      ticketTypes.forEach((t: TicketType) => {
+        const id = t.ticketTypeId;
+
+        if (typeof next[id] === 'undefined') {
+          next[id] = t.minPerUser
+        }
+      });
+      return next;
+    });
+  }, [ticketTypes]);
+
+
+  const ticketMap = useMemo(() => {
+    const map: Record<number, TicketType> = {};
+    (ticketTypes || []).forEach((t: TicketType) => (map[t.ticketTypeId] = t));
+    return map;
+  }, [ticketTypes]);
+
+
+  const changeQty = (id: number, delta: number) =>
+    setQty(prev => {
+      const t = ticketMap[id];
+      const min = t ? t.minPerUser : 0;
+      const max = t ? t.maxPerUser : Infinity;
+      const current = prev[id] ?? min;
+      const nextVal = Math.min(max, Math.max(min, current + delta));
+      return { ...prev, [id]: nextVal };
     });
 
-  const subtotalPerTicket = useMemo(
-    () =>
-      MOCK_TICKETS.map(t => ({
-        ...t,
-        count: qty[t.id] || 0,
-        subtotal: (qty[t.id] || 0) * t.price,
-      })),
-    [qty]
-  );
 
-  const total = subtotalPerTicket.reduce((s, t) => s + t.subtotal, 0);
+  const uiTickets = useMemo(() => {
+    return (ticketTypes || []).map((t: TicketType) => ({
+      id: t.ticketTypeId,
+      name: t.ticketTypeName,
+      price: t.price,
+      description: t.description,
+      minPerUser: t.minPerUser,
+      maxPerUser: t.maxPerUser,
+      count: qty[t.ticketTypeId] ?? (t.minPerUser > 0 ? t.minPerUser : 0),
+      subtotal: (qty[t.ticketTypeId] ?? (t.minPerUser > 0 ? t.minPerUser : 0)) * t.price,
+    }));
+  }, [ticketTypes, qty]);
+
+
+  const total = uiTickets.reduce((s, t) => s + t.subtotal, 0);
   const hasSelected = total > 0;
 
+
   const handleCheckout = () => {
-    if (!hasSelected) return;
-    alert(`Bạn đã chọn ${formatVND(total)} — tiến hành thanh toán`);
+    const selected = uiTickets
+      .filter(t => t.count > 0)
   };
 
   return (
@@ -62,13 +112,15 @@ export default function TicketSelector() {
             </div>
 
             <div className="mt-6 space-y-6">
-              {subtotalPerTicket.map(t => (
+              {uiTickets.map(t => (
                 <TicketItem
                   key={t.id}
                   id={t.id}
                   name={t.name}
                   price={t.price}
                   count={t.count}
+                  min={t.minPerUser}
+                  max={t.maxPerUser}
                   onChange={changeQty}
                   formatVND={formatVND}
                 />
@@ -78,10 +130,9 @@ export default function TicketSelector() {
           </div>
         </div>
 
-        {/* RIGHT */}
         <aside className="w-full lg:w-96">
           <TicketSummary
-            tickets={subtotalPerTicket}
+            tickets={uiTickets}
             total={total}
             hasSelected={hasSelected}
             formatVND={formatVND}

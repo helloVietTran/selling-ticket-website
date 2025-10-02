@@ -1,8 +1,8 @@
 import api from "./api";
-import type { BaseResponse, SelectTicketTypePayload, StatsTicketType }  from '@/types';
+import type { BaseResponse, SelectTicketTypePayload, StatsTicketType, TicketType }  from '@/types';
 
 
-async function getTicketTypesByEventId(eventId: string) {
+async function getTicketTypesByEventId(eventId: string): Promise<BaseResponse<TicketType[]>> {
   const res = await api.get(`/ticket-types/all/events/${eventId}`);
 
   return res.data;

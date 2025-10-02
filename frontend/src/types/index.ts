@@ -66,6 +66,8 @@ export type TicketType = {
   price: number;
   totalQuantity: number;
   soldTicket: number;
+  minPerUser: number;
+  maxPerUser: number;
   startSellDate: string;
   endSellDate: string;
 };
