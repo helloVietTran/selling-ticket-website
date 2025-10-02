@@ -97,10 +97,10 @@ class TicketTypeController {
 
   statisticalTicketType = async (req: Request, res: Response<statsResponse<any>>, next: NextFunction) => {
     try {
-      const eventId= parseInt(req.params.eventId, 10);
+      const eventId = parseInt(req.params.eventId, 10);
 
       const existedEvent = await this.ticketTypeRepo.findOne({
-        where: { event:{eventId }},
+        where: { event: { eventId } },
         relations: ['event']
       });
       if (!existedEvent) {
@@ -115,7 +115,7 @@ class TicketTypeController {
       });
 
       const percentage = totalTicket && totalSoldTicket ? (totalSoldTicket / totalTicket) * 100 : 0;
-      const statistical:statsData = {
+      const statistical: statsData = {
         ticketType: existedEvent.ticketTypeName,
         totalQuantity: existedEvent.totalQuantity,
         soldTicket: existedEvent.soldTicket,
