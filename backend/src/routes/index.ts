@@ -5,9 +5,9 @@ import eventRoutes from './event.route';
 import ticketTypeRoutes from './ticket-type.route';
 import ticketRoutes from './ticket.route';
 import userRoute from './user.route';
-import bookingRoute from './booking.route'
-import organizerRoute from './organizer.route'
-import uploadRoute from './upload.route'
+import bookingRoute from './booking.route';
+import organizerRoute from './organizer.route';
+import uploadRoute from './upload.route';
 
 function route(app: Application) {
   const urlPrefix = config.api_prefix + config.api_version;
@@ -18,9 +18,8 @@ function route(app: Application) {
   app.use(`${urlPrefix}/ticket`, ticketRoutes);
   app.use(`${urlPrefix}/user`, userRoute);
   app.use(`${urlPrefix}/booking`, bookingRoute);
-  app.use(`${urlPrefix}/organizer`,organizerRoute);
-  app.use(`${urlPrefix}/upload`,uploadRoute);
-
+  app.use(`${urlPrefix}/organizer`, organizerRoute);
+  app.use(`${urlPrefix}/upload`, uploadRoute);
 }
 
 export default route;

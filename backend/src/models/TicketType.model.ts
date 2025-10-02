@@ -3,7 +3,6 @@ import { Event } from './Event.model';
 import { Ticket } from './Ticket.model';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
-import { BookingItem } from './BookingItem.model';
 
 @Entity('ticket_type')
 export class TicketType {

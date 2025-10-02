@@ -16,12 +16,23 @@ class BookingController {
     try {
       const requester = res.locals.requester as Requester;
       const user = await userRepo.findOneBy({ id: Number(requester.id) });
-      if (!user) return AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
-      const myBooking = await bookingRepo.findBy({
-        attendee: user,
-        expiresAt: MoreThan(new Date())
+      if (!user) throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
+      const myBooking = await bookingRepo.find({
+        where: {
+          attendee: { id: user.id },
+          expiresAt: MoreThan(new Date())
+        },
+        relations: {
+          bookingItems: {
+            ticketType: true
+          }
+        }
       });
-      return res.status(200).json({ message: 'danh sách booking', data: myBooking });
+
+      return res.status(200).json({
+        message: 'Lấy danh sách thành công',
+        data: myBooking
+      });
     } catch (error) {
       next(error);
     }

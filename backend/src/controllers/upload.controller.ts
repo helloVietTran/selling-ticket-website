@@ -24,10 +24,7 @@ class UploadController {
       const filePath = path.join(UPLOAD_DIR, fileName);
 
       // Resize và lưu ảnh
-      await sharp(req.file.buffer)
-        .resize(800) 
-        .jpeg({ quality: 90 })
-        .toFile(filePath);
+      await sharp(req.file.buffer).resize(800).jpeg({ quality: 90 }).toFile(filePath);
       const resource = this.uploadRepo.create({
         id: imageId,
         url: `${urlPre}/uploads/${fileName}`
