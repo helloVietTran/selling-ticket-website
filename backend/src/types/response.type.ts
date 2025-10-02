@@ -5,6 +5,7 @@ export interface BaseResponse<T> {
   status?: string | number;
   data?: T;
   accessToken?: string;
+  url?:String;
 }
 export interface statsResponse<T>{
   message:String;
