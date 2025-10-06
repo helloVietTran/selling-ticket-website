@@ -1,4 +1,5 @@
-import { EventStatus, Role } from './enum';
+import { User } from '../models/User.model';
+import { Role } from './enum';
 
 export interface BaseResponse<T> {
   message: string;
@@ -27,4 +28,9 @@ export interface UserOutput {
   UserName: string;
   phoneNumber: string;
   roles: Role;
+}
+
+export interface LoginOutput {
+  user: User;
+  accessToken: string;
 }

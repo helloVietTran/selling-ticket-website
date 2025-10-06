@@ -9,7 +9,6 @@ type EventCardProps = {
   date: string;
   img: string;
   status: string;
-
 };
 
 const EventCard: React.FC<EventCardProps> = ({
@@ -18,8 +17,7 @@ const EventCard: React.FC<EventCardProps> = ({
   date,
   img,
   status,
-  eventId
-
+  eventId,
 }) => {
   return (
     <Link

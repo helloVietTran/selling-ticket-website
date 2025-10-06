@@ -1,6 +1,9 @@
-'use client';
+import { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff } from 'lucide-react';
 
-import * as React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,17 +13,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Eye, EyeOff } from 'lucide-react';
+import { toast } from 'sonner';
 
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthModal } from '@/context/auth-modal-context';
+import { useApi } from '@/api/hooks/useApi';
+import { signup } from '@/api/authApi';
+import type { RegisterPayload } from '@/types';
 
-// Schema validate với zod
 const registerSchema = z
   .object({
     email: z.string().email('Email không hợp lệ'),
+    userName: z.string().min(3, 'Tên người dùng tối thiểu 3 ký tự'),
     password: z.string().min(6, 'Mật khẩu tối thiểu 6 ký tự'),
     confirmPassword: z.string(),
   })
@@ -29,11 +32,10 @@ const registerSchema = z
     message: 'Mật khẩu xác nhận không khớp',
   });
 
-type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function RegisterModal() {
-  const [showPassword, setShowPassword] = React.useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const { modalType, closeModal, openLogin } = useAuthModal();
   const open = modalType === 'register';
@@ -42,14 +44,34 @@ export default function RegisterModal() {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormValues>({
+  } = useForm<RegisterPayload>({
     resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = (data: RegisterFormValues) => {
-    console.log('Register form data:', data);
-    // Gọi API đăng ký ở đây
+  const { exec, isError, isSuccess, error } = useApi(signup);
+
+  const onSubmit = (data: RegisterPayload) => {
+    exec(data)
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success('Đăng ký thành công', {
+        description: 'Bạn có thể đăng nhập ngay bây giờ.',
+        duration: 3000,
+      });
+      closeModal();
+      openLogin();
+    }
+
+    if (isError) {
+      console.log("Register failed: ", error);
+      toast.error('Đăng ký thất bại', {
+        description: 'Vui lòng kiểm tra lại thông tin và thử lại.',
+        duration: 4000,
+      });
+    }
+  }, [isSuccess, isError, closeModal, openLogin]);
 
   return (
     <Dialog open={open} onOpenChange={closeModal}>
@@ -61,7 +83,6 @@ export default function RegisterModal() {
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-          {/* Email */}
           <div>
             <Input
               type="email"
@@ -76,7 +97,20 @@ export default function RegisterModal() {
             )}
           </div>
 
-          {/* Password */}
+          <div>
+            <Input
+              type="text"
+              placeholder="Nhập tên người dùng"
+              className="rounded"
+              {...register('userName')}
+            />
+            {errors.userName && (
+              <p className="text-rose-600 text-xs mt-1">
+                {errors.userName.message}
+              </p>
+            )}
+          </div>
+
           <div className="relative">
             <Input
               type={showPassword ? 'text' : 'password'}
@@ -97,7 +131,6 @@ export default function RegisterModal() {
             )}
           </div>
 
-          {/* Confirm Password */}
           <div className="relative">
             <Input
               type={showConfirmPassword ? 'text' : 'password'}
