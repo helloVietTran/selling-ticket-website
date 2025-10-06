@@ -1,11 +1,10 @@
-
-import React, { createContext, useState, useContext, type ReactNode } from "react";
+import React, { createContext, useState, useContext, useEffect, type ReactNode } from "react";
 import type { User } from "@/types";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  login: (userData: User) => void;
+  login: (userData: User, token: string) => void;
   logout: () => void;
 }
 
@@ -18,15 +17,18 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+;
 
-  const login = (userData: User) => {
-    setIsAuthenticated(true);
+  const login = (userData: User, token: string) => {
+    localStorage.setItem("accessToken", token);
     setUser(userData);
+    setIsAuthenticated(true);
   };
 
   const logout = () => {
-    setIsAuthenticated(false);
+    localStorage.removeItem("accessToken");
     setUser(null);
+    setIsAuthenticated(false);
   };
 
   return (
