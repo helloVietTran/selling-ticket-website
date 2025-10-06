@@ -65,5 +65,6 @@ export const ErrorMap = {
   NOT_ENOUGH_STOCK: { code: 'NOT_ENOUGH_STOCK', statusCode: 400, message: 'not enough stock for ticket' } as IErrorCode,
   QUANTITY_OVER_LIMIT: { code: 'QUANTITY_OVER_LIMIT', statusCode: 400, message: 'Quantity over limit' } as IErrorCode,
   BOOKING_NOT_FOUND: { code: 'BOOKING_NOT_FOUND', statusCode: 400, message: 'booking not found' } as IErrorCode,
-  NO_FILE_UPLOAD: { code: 'NO_FILE_UPLOAD', statusCode: 400, message: 'no file upload' } as IErrorCode
+  NO_FILE_UPLOAD: { code: 'NO_FILE_UPLOAD', statusCode: 400, message: 'no file upload' } as IErrorCode,
+  NOT_FOUND_TOKEN: { code: 'NOT_FOUND_TOKEN', statusCode: 400, message: 'not found token' } as IErrorCode
 };
