@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { TicketType } from '../models/TicketType.model';
 import { AppDataSource } from '../config/data-source';
-import { Ticket } from '../models/Ticket.model';
+
 import { ErrorMap } from '../config/ErrorMap';
 
 import { BaseResponse } from '../types/response.type';
@@ -26,6 +26,7 @@ class TicketTypeController {
       next(error);
     }
   };
+
   bookingTicket = async (
     req: Request<{}, {}, SelectTicketInput>,
     res: Response<BaseResponse<Booking>>,
@@ -123,6 +124,7 @@ class TicketTypeController {
         totalsoldTicket: totalSoldTicket,
         percentage: percentage.toFixed(2)
       };
+      
       return res.json({
         message: 'statistical featch successfully',
         data: statistical
