@@ -10,11 +10,11 @@ export default function HomePage() {
       <div className="bg-main-content">
         <div className="main-container">
           <EventSlider />
-          <EventList category="Âm nhạc" />
+          {/* <EventList category="Âm nhạc" />
           <EventList wrapperClassName="mt-4" category="Nghệ thuật" />
 
           <EventList wrapperClassName="mt-4" category="Thể thao" />
-          <EventList wrapperClassName="mt-4" category="Khác" />
+          <EventList wrapperClassName="mt-4" category="Khác" /> */}
         </div>
       </div>
       <Footer />

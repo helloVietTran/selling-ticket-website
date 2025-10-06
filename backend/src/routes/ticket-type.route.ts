@@ -9,6 +9,6 @@ const router = Router();
 
 router.get('/all/events/:eventId', ticketTypeController.getTicketTypesByEventId);
 router.post('/select-ticket-type', auth, validate(selectTicketSchema), ticketTypeController.bookingTicket);
-router.get('/statistical', auth, ticketTypeController.statisticalTicketType);
+router.get('/stats', auth, ticketTypeController.statisticalTicketType);
 
 export default router;
