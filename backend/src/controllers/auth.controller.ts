@@ -76,7 +76,13 @@ export class AuthController {
       return res.status(200).json({
         message: 'Đăng nhập thành công',
         data: {
-          user,
+          user: {
+            id: user.id,
+            userName: user.userName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            roles: user.roles
+          },
           accessToken: token
         }
       });

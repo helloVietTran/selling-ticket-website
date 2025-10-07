@@ -26,12 +26,12 @@ export interface PaginateResponse<T> extends BaseResponse<T[]> {
 export interface UserOutput {
   id: number;
   email: string;
-  UserName: string;
-  phoneNumber: string;
+  userName: string;
+  phoneNumber?: string;
   roles: Role;
 }
 
 export interface LoginOutput {
-  user: User;
+  user: UserOutput;
   accessToken: string;
 }

@@ -1,5 +1,5 @@
 import api from './api';
-import type { LoginPayLoad, LogoutPayload, RegisterPayload } from '@/types';
+import type { BaseResponse, LoginPayLoad, LogoutPayload, RegisterPayload } from '@/types';
 import type { LoginResponse }  from '@/types';
 
 async function signup(payload: RegisterPayload) {
@@ -7,7 +7,7 @@ async function signup(payload: RegisterPayload) {
     return res.data;
 }
 
-async function signin(payload: LoginPayLoad): Promise<LoginResponse> {
+async function signin(payload: LoginPayLoad): Promise<BaseResponse<LoginResponse>> {
     const res = await api.post("/auth/login", payload);
     return res.data;
 }
