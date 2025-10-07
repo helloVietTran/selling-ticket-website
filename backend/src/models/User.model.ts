@@ -3,6 +3,8 @@ import { Role } from '../types/enum';
 import { Ticket } from './Ticket.model';
 import { Booking } from './Booking.model';
 import { Organizer } from './Organizer.model';
+import { AppError } from '../config/exception';
+import { ErrorMap } from '../config/ErrorMap';
 
 @Entity('user')
 export class User {
@@ -39,4 +41,18 @@ export class User {
   })
   @JoinColumn({ name: 'organizerId', referencedColumnName: 'organizerId' })
   organizer?: Organizer;
+
+  validate = (email: string, userName: string, password: string): void => {
+    const regex = /^[\w.-]+@[\w.-]+\.\w{2,}$/;
+    if (!regex.test(email)) {
+      throw AppError.fromErrorCode(ErrorMap.FORMAT_EMAIL_INCORRECT);
+    }
+    if (!email) {
+      throw AppError.fromErrorCode(ErrorMap.EMAIL_NOT_FOUND);
+    } else if (!userName) {
+      throw AppError.fromErrorCode(ErrorMap.USERNAME_NOT_FOUND);
+    } else {
+      throw AppError.fromErrorCode(ErrorMap.PASSWORD_NOT_FOUND);
+    }
+  };
 }

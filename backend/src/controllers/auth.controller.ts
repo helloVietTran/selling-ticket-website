@@ -1,7 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
 import { AppDataSource } from '../config/data-source';
 import { Role } from '../types/enum';
 import { config } from '../config/config';
@@ -11,19 +10,21 @@ import { LoginInput, LogoutInput, RegisterInput } from '../validators/auth.valid
 import { BaseResponse, LoginOutput } from '../types/response.type';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
+import validator from 'validator';
 
 export class AuthController {
   private userRepo = AppDataSource.getRepository(User);
   private disabledTokenRepo = AppDataSource.getRepository(DisabledToken);
 
   register: RequestHandler = async (
-    req: Request<{}, RegisterInput>,
+    req: Request<{}, {}, RegisterInput>,
     res: Response<BaseResponse<{}>>,
     next: NextFunction
   ) => {
     try {
       const { email, userName, password } = req.body;
-
+      const userEntity = new User();
+      userEntity.validate(email, userName, password);
       const existedUser = await this.userRepo.findOne({ where: { email } });
       if (existedUser) {
         throw AppError.fromErrorCode(ErrorMap.USER_ALREADY_EXISTS);
@@ -53,7 +54,13 @@ export class AuthController {
   ) => {
     try {
       const { email, password } = req.body;
-
+      const regex = /^[\w.-]+@[\w.-]+\.\w{2,}$/;
+      if (!regex.test(email)) {
+        throw AppError.fromErrorCode(ErrorMap.FORMAT_EMAIL_INCORRECT);
+      }
+      if (!email || !password) {
+        throw AppError.fromErrorCode(ErrorMap.DATA_NOT_EMPTY);
+      }
       const user = await this.userRepo.findOne({ where: { email } });
       if (!user) {
         throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
@@ -106,9 +113,9 @@ export class AuthController {
     }
   };
 
-  verifyToken = (req: Request, res: Response<BaseResponse<{}>>,next: NextFunction) => {
+  verifyToken = (req: Request, res: Response<BaseResponse<{}>>, next: NextFunction) => {
     try {
-      const token = req.body.accessToken ;
+      const token = req.body.accessToken;
       if (!token) {
         throw AppError.fromErrorCode(ErrorMap.NOT_FOUND_TOKEN);
       }
