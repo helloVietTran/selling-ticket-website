@@ -18,27 +18,27 @@ jest.mock('../src/config/data-source', () => {
       getRepository: jest.fn(() => ({
         findOne: mockFindOne,
         create: mockCreate,
-        save: mockSave,
-      })),
-    },
+        save: mockSave
+      }))
+    }
   };
 });
 
 // bcryptjs
 jest.mock('bcryptjs', () => ({
   hash: jest.fn(),
-  compare: jest.fn(),
+  compare: jest.fn()
 }));
 
 // jsonwebtoken
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(),
-  verify: jest.fn(),
+  verify: jest.fn()
 }));
 
 // config
 jest.mock('../src/config/config', () => ({
-  config: { jwt_secret: 'TEST_SECRET' },
+  config: { jwt_secret: 'TEST_SECRET' }
 }));
 
 // ----------------------------------------------------
@@ -49,9 +49,9 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
 const mockGetRepository = AppDataSource.getRepository as jest.Mock;
-const mockFindOne = () => (mockGetRepository().findOne as jest.Mock);
-const mockCreate = () => (mockGetRepository().create as jest.Mock);
-const mockSave = () => (mockGetRepository().save as jest.Mock);
+const mockFindOne = () => mockGetRepository().findOne as jest.Mock;
+const mockCreate = () => mockGetRepository().create as jest.Mock;
+const mockSave = () => mockGetRepository().save as jest.Mock;
 
 const mockHash = bcrypt.hash as jest.Mock;
 const mockCompare = bcrypt.compare as jest.Mock;
@@ -82,7 +82,7 @@ describe('AuthController', () => {
   // ---------------- REGISTER ----------------
   describe('register', () => {
     const mockReq = {
-      body: { email: 'new@example.com', userName: 'newuser', password: '123456' },
+      body: { email: 'new@example.com', userName: 'newuser', password: '123456' }
     } as unknown as Request;
 
     it('Đăng ký thành công', async () => {
@@ -123,14 +123,14 @@ describe('AuthController', () => {
   // ---------------- LOGIN ----------------
   describe('login', () => {
     const mockReq = {
-      body: { email: 'test@example.com', password: 'pw' },
+      body: { email: 'test@example.com', password: 'pw' }
     } as unknown as Request;
 
     const mockUser = {
       id: 1,
       email: 'test@example.com',
       passwordHash: 'hashed_pw',
-      roles: [Role.User],
+      roles: [Role.User]
     };
 
     it('Đăng nhập thành công', async () => {
@@ -146,7 +146,7 @@ describe('AuthController', () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: 'Đăng nhập thành công',
-        accessToken: 'mockToken',
+        accessToken: 'mockToken'
       });
     });
 
@@ -187,12 +187,12 @@ describe('AuthController', () => {
       expect(mockVerify).toHaveBeenCalledWith(token, 'TEST_SECRET');
       expect(mockCreate()).toHaveBeenCalledWith({
         token,
-        expiresAt: new Date(decoded.exp * 1000),
+        expiresAt: new Date(decoded.exp * 1000)
       });
       expect(mockSave()).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
-        message: 'Đăng xuất thành công, token đã bị vô hiệu hóa.',
+        message: 'Đăng xuất thành công, token đã bị vô hiệu hóa.'
       });
     });
 

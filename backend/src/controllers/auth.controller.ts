@@ -105,6 +105,24 @@ export class AuthController {
       next(error);
     }
   };
+
+  verifyToken = (req: Request, res: Response<BaseResponse<{}>>,next: NextFunction) => {
+    try {
+      const token = req.body.accessToken ;
+      if (!token) {
+        throw AppError.fromErrorCode(ErrorMap.NOT_FOUND_TOKEN);
+      }
+
+      const decoded = jwt.verify(token, config.jwt_secret);
+
+      return res.status(200).json({
+        message: 'Token hợp lệ',
+        data: decoded
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default new AuthController();
