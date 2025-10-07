@@ -9,9 +9,13 @@ export const ErrorMap = {
   ORGANIZER_NOT_FOUND: { code: 'ORGANIZER_NOT_FOUND', statusCode: 404, message: 'Not found organizer' } as IErrorCode,
   USER_ALREADY_EXISTS: { code: 'USER_ALREADY_EXISTS', statusCode: 400, message: 'User already exists' } as IErrorCode,
   EVENT_NOT_EXISTS: { code: ' EVENT_NOT_EXISTS', statusCode: 400, message: 'event not exist' } as IErrorCode,
-  PASSWORD_INCORRECT: { code: 'PASSWORD_INCORRECT', statusCode: 400, message: 'password incorrect' } as IErrorCode,
+  PASSWORD_INCORRECT: { code: 'PASSWORD_INCORRECT', statusCode: 401, message: 'password incorrect' } as IErrorCode,
+  DATA_NOT_EMPTY: { code: 'DATA_NOT_EMPTY', statusCode: 400, message: ' email or password not empty' } as IErrorCode,
   TICKET_TYPE_NOT_FOUND: { code: 'TICKET_TYPE_NOT_FOUND', statusCode: 404, message: 'Not found ticket' } as IErrorCode,
-
+  FORMAT_EMAIL_INCORRECT: { code: 'FORMAT_EMAIL_INCORRECT', statusCode: 400, message: 'Email invalid' } as IErrorCode,
+  EMAIL_NOT_FOUND: { code: 'EMAIL_NOT_FOUND', statusCode: 400, message: 'Hãy Nhập email' } as IErrorCode,
+  USERNAME_NOT_FOUND: { code: 'USERNAME_NOT_FOUND', statusCode: 400, message: 'Hãy Nhập tên người dùng' } as IErrorCode,
+  PASSWORD_NOT_FOUND: { code: 'PASSWORD_NOT_FOUND', statusCode: 400, message: 'Hãy Nhập password' } as IErrorCode,
   ERROR_CREATE_TICKET_TYPE: {
     code: 'ERROR_CREATE_TICKET_TYPE',
     statusCode: 400,

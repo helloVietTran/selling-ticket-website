@@ -26,5 +26,5 @@ export const config = {
     email: process.env.ADMIN_EMAIL!,
     password: process.env.ADMIN_PASSWORD!
   },
-  url_upload: process.env.URL_UPLOAD
+  resource_path: process.env.RESOURCE_PATH
 };
