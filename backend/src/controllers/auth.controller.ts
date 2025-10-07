@@ -69,7 +69,13 @@ export class AuthController {
       return res.status(200).json({
         message: 'Đăng nhập thành công',
         data: {
-          user,
+          user: {
+            id: user.id,
+            userName: user.userName,
+            email: user.email,
+            phoneNumber: user.phoneNumber,
+            roles: user.roles
+          },
           accessToken: token
         }
       });
@@ -106,9 +112,9 @@ export class AuthController {
     }
   };
 
-  verifyToken = (req: Request, res: Response<BaseResponse<{}>>,next: NextFunction) => {
+  verifyToken = (req: Request, res: Response<BaseResponse<{}>>, next: NextFunction) => {
     try {
-      const token = req.body.accessToken ;
+      const token = req.body.accessToken;
       if (!token) {
         throw AppError.fromErrorCode(ErrorMap.NOT_FOUND_TOKEN);
       }

@@ -50,6 +50,7 @@ class UploadController {
           })
           .execute();
       }
+
       return res.json({
         message: 'upload image successfully',
         url: `${urlPre}/uploads/${fileName}`
