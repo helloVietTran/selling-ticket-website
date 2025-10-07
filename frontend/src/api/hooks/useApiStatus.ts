@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { defaultStatuses, IDLE, type Status } from "../constants/apiStatus";
+import { defaultStatuses, IDLE, type Status } from "../../constant/apiStatus";
 
 export type StatusBooleans = {
   [K in Status as `is${Capitalize<Lowercase<K>>}`]: boolean;
