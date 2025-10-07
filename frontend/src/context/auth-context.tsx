@@ -1,11 +1,11 @@
-
-import React, { createContext, useState, useContext, type ReactNode } from "react";
+import React, { createContext, useState, useContext, useEffect, type ReactNode } from "react";
 import type { User } from "@/types";
+import { LOCAL_STORAGE_KEYS } from "@/constant";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  login: (userData: User) => void;
+  login: (userData: User, token: string) => void;
   logout: () => void;
 }
 
@@ -18,15 +18,18 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
+;
 
-  const login = (userData: User) => {
-    setIsAuthenticated(true);
+  const login = (userData: User, token: string) => {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN, token);
     setUser(userData);
+    setIsAuthenticated(true);
   };
 
   const logout = () => {
-    setIsAuthenticated(false);
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN);
     setUser(null);
+    setIsAuthenticated(false);
   };
 
   return (

@@ -15,7 +15,8 @@ import { DisabledToken } from '../models/DisabledToken.model';
 import { Category } from '../models/Category.model';
 import { EmailSetting } from '../models/EmailSetting.model';
 import { TransactionHistory } from '../models/TransactionHistory.model';
-import { Upload } from '../models/Upload.model';
+import { Resource } from '../models/Resource.model';
+
 
 
 export const AppDataSource = new DataSource({
@@ -26,7 +27,7 @@ export const AppDataSource = new DataSource({
   password: 'root',
   database: 'event_ticket_db',
   synchronize: true, // dev only
-  logging: ['error', 'info', 'query'],
+  logging: ['error'],
   entities: [
     User,
     QrCode,
@@ -42,7 +43,7 @@ export const AppDataSource = new DataSource({
     Category,
     EmailSetting,
     TransactionHistory,
-    Upload
+    Resource
   ],
   migrations: [],
   subscribers: []

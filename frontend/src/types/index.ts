@@ -8,10 +8,64 @@ export type GetEventsParams = {
 };
 
 // request
+export interface CreateEventPayload {
+  organizer: {
+    organizerName: string;
+    organizerInfo: string;
+  };
+  venue: {
+    province: string;
+    district: string;
+    ward: string;
+    street: string;
+  };
+  event: {
+    title: string;
+    category: string;
+    eventInfo: string;
+    startTime: string;
+    endTime: string;
+    eventImage?: Record<string, any>;
+    organizer?: {
+      organizerName: string;
+      organizerInfo: string;
+    };
+    venue?: {
+      province: string;
+      district: string;
+      ward: string;
+      street: string;
+    };
+  };
+  ticketTypes: {
+    name: string;
+    price: string;
+    quantity: string;
+    description?: string;
+    maxPerUser: string;
+    minPerUser: string;
+    startSellDate: string;
+    endSellDate: string;
+  }[];
+  setting: {
+    messageToReceiver?: string;
+  };
+  paymentInfo: {
+    accountHolder: string;
+    accountNumber: string;
+    bankName: string;
+    branch: string;
+    organizerId?: string;
+    organizationName?: string;
+    organizerInfo?: string;
+  };
+}
+
 export type RegisterPayload = {
   email: string;
   password: string;
   userName: string;
+  confirmPassword: string;
 };
 
 export type LoginPayLoad = {
@@ -37,8 +91,6 @@ export type SelectTicketTypePayload = {
     quantity: number;
   }[];
 };
-
-
 
 // dùng chung
 export interface BaseResponse<T> {
@@ -98,8 +150,9 @@ export type PaymentInfo = {
   branch: string;
 };
 
-export type TokenResponse = {
+export type LoginResponse = {
   accessToken: string;
+  user: User;
 };
 
 export interface User {
@@ -108,7 +161,7 @@ export interface User {
   userName: string;
   phoneNumber: string;
   roles: string;
-  dob: string
+  dob: string;
   avatar: string;
 }
 
@@ -120,9 +173,9 @@ export interface Booking {
 }
 
 export interface StatsTicketType {
-  type: string;       
-  price: number;    
-  checkedIn: number;  
-  sold: number;       
-  total: number;      
+  type: string;
+  price: number;
+  checkedIn: number;
+  sold: number;
+  total: number;
 }

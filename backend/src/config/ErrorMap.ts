@@ -9,9 +9,13 @@ export const ErrorMap = {
   ORGANIZER_NOT_FOUND: { code: 'ORGANIZER_NOT_FOUND', statusCode: 404, message: 'Not found organizer' } as IErrorCode,
   USER_ALREADY_EXISTS: { code: 'USER_ALREADY_EXISTS', statusCode: 400, message: 'User already exists' } as IErrorCode,
   EVENT_NOT_EXISTS: { code: ' EVENT_NOT_EXISTS', statusCode: 400, message: 'event not exist' } as IErrorCode,
-  PASSWORD_INCORRECT: { code: 'PASSWORD_INCORRECT', statusCode: 400, message: 'password incorrect' } as IErrorCode,
+  PASSWORD_INCORRECT: { code: 'PASSWORD_INCORRECT', statusCode: 401, message: 'password incorrect' } as IErrorCode,
+  DATA_NOT_EMPTY: { code: 'DATA_NOT_EMPTY', statusCode: 400, message: ' email or password not empty' } as IErrorCode,
   TICKET_TYPE_NOT_FOUND: { code: 'TICKET_TYPE_NOT_FOUND', statusCode: 404, message: 'Not found ticket' } as IErrorCode,
-
+  FORMAT_EMAIL_INCORRECT: { code: 'FORMAT_EMAIL_INCORRECT', statusCode: 400, message: 'Email invalid' } as IErrorCode,
+  EMAIL_NOT_FOUND: { code: 'EMAIL_NOT_FOUND', statusCode: 400, message: 'Hãy Nhập email' } as IErrorCode,
+  USERNAME_NOT_FOUND: { code: 'USERNAME_NOT_FOUND', statusCode: 400, message: 'Hãy Nhập tên người dùng' } as IErrorCode,
+  PASSWORD_NOT_FOUND: { code: 'PASSWORD_NOT_FOUND', statusCode: 400, message: 'Hãy Nhập password' } as IErrorCode,
   ERROR_CREATE_TICKET_TYPE: {
     code: 'ERROR_CREATE_TICKET_TYPE',
     statusCode: 400,
@@ -54,5 +58,6 @@ export const ErrorMap = {
   NOT_ENOUGH_STOCK: { code: 'NOT_ENOUGH_STOCK', statusCode: 400, message: 'not enough stock for ticket' } as IErrorCode,
   QUANTITY_OVER_LIMIT: { code: 'QUANTITY_OVER_LIMIT', statusCode: 400, message: 'Quantity over limit' } as IErrorCode,
   BOOKING_NOT_FOUND: { code: 'BOOKING_NOT_FOUND', statusCode: 400, message: 'booking not found' } as IErrorCode,
-  NO_FILE_UPLOAD: { code: 'NO_FILE_UPLOAD', statusCode: 400, message: 'no file upload' } as IErrorCode
+  NO_FILE_UPLOAD: { code: 'NO_FILE_UPLOAD', statusCode: 400, message: 'no file upload' } as IErrorCode,
+  NOT_FOUND_TOKEN: { code: 'NOT_FOUND_TOKEN', statusCode: 400, message: 'not found token' } as IErrorCode
 };

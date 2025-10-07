@@ -1,6 +1,10 @@
-'use client';
+import { useState } from 'react';
+import { Eye, EyeOff } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import * as React from 'react';
 import {
   Dialog,
   DialogContent,
@@ -10,40 +14,49 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { toast } from 'sonner';
 
-import { Eye, EyeOff } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuthModal } from '@/context/auth-modal-context';
+import { useApi } from '@/api/hooks/useApi';
+import { signin } from '@/api/authApi';
+import type { LoginPayLoad } from '@/types';
+import { useAuth } from '@/context/auth-context';
 
-// Schema validate
 const loginSchema = z.object({
-  emailOrPhone: z.string().min(1, 'Vui lòng nhập email hoặc số điện thoại'),
+  email: z.string().min(1, 'Vui lòng nhập email hoặc số điện thoại'),
   password: z.string().min(6, 'Mật khẩu tối thiểu 6 ký tự'),
 });
 
-type LoginFormValues = z.infer<typeof loginSchema>;
-
 export default function LoginModal() {
-  const [showPassword, setShowPassword] = React.useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const { modalType, openRegister, closeModal } = useAuthModal();
+  const { login } = useAuth();
   const open = modalType === 'login';
+
+  const { exec } = useApi(signin);
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<LoginFormValues>({
+  } = useForm<LoginPayLoad>({
     resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: LoginFormValues) => {
-    console.log('Login form data:', data);
-    // Gọi API login ở đây
+  const onSubmit = async (formValues: LoginPayLoad) => {
+    const { data, error } = await exec(formValues);
+
+    if (data?.data) {
+      console.log(data.data)
+      login(data.data.user, data.data.accessToken);
+      toast.success('Đăng nhập thành công');
+      closeModal();
+    } else {
+      console.error('Login Failed:', error);
+      toast.error('Đăng nhập thất bại, vui lòng thử lại!');
+    }
   };
+
 
   return (
     <Dialog open={open} onOpenChange={closeModal}>
@@ -60,14 +73,13 @@ export default function LoginModal() {
             <Input
               type="text"
               placeholder="Nhập email hoặc số điện thoại"
-              className={`rounded ${
-                errors.emailOrPhone ? 'border-red-500' : ''
-              }`}
-              {...register('emailOrPhone')}
+              className={`rounded ${errors.email ? 'border-red-500' : ''
+                }`}
+              {...register('email')}
             />
-            {errors.emailOrPhone && (
+            {errors.email && (
               <p className="text-red-500 text-xs mt-1">
-                {errors.emailOrPhone.message}
+                {errors.email.message}
               </p>
             )}
           </div>
@@ -77,9 +89,8 @@ export default function LoginModal() {
             <Input
               type={showPassword ? 'text' : 'password'}
               placeholder="Nhập mật khẩu"
-              className={`rounded pr-10 ${
-                errors.password ? 'border-red-500' : ''
-              }`}
+              className={`rounded pr-10 ${errors.password ? 'border-red-500' : ''
+                }`}
               {...register('password')}
             />
             <button

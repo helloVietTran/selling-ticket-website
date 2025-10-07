@@ -1,13 +1,13 @@
 import api from './api';
-import type { LoginPayLoad, LogoutPayload, RegisterPayload } from '@/types';
-import type { TokenResponse }  from '@/types';
+import type { BaseResponse, LoginPayLoad, LogoutPayload, RegisterPayload } from '@/types';
+import type { LoginResponse }  from '@/types';
 
-async function register(payload: RegisterPayload) {
+async function signup(payload: RegisterPayload) {
     const res = await api.post("/auth/register", payload);
     return res.data;
 }
 
-async function login(payload: LoginPayLoad): Promise<TokenResponse> {
+async function signin(payload: LoginPayLoad): Promise<BaseResponse<LoginResponse>> {
     const res = await api.post("/auth/login", payload);
     return res.data;
 }
@@ -19,7 +19,7 @@ async function logout(payload: LogoutPayload) {
 }
 
 export {
-    register,
-    login,
+    signup,
+    signin,
     logout
 }

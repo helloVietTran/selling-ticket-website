@@ -1,15 +1,17 @@
-import { EventStatus, Role } from './enum';
+import { User } from '../models/User.model';
+import { Role } from './enum';
 
 export interface BaseResponse<T> {
   message: string;
   status?: string | number;
   data?: T;
   accessToken?: string;
-  url?:String;
+  url?: String;
 }
-export interface statsResponse<T>{
-  message:String;
-  data:T
+
+export interface statsResponse<T> {
+  message: String;
+  data: T;
 }
 
 export interface PaginateResponse<T> extends BaseResponse<T[]> {
@@ -24,12 +26,19 @@ export interface PaginateResponse<T> extends BaseResponse<T[]> {
 export interface UserOutput {
   id: number;
   email: string;
-  UserName: string;
-  phoneNumber: string;
+  userName: string;
+  phoneNumber?: string;
   roles: Role;
 }
+
 
 export interface RevenueResponse {
   revenueLastWeek: number;
   revenueLastMonth: number;
 }
+
+export interface LoginOutput {
+  user: UserOutput;
+  accessToken: string;
+}
+

@@ -1,3 +1,4 @@
+import { LOCAL_STORAGE_KEYS } from "@/constant";
 import axios, {
   type AxiosInstance,
   type AxiosRequestConfig,
@@ -15,7 +16,7 @@ const axiosInstance: AxiosInstance = axios.create(axiosParams);
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token"); 
+    const token = localStorage.getItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN); 
     if (token) {
       config.headers = config.headers ?? {};
       config.headers.Authorization = `Bearer ${token}`;

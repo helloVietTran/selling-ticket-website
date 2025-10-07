@@ -2,7 +2,6 @@ import CheckinSummary from '@/features/organizer/components/check-in-summary';
 import CheckinTable from '@/features/organizer/components/checkin-table';
 
 export default function CheckinPage() {
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col gap-6">
