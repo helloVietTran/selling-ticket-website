@@ -70,5 +70,11 @@ export const ErrorMap = {
   QUANTITY_OVER_LIMIT: { code: 'QUANTITY_OVER_LIMIT', statusCode: 400, message: 'Quantity over limit' } as IErrorCode,
   BOOKING_NOT_FOUND: { code: 'BOOKING_NOT_FOUND', statusCode: 400, message: 'booking not found' } as IErrorCode,
   NO_FILE_UPLOAD: { code: 'NO_FILE_UPLOAD', statusCode: 400, message: 'no file upload' } as IErrorCode,
-  NOT_FOUND_TOKEN: { code: 'NOT_FOUND_TOKEN', statusCode: 400, message: 'not found token' } as IErrorCode
+  NOT_FOUND_TOKEN: { code: 'NOT_FOUND_TOKEN', statusCode: 400, message: 'not found token' } as IErrorCode,
+  NOT_FOUND_EVENT_ID: { code: 'NOT_FOUND_EVENT_ID', statusCode: 400, message: 'not found event id' } as IErrorCode,
+  NOT_ENOUGH_PERMISSION: {
+    code: 'NOT_ENOUGH_PERMISSION',
+    statusCode: 400,
+    message: 'not enough permission'
+  } as IErrorCode
 };

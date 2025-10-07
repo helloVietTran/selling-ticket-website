@@ -8,6 +8,7 @@ import userRoute from './user.route';
 import bookingRoute from './booking.route';
 import organizerRoute from './organizer.route';
 import resourceRoute from './resource.route';
+import adminRoute from './admin.route';
 
 function route(app: Application) {
   const urlPrefix = config.api_prefix + config.api_version;
@@ -20,6 +21,7 @@ function route(app: Application) {
   app.use(`${urlPrefix}/booking`, bookingRoute);
   app.use(`${urlPrefix}/organizer`, organizerRoute);
   app.use(`${urlPrefix}/resource`, resourceRoute);
+  app.use(`${urlPrefix}/admin`, adminRoute);
 }
 
 export default route;

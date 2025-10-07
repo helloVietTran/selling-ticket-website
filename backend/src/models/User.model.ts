@@ -51,7 +51,7 @@ export class User {
       throw AppError.fromErrorCode(ErrorMap.EMAIL_NOT_FOUND);
     } else if (!userName) {
       throw AppError.fromErrorCode(ErrorMap.USERNAME_NOT_FOUND);
-    } else if(!password){
+    } else if (!password) {
       throw AppError.fromErrorCode(ErrorMap.PASSWORD_NOT_FOUND);
     }
   };
