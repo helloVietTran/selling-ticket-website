@@ -1,5 +1,6 @@
 import React, { createContext, useState, useContext, useEffect, type ReactNode } from "react";
 import type { User } from "@/types";
+import { LOCAL_STORAGE_KEYS } from "@/constant";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -20,13 +21,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 ;
 
   const login = (userData: User, token: string) => {
-    localStorage.setItem("accessToken", token);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN, token);
     setUser(userData);
     setIsAuthenticated(true);
   };
 
   const logout = () => {
-    localStorage.removeItem("accessToken");
+    localStorage.removeItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN);
     setUser(null);
     setIsAuthenticated(false);
   };

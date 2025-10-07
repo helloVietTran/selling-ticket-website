@@ -44,14 +44,15 @@ export default function LoginModal() {
   });
 
   const onSubmit = async (formValues: LoginPayLoad) => {
-    const result = await exec(formValues);
+    const { data, error } = await exec(formValues);
 
-    if (result.data) {
-      login(result.data.user, result.data.accessToken);
+    if (data?.data) {
+      console.log(data.data)
+      login(data.data.user, data.data.accessToken);
       toast.success('Đăng nhập thành công');
       closeModal();
     } else {
-      console.error('Login Failed:', result.error);
+      console.error('Login Failed:', error);
       toast.error('Đăng nhập thất bại, vui lòng thử lại!');
     }
   };
