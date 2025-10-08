@@ -8,10 +8,6 @@ export class TransactionHistory {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @ManyToOne(() => Event, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'event_id' })
-  event!: Event;
-
   @Column({ name: 'user_id' })      // người mua vé
   userId!: number;
 
