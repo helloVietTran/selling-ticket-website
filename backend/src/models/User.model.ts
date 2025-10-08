@@ -43,8 +43,6 @@ export class User {
   })
   @JoinColumn({ name: 'organizerId', referencedColumnName: 'organizerId' })
   organizer?: Organizer;
-  @OneToMany(() => TransactionHistory, (t) => t.user)
-  transactions!: TransactionHistory[];
 
   validate = (email: string, userName: string, password: string): void => {
     const regex = /^[\w.-]+@[\w.-]+\.\w{2,}$/;
@@ -55,8 +53,9 @@ export class User {
       throw AppError.fromErrorCode(ErrorMap.EMAIL_NOT_FOUND);
     } else if (!userName) {
       throw AppError.fromErrorCode(ErrorMap.USERNAME_NOT_FOUND);
-    } else {
-      throw AppError.fromErrorCode(ErrorMap.PASSWORD_NOT_FOUND);
+    } else if (!password) {
+      throw AppError.fromErrorCode(ErrorMap.PASSWORD_NOT_FOUND)
     }
+
   };
 }

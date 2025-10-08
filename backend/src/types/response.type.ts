@@ -33,8 +33,10 @@ export interface UserOutput {
 
 
 export interface RevenueResponse {
-  revenueLastWeek: number;
-  revenueLastMonth: number;
+  weeklyRevenue: Record<string, number>;
+  monthlyRevenue: Record<string, number>;
+  totalWeeklyRevenue: number;
+  totalMonthlyRevenue: number;
 }
 
 export interface LoginOutput {

@@ -1,5 +1,5 @@
 // src/entities/transaction-history.entity.ts
-import {Entity,PrimaryGeneratedColumn,Column,ManyToOne,JoinColumn,CreateDateColumn,} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, } from 'typeorm';
 import { Event } from './Event.model';
 import { User } from './User.model';
 
@@ -12,9 +12,11 @@ export class TransactionHistory {
   @JoinColumn({ name: 'event_id' })
   event!: Event;
 
-  @ManyToOne(() => User, (user) => user.transactions, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user!: User;
+  @Column({ name: 'user_id' })      // người mua vé
+  userId!: number;
+
+  @Column({ name: 'organizer_id' }) // người tổ chức sự kiện
+  organizerId!: number;
 
   @Column({ type: 'decimal', precision: 12, scale: 2 })
   amount!: number;

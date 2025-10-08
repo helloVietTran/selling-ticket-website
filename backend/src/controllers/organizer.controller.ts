@@ -83,16 +83,15 @@ class organizerController {
       });
 
       if (!user || !user.organizer) {
-        return res.status(404).json({ message: 'Organizer not found for this user' });
+        throw AppError.fromErrorCode(ErrorMap.ORGANIZER_NOT_FOUND);
       }
-
+      console.log(user.organizer.organizerId);
       return res.status(200).json({
         message: 'Lấy thông tin organizer của tôi thành công',
         data: user.organizer
       });
     } catch (err) {
-      console.error('Error in getMyOrganizer:', err);
-      return next(err);
+      next(err);
     }
   };
   
