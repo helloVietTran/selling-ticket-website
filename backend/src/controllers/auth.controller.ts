@@ -23,13 +23,10 @@ export class AuthController {
   ) => {
     try {
       const { email, userName, password } = req.body;
-      const userEntity = new User();
-      userEntity.validate(email, userName, password);
       const existedUser = await this.userRepo.findOne({ where: { email } });
       if (existedUser) {
         throw AppError.fromErrorCode(ErrorMap.USER_ALREADY_EXISTS);
       }
-
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const newUser = this.userRepo.create({
@@ -54,13 +51,6 @@ export class AuthController {
   ) => {
     try {
       const { email, password } = req.body;
-      const regex = /^[\w.-]+@[\w.-]+\.\w{2,}$/;
-      if (!regex.test(email)) {
-        throw AppError.fromErrorCode(ErrorMap.FORMAT_EMAIL_INCORRECT);
-      }
-      if (!email || !password) {
-        throw AppError.fromErrorCode(ErrorMap.DATA_NOT_EMPTY);
-      }
       const user = await this.userRepo.findOne({ where: { email } });
       if (!user) {
         throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
