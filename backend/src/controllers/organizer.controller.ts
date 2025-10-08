@@ -5,9 +5,12 @@ import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
 import { AppDataSource } from '../config/data-source';
 import { Organizer } from '../models/Organizer.model';
+import { Requester } from '../types/index';
+import { User } from '../models/User.model';
 
 class organizerController {
   private organizerRepo = AppDataSource.getRepository(Organizer);
+  private userRepo = AppDataSource.getRepository(User);
 
   createOrganizer = async (
     req: Request<{}, {}, paymentInput>,
@@ -27,6 +30,7 @@ class organizerController {
       next(error);
     }
   };
+
   getOneOrganizer = async (
     req: Request<{}, {}, paymentInput>,
     res: Response<BaseResponse<any>>,
@@ -68,5 +72,28 @@ class organizerController {
       next(error);
     }
   };
+  
+  getMyOrganizer = async (req: Request, res: Response<BaseResponse<any>>, next: NextFunction) => {
+    try {
+      const requester = res.locals.requester as Requester;
+     
+      const user = await this.userRepo.findOne({
+        where: { id: Number(requester.id) },
+        relations: ['organizer']
+      });
+
+      if (!user || !user.organizer) {
+        throw AppError.fromErrorCode(ErrorMap.ORGANIZER_NOT_FOUND);
+      }
+      console.log(user.organizer.organizerId);
+      return res.status(200).json({
+        message: 'Lấy thông tin organizer của tôi thành công',
+        data: user.organizer
+      });
+    } catch (err) {
+      next(err);
+    }
+  };
+  
 }
 export default new organizerController();

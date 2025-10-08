@@ -3,8 +3,10 @@ import { Role } from '../types/enum';
 import { Ticket } from './Ticket.model';
 import { Booking } from './Booking.model';
 import { Organizer } from './Organizer.model';
+import { TransactionHistory } from './TransactionHistory.model';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
+
 
 @Entity('user')
 export class User {
@@ -51,8 +53,9 @@ export class User {
       throw AppError.fromErrorCode(ErrorMap.EMAIL_NOT_FOUND);
     } else if (!userName) {
       throw AppError.fromErrorCode(ErrorMap.USERNAME_NOT_FOUND);
-    } else {
-      throw AppError.fromErrorCode(ErrorMap.PASSWORD_NOT_FOUND);
+    } else if (!password) {
+      throw AppError.fromErrorCode(ErrorMap.PASSWORD_NOT_FOUND)
     }
+
   };
 }
