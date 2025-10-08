@@ -46,6 +46,4 @@ export class Event {
   @JoinColumn({ name: 'emailSettingId', referencedColumnName: 'emailSettingId' })
   emailSetting?: EmailSetting | null;
 
-   @OneToMany(() => TransactionHistory, (t) => t.event)
-  transactions!: TransactionHistory[];
 }
