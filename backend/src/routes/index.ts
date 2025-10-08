@@ -5,8 +5,9 @@ import eventRoutes from './event.route';
 import ticketTypeRoutes from './ticket-type.route';
 import ticketRoutes from './ticket.route';
 import userRoute from './user.route';
-import bookingRoute from './booking.route';
-import organizerRoute from './organizer.route';
+import bookingRoute from './booking.route'
+import organizerRoute from './organizer.route'
+import revenueRoute from './revenue.route';
 import resourceRoute from './resource.route';
 import adminRoute from './admin.route';
 
@@ -19,6 +20,7 @@ function route(app: Application) {
   app.use(`${urlPrefix}/ticket`, ticketRoutes);
   app.use(`${urlPrefix}/user`, userRoute);
   app.use(`${urlPrefix}/booking`, bookingRoute);
+  app.use(`${urlPrefix}/revenue`, revenueRoute);
   app.use(`${urlPrefix}/organizer`, organizerRoute);
   app.use(`${urlPrefix}/resource`, resourceRoute);
   app.use(`${urlPrefix}/admin`, adminRoute);

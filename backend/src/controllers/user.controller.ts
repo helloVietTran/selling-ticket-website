@@ -53,7 +53,9 @@ class UserController {
         message: 'Get my info successfully',
         data: userWithoutPassword
       });
-    } catch (error) {}
+    } catch (error) {
+      next(error);
+    }
   };
 
   updateMyInfo = async (
