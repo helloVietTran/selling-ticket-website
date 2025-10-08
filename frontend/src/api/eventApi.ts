@@ -1,5 +1,6 @@
+import type { PaginateResponse } from "@/components/event-list";
 import api from "./api";
-import type { CreateEventPayload, GetEventsParams }  from '@/types';
+import type { CreateEventPayload, GetEventsParams, GetMyEventParams }  from '@/types';
 import type { BaseResponse, Event }  from '@/types';
 
 async function createFullEvent(payload: CreateEventPayload): Promise<BaseResponse<Event>> {
@@ -21,12 +22,15 @@ async function getEvents(params: GetEventsParams): Promise<BaseResponse<Event[]>
   return res.data;
 }
 
-async function deleteEvent(eventId: string): Promise<void>{
-  await api.delete(`/events/${eventId}`);
+async function deleteEvent(eventId: string | number, organizerId: string): Promise<void>{
+  await api.delete(`/events/${eventId}/organizer/${organizerId}`); 
 }
 
-async function getMyEvents(eventId: string, organizerId: string): Promise<BaseResponse<Event[]>>{
-  const res =  await api.delete(`/events/${eventId}/organizer/${organizerId}`);
+async function getMyEvents(organizerId: string, params: GetMyEventParams): Promise<PaginateResponse<Event>>{
+  const res =  await api.get(`/events/organizer/${organizerId}`,  { params: {
+    status: params.status,
+    keyword: params.keyword
+  }});
 
   return res.data;
 }

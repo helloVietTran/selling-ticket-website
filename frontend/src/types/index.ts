@@ -1,9 +1,16 @@
+import type { EventStatus } from "@/constant";
+
 // params
 export type GetEventsParams = {
   startTime?: string;
   endTime?: string;
   category?: string;
   province?: string;
+  keyword?: string;
+};
+
+export type GetMyEventParams = {
+  status?: string;
   keyword?: string;
 };
 
@@ -100,6 +107,7 @@ export interface BaseResponse<T> {
 }
 
 export type Organizer = {
+  organizerId: number;
   organizerName: string;
   organizerInfo: string;
 };
@@ -132,6 +140,7 @@ export type Event = {
   startTime: string;
   endTime: string;
   eventImage: string;
+  status: EventStatus;
 
   ticketTypes: TicketType[];
   minPriceTicketType: number;
