@@ -25,9 +25,7 @@ export default function SearchBox({
     <div
       className={`flex w-[350px] max-w-md items-center rounded-sm bg-white shadow-sm ${className}`}>
       <div className="flex items-center px-3 flex-1 relative">
-
         <Search className="size-4 text-gray-500 mr-2" />
-
         <Input
           type="text"
           placeholder={placeholder}
@@ -35,8 +33,7 @@ export default function SearchBox({
           onChange={(e) => onChange(e.target.value)}
           className={`border-0 focus-visible:ring-0 focus:outline-none flex-1 text-[#333333] pr-6 ${inputClassName}`}
         />
-
-
+        
         {value && (
           <button
             onClick={() => onChange('')}
@@ -48,7 +45,6 @@ export default function SearchBox({
         )}
       </div>
 
-      {/* 🔘 Nút tìm kiếm */}
       <Button
         onClick={onSearch}
         className={`rounded-l-none border-l border-gray-200 bg-white text-[#333333] hover:bg-gray-200 cursor-pointer ${buttonClassName}`}>

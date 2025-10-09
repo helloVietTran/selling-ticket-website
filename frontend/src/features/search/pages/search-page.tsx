@@ -8,7 +8,7 @@ const SearchPage = () => {
       <div className="bg-main-content py-4">
         <div className="main-container">
           <FilterBar />
-          <EventList category="Âm nhạc" />
+          <EventList />
         </div>
       </div>
       <Footer />

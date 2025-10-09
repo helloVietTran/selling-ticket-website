@@ -1,6 +1,6 @@
-import type { PaginateResponse } from "@/components/event-list";
+
 import api from "./api";
-import type { CreateEventPayload, GetEventsParams, GetMyEventParams }  from '@/types';
+import type { CreateEventPayload, GetEventsParams, GetMyEventParams, PaginateResponse }  from '@/types';
 import type { BaseResponse, Event }  from '@/types';
 
 async function createFullEvent(payload: CreateEventPayload): Promise<BaseResponse<Event>> {
@@ -8,8 +8,8 @@ async function createFullEvent(payload: CreateEventPayload): Promise<BaseRespons
   return res.data;
 }
 
-async function getEvents(params: GetEventsParams): Promise<BaseResponse<Event[]>> {
-  const res = await api.get("/events", {
+async function getEvents(params: GetEventsParams): Promise<PaginateResponse<Event>> {
+  const res = await api.get("/events/filter", {
     params: {
       startTime: params.startTime,
       endTime: params.endTime,

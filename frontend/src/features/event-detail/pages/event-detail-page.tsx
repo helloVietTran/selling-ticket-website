@@ -13,20 +13,20 @@ import TicketTypeList from '@/features/event-detail/components/ticket-type-list'
 import OrganizerCard from '@/features/event-detail/components/organizer-card';
 
 const EventDetailPage = () => {
-  const { id } = useParams();
+  const { eventId } = useParams();
   const navigate = useNavigate();
 
   const { data, exec, isPending, isError } = useApi(getEventById);
 
   useEffect(() => {
-    if (id) exec(id);
-  }, [id, exec]);
+    if (eventId) exec(eventId);
+  }, [eventId]);
 
-  useEffect(() => {
-    if (isError || !data?.data) {
-      navigate('/not-found', { replace: true });
-    }
-  }, [isError, data, navigate]);
+  // useEffect(() => {
+  //   if (isError || !data?.data) {
+  //     navigate('/not-found', { replace: true });
+  //   }
+  // }, [isError, data, navigate]);
 
   if (isPending) {
     return <p className="text-center py-10">Đang tải chi tiết sự kiện...</p>;

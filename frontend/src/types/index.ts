@@ -106,6 +106,18 @@ export interface BaseResponse<T> {
   data?: T;
 }
 
+
+export type PaginateResponse<T> = {
+  message: string;
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalItems: number;
+    totalPages: number;
+  };
+};
+
 export type Organizer = {
   organizerId: number;
   organizerName: string;
