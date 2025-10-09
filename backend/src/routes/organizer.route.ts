@@ -4,8 +4,7 @@ import { auth } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.post('/', auth, organizerController.createOrganizer);
-router.get('/:organizerId', auth, organizerController.getOneOrganizer);
-router.put('/:organizerId', auth, organizerController.updateOrganizer);
+router.get('/my', auth, organizerController.getMyOrganizerRecord);
+
 
 export default router;
