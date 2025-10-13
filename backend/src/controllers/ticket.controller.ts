@@ -1,51 +1,41 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
+import QRCode from 'qrcode';
+import { Repository } from 'typeorm';
+
 import { AppDataSource } from '../config/data-source';
 import { Booking } from '../models/Booking.model';
 import { Ticket } from '../models/Ticket.model';
 import { QrCode } from '../models/QrCode.model';
-import { v4 as uuidv4 } from 'uuid';
-import QRCode from 'qrcode';
-import { Repository } from 'typeorm';
-import ApiResponse from '../utils/ApiResponse';
-import { AppError } from '../config/exception';
-import { ErrorMap } from '../config/ErrorMap';
+import { User } from '../models/User.model';
+import { TicketState } from '../types/enum';
 
 class TicketController {
-  private bookingRepo: Repository<Booking> = AppDataSource.getRepository(Booking);
   private ticketRepo: Repository<Ticket> = AppDataSource.getRepository(Ticket);
-  private qrRepo: Repository<QrCode> = AppDataSource.getRepository(QrCode);
 
-  generateTickets = async (req: Request, res: Response) => {
+  generateTickets = async (booking: Booking, user: User, eventId: number) => {
     const queryRunner = AppDataSource.createQueryRunner();
 
     await queryRunner.connect();
     await queryRunner.startTransaction();
 
     try {
-      const { bookingId } = req.body;
-
-      const booking = await queryRunner.manager.findOne(Booking, {
-        where: { bookingId },
-        relations: ['attendee', 'bookingItems', 'bookingItems.ticketType']
-      });
-
-      if (!booking) {
-       throw AppError.fromErrorCode(ErrorMap.BOOKING_NOT_FOUND);
-      }
-
       const ticketsResponse: any[] = [];
 
       for (const item of booking.bookingItems) {
         for (let i = 0; i < item.quantity; i++) {
-          // Tạo ticket
+          // create ticket
           const ticket = queryRunner.manager.create(Ticket, {
             ticketType: item.ticketType,
-            owner: booking.attendee,
-            checkedIn: false
+            ownerId: user.id,
+            eventId: eventId,
+            checkedIn: false,
+            seatNumber: 1,
+            ticketStatus: TicketState.Available
           });
           await queryRunner.manager.save(ticket);
 
-          // Tạo QR Code
+          // create QR Code
           const randomCode = uuidv4();
           const issuedAt = new Date();
           const expiresAt = undefined;
@@ -60,39 +50,49 @@ class TicketController {
 
           // Generate QR Image
           const payload = { issuedAt, expiresAt, randomCode };
-          const qrImage = await QRCode.toDataURL(JSON.stringify(payload));
-
-          // Tạo object trả về API
-          ticketsResponse.push({
-            ticketId: ticket.ticketId,
-            bookingId: booking.bookingId,
-            ticketType: item.ticketType.ticketTypeName,
-            attendeeId: booking.attendee?.id,
-            checkedIn: ticket.checkedIn,
-            qrCode: {
-              issuedAt,
-              expiresAt,
-              randomCode,
-              image: qrImage
-            }
-          });
+          await QRCode.toDataURL(JSON.stringify(payload));
         }
       }
 
       await queryRunner.commitTransaction();
 
-      return res.json(ApiResponse.success(ticketsResponse, 'Tickets generated successfully'));
-    } catch (error: any) {
+      return ticketsResponse;
+    } catch (error) {
       await queryRunner.rollbackTransaction();
-      return res.status(500).json(
-        ApiResponse.error({
-          code: 'ERROR_GENERATING_TICKETS',
-          message: error.message || 'Error generating tickets',
-          statusCode: 500
-        })
-      );
+      throw error;
     } finally {
       await queryRunner.release();
+    }
+  };
+
+  getMyTickets = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const requester = res.locals.requester;
+
+      const tickets = await this.ticketRepo.find({
+        where: {
+          ownerId: requester.id,
+          ticketStatus: TicketState.Available
+        },
+        relations: ['ticketType', 'ticketType.event']
+      });
+
+      const responseData = tickets.map((t) => ({
+        ticketId: t.ticketId,
+        ticketType: t.ticketType.ticketTypeName,
+        checkedIn: t.checkedIn,
+        seatNumber: t.seatNumber,
+        eventName: t.ticketType.event.title,
+        eventStartTime: t.ticketType.event.startTime,
+        eventEndTime: t.ticketType.event.endTime
+      }));
+
+      return res.json({
+        success: true,
+        data: responseData
+      });
+    } catch (error) {
+      next(error);
     }
   };
 }

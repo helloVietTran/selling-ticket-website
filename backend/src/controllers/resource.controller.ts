@@ -13,7 +13,8 @@ class ResourceController {
 
   uploadImage = async (req: Request, res: Response<BaseResponse<Image>>, next: NextFunction) => {
     try {
-      const urlPre = config.resource_path;
+      const domain = config.domain;
+      console.log(domain)
       const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
       if (!req.file) throw AppError.fromErrorCode(ErrorMap.NO_FILE_UPLOAD);
       const imageId = Date.now() + '-' + Math.round(Math.random() * 1e9);
@@ -25,7 +26,7 @@ class ResourceController {
 
       const resource = this.imageRepo.create({
         id: imageId,
-        url: `${urlPre}/uploads/${fileName}`
+        url: `${domain}/uploads/${fileName}`
       });
       await this.imageRepo.save(resource);
 

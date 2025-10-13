@@ -43,7 +43,8 @@ const eventSchema = z
     category: z.string().min(1, 'Vui lòng nhập thể loại'),
     eventInfo: z.string().min(1, 'Vui lòng nhập thông tin sự kiện'),
     startTime: z.string().min(1, 'Chọn ngày bắt đầu'),
-    endTime: z.string().min(1, 'Chọn ngày kết thúc')
+    endTime: z.string().min(1, 'Chọn ngày kết thúc'),
+    eventImage: z.string().nonoptional('Vui lòng chọn ảnh')
   })
   .superRefine((data, ctx) => {
     const start = parseISO(data.startTime);
