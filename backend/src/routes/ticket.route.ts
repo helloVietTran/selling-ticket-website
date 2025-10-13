@@ -1,4 +1,3 @@
-// src/routes/ticket.route.ts
 import { Router } from 'express';
 import ticketController from '../controllers/ticket.controller';
 

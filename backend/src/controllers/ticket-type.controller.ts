@@ -27,7 +27,7 @@ class TicketTypeController {
     }
   };
 
-  bookingTicket = async (
+  bookingTicketType = async (
     req: Request<{}, {}, SelectTicketInput>,
     res: Response<BaseResponse<Booking>>,
     next: NextFunction
@@ -41,10 +41,6 @@ class TicketTypeController {
       const userId = requester.id;
       const { ticketTypes } = req.body;
 
-      if (!ticketTypes || ticketTypes.length === 0) {
-        throw AppError.fromErrorCode(ErrorMap.INVALID_REQUEST);
-      }
-      if (!userId) return 0;
       const user = await queryRunner.manager.findOneBy(User, { id: Number(userId) });
       if (!user) {
         throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
@@ -53,13 +49,16 @@ class TicketTypeController {
       const bookingItems: BookingItem[] = [];
       const now = new Date();
       const ticketTypeEntity = new TicketType();
+
       for (const item of ticketTypes) {
         const ticketType = await queryRunner.manager.findOneBy(TicketType, { ticketTypeId: Number(item.ticketTypeId) });
         if (!ticketType) {
           throw AppError.fromErrorCode(ErrorMap.TICKET_TYPE_NOT_FOUND);
         }
-        await ticketTypeEntity.validate(ticketType, item, now);
+
+        ticketTypeEntity.validate(ticketType, item, now);
         ticketType.soldTicket += item.quantity;
+        
         await queryRunner.manager.save(ticketType);
 
         totalAmount += Number(ticketType.price) * item.quantity;
@@ -71,6 +70,7 @@ class TicketTypeController {
       }
 
       const newBooking = new Booking();
+
       newBooking.attendee = user;
       newBooking.bookingItems = bookingItems;
       newBooking.amount = totalAmount;
@@ -84,6 +84,7 @@ class TicketTypeController {
       savedBooking.bookingItems.forEach((bi) => delete (bi as any).booking);
 
       await queryRunner.commitTransaction();
+
       return res.status(201).json({
         message: 'Booking created successfully. Please proceed to payment.',
         data: savedBooking

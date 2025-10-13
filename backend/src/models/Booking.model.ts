@@ -1,6 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany } from 'typeorm';
 import { BookingItem } from './BookingItem.model';
-import { Payment } from './Payment.model';
 import { BookingStatus } from '../types/enum';
 import { User } from './User.model';
 
@@ -26,7 +25,4 @@ export class Booking {
 
   @OneToMany(() => BookingItem, (bi) => bi.booking, { cascade: true })
   bookingItems!: BookingItem[];
-
-  @OneToOne(() => Payment, (p) => p.booking, { nullable: true })
-  payment?: Payment;
 }

@@ -1,7 +1,7 @@
 import { Entity, PrimaryColumn, Column, CreateDateColumn } from 'typeorm';
 
-@Entity('upload')
-export class Upload {
+@Entity('image')
+export class Image {
   @PrimaryColumn()
   id!: String;
 

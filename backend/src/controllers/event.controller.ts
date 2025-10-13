@@ -44,12 +44,12 @@ class EventController {
 
         // create or update organizer
         let savedOrganizer = await organizerRepo.findOne({
-          where: { organizationName: organizer.organizerName }
+          where: { organizerName: organizer.organizerName }
         });
 
         if (!savedOrganizer) {
           const newOrg = organizerRepo.create({
-            organizationName: organizer.organizerName,
+            organizerName: organizer.organizerName,
             organizerInfo: organizer.organizerInfo
           });
 
@@ -272,6 +272,34 @@ class EventController {
       next(error);
     }
   };
+
+  getEventById = async (
+  req: Request<{ eventId: string }>,
+  res: Response<BaseResponse<Event>>,
+  next: NextFunction
+) => {
+  try {
+    const { eventId } = req.params;
+
+    const eventRepo = AppDataSource.getRepository(Event);
+
+    const event = await eventRepo.findOne({
+      where: { eventId: Number(eventId) },
+      relations: ['venue', 'organizer', 'ticketTypes', 'category']
+    });
+
+    if (!event) {
+      throw AppError.fromErrorCode(ErrorMap.EVENT_NOT_FOUND);
+    }
+
+    return res.status(200).json({
+      message: 'Get event detail successfully',
+      data: event
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 }
 
 export default new EventController();

@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Booking } from './Booking.model';
 
 @Entity('payment')
@@ -6,16 +6,12 @@ export class Payment {
   @PrimaryGeneratedColumn()
   paymentId!: number;
 
-  @OneToOne(() => Booking, (b) => b.payment)
-  @JoinColumn()
-  booking!: Booking;
-
   @Column('double precision')
   amount!: number;
 
-  @Column({ nullable: true })
-  gatewayTransactionId?: number;
+  @Column({ nullable: false })
+  gatewayTransactionId?: string;
 
-  @Column('int', { nullable: true })
-  methodType?: number;
+  @Column({ type: 'datetime', nullable: true })
+  createdAt!: Date;
 }

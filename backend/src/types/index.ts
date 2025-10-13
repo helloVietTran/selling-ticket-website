@@ -15,3 +15,5 @@ export interface statsData {
   totalsoldTicket: number | null;
   percentage: string;
 }
+
+
