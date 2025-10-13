@@ -9,17 +9,18 @@ import { AppDataSource } from '../config/data-source';
 import { Event } from '../models/Event.model';
 import { User } from '../models/User.model';
 import { Ticket } from '../models/Ticket.model';
+import { AppError } from '../config/exception';
+import { ErrorMap } from '../config/ErrorMap';
+import { TicketState } from '../types/enum';
 
 class EmailController {
-  private userRepo = AppDataSource.getRepository(User);
   private ticketRepo = AppDataSource.getRepository(Ticket);
-  private ticketTypeRepo = AppDataSource.getRepository(TicketType);
   private eventRepo = AppDataSource.getRepository(Event);
+  private userRepo = AppDataSource.getRepository(User);
 
-  sendEmailQR = async (req: Request, res: Response, next: NextFunction) => {
+  // TODO: đẩy mail vào hàng đợi
+  sendTicketMail = async () => {
     try {
-      const { email, eventId, ticketTypeId } = req.body;
-
       const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 465,
@@ -30,16 +31,22 @@ class EmailController {
         }
       });
 
-      const user = await this.userRepo.findOne({ where: { email } });
+      const ticket = await this.ticketRepo.findOne({
+        where: { ticketStatus: TicketState.Available },
+        relations: ['ticketType']
+      });
+
       const event = await this.eventRepo.findOne({
-        where: { eventId },
+        where: { eventId: ticket?.eventId },
         relations: ['organizer']
       });
-      const ticketType = await this.ticketTypeRepo.findOne({ where: { ticketTypeId } });
-      const ticket = await this.ticketRepo.findOne({ where: { ticketType: ticketTypeId } });
 
-      if (!event || !user || !ticket || !ticketType || !event.organizer) {
-        return res.status(404).json({ message: 'Không tìm thấy dữ liệu' });
+      const user = await this.userRepo.findOne({
+        where: { id: ticket?.ownerId }
+      });
+
+      if (!event || !user || !ticket || !event.organizer) {
+        throw AppError.fromErrorCode(ErrorMap.INTERNAL_SERVER);
       }
 
       const ticketData = {
@@ -48,20 +55,19 @@ class EmailController {
         startTime: event.startTime,
         endTime: event.endTime,
         stand: ticket.seatNumber || '0',
-        ticketType: ticketType.ticketTypeName,
-        price: ticketType.price || 0,
+        ticketType: ticket.ticketType.ticketTypeName,
+        price: ticket.ticketType.price || 0,
         year: new Date().getFullYear(),
         organizerName: event.organizer.organizerName || ' '
       };
 
-      // 1) QR payload
+      //  QR payload
       const qrPayload = JSON.stringify({
-        organization: ticketData.organizerName,
-        name: ticketData.userName,
-        event: ticketData.eventName
+        eventId: event.eventId,
+        userId: user.id
       });
 
-      // 2) Tạo QR buffer
+      // Tạo QR buffer
       const qrBuffer = await QRCode.toBuffer(qrPayload, {
         type: 'png',
         errorCorrectionLevel: 'M',
@@ -69,7 +75,7 @@ class EmailController {
         width: 400
       });
 
-      // 3) Load template
+      // Load template
       const templatePath = path.join(__dirname, '../teamplate/sendEmail.html');
       let html = fs.readFileSync(templatePath, 'utf8');
 
@@ -82,24 +88,20 @@ class EmailController {
         .replace(/{{year}}/g, ticketData.year.toString())
         .replace(/{{price}}/g, ticketData.price.toString())
         .replace(/{{organizerName}}/g, ticketData.organizerName)
-        .replace(/{{qrSrc}}/g, 'cid:qr1'); // fix chỗ cid
+        .replace(/{{qrSrc}}/g, 'cid:qr1');
 
-      // 4) Gửi mail
+      // Gửi mail
       const mailOptions = {
         from: `"Ban Tổ Chức" <${process.env.SMTP_USER}>`,
-        to: 'nguyentieubao96@gmail.com', // gửi cho user
+        to: user.email,
         subject: `Vé của bạn cho ${ticketData.eventName}`,
         html,
         attachments: [{ filename: 'qr.png', content: qrBuffer, cid: 'qr1' }]
       };
 
-      const info = await transporter.sendMail(mailOptions);
-      console.log('Message sent:', info.messageId);
-
-      return res.status(200).json({ message: 'Email sent successfully', info });
+      await transporter.sendMail(mailOptions);
     } catch (error) {
       console.error('Send email error:', error);
-      return res.status(500).json({ message: 'Failed to send email', error });
     }
   };
 }

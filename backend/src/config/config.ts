@@ -26,7 +26,7 @@ export const config = {
     email: process.env.ADMIN_EMAIL!,
     password: process.env.ADMIN_PASSWORD!
   },
-  resource_path: process.env.RESOURCE_PATH,
+  domain: process.env.DOMAIN,
   vnp: {
     vnp_TmnCode: process.env.vnp_TmnCode,
     vnp_HashSecret: process.env.vnp_HashSecret,

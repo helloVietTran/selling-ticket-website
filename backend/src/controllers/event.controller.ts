@@ -35,7 +35,8 @@ class EventController {
         const emailSettingRepo = manager.getRepository(EmailSetting);
 
         const user = await userRepo.findOne({
-          where: { id: Number(requester.id) }
+          where: { id: Number(requester.id) },
+          relations: ['organizer']
         });
 
         if (!user) {
@@ -43,21 +44,20 @@ class EventController {
         }
 
         // create or update organizer
-        let savedOrganizer = await organizerRepo.findOne({
-          where: { organizerName: organizer.organizerName }
-        });
-
-        if (!savedOrganizer) {
-          const newOrg = organizerRepo.create({
+        if (user.organizer) {
+          user.organizer.organizerName = organizer.organizerName;
+          user.organizer.organizerInfo = organizer.organizerInfo;
+          await organizerRepo.save(user.organizer);
+        } else {
+          const newOrganizer = organizerRepo.create({
             organizerName: organizer.organizerName,
             organizerInfo: organizer.organizerInfo
           });
+          const savedOrganizer = await organizerRepo.save(newOrganizer);
 
-          savedOrganizer = await organizerRepo.save(newOrg);
+          user.organizer = savedOrganizer;
+          await userRepo.save(user);
         }
-
-        user.organizer = savedOrganizer;
-        await userRepo.save(user);
 
         // create venue
         const newVenue = venueRepo.create({
@@ -95,12 +95,13 @@ class EventController {
         );
 
         const newEvent = eventRepo.create({
+          eventImage: event.eventImage,
           title: event.title,
           eventInfo: event.eventInfo,
           startTime: new Date(event.startTime),
           endTime: new Date(event.endTime),
           venue: newVenue,
-          organizer: savedOrganizer,
+          organizer: user.organizer,
           category: savedCategory,
           emailSetting: emailSetting,
           ticketTypes: newTicketTypes

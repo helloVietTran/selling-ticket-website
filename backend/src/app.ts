@@ -1,12 +1,15 @@
 import express, { Application, NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import cors from 'cors';
+import cron from 'node-cron';
+import path from 'path';
 
 import route from './routes';
 import { AppDataSource } from './config/data-source';
 import { responseErr } from './config/exception';
 import { startCronTicketBooking } from './controllers/cron/booking.cron';
-import path from 'path';
+import emailController from './controllers/email.controller';
+
 const app: Application = express();
 
 app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
@@ -15,7 +18,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+// cron job
 startCronTicketBooking();
+
+// // send ticket mail job
+// cron.schedule('*/3 * * * *', async () => {
+//   await emailController.sendTicketMail();
+// });
+
 // routes
 route(app);
 

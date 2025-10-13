@@ -1,22 +1,19 @@
-// src/entities/transaction-history.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, } from 'typeorm';
-import { Event } from './Event.model';
-import { User } from './User.model';
+import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
 @Entity('transaction_history')
 export class TransactionHistory {
   @PrimaryGeneratedColumn()
   id!: number;
 
-  @Column({ name: 'user_id' })      // người mua vé
+  @Column({ name: 'user_id' })
   userId!: number;
 
-  @Column({ name: 'organizer_id' }) // người tổ chức sự kiện
-  organizerId!: number;
+  @Column({ name: 'booking_id' })
+  bookingId!: number;
 
-  @Column({ type: 'decimal', precision: 12, scale: 2 })
+  @Column('double precision')
   amount!: number;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @Column({ type: 'datetime' })
   createdAt!: Date;
 }

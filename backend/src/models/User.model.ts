@@ -31,9 +31,6 @@ export class User {
   })
   roles!: Role;
 
-  @OneToMany(() => Ticket, (ticket) => ticket.owner)
-  tickets!: Ticket[];
-
   @OneToMany(() => Booking, (booking) => booking.attendee)
   bookings!: Booking[];
 

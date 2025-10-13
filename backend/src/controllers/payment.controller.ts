@@ -4,30 +4,46 @@ import { config } from '../config/config';
 import { format } from 'date-fns';
 import qs from 'qs';
 import crypto from 'crypto';
-import request from 'request';
+
 import { AppDataSource } from '../config/data-source';
 import { Booking } from '../models/Booking.model';
-import { Payment } from '../models/Payment.model';
 import { BookingStatus } from '../types/enum';
 import { CreatePaymentInput } from '../validators/payment.validate';
+import { TransactionHistory } from '../models/TransactionHistory.model';
+import { Requester } from '../types';
+import ticketController from './ticket.controller';
+import { User } from '../models/User.model';
+import { AppError } from '../config/exception';
+import { ErrorMap } from '../config/ErrorMap';
+import emailController from './email.controller';
 
 class PaymentController {
   private bookingRepo = AppDataSource.getRepository(Booking);
-  private paymentRepo = AppDataSource.getRepository(Payment);
+  private userRepo = AppDataSource.getRepository(User);
+  private transactionHistoryRepo = AppDataSource.getRepository(TransactionHistory);
 
   createPaymentUrl = async (
     req: Request<{}, {}, CreatePaymentInput>,
     res: Response<BaseResponse<{ url: string }>>,
     next: NextFunction
   ) => {
-    const booking = await this.bookingRepo.findOne({
-      where: { bookingId: Number(req.body.orderId) }
+    const requester = res.locals.requester as Requester;
+
+    const user = await this.userRepo.findOne({
+      where: { id: Number(requester.id) }
     });
 
+    const booking = await this.bookingRepo.findOne({
+      where: { bookingId: Number(req.body.orderId) },
+      relations: ['attendee', 'bookingItems', 'bookingItems.ticketType']
+    });
+
+    if (!user) {
+      throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
+    }
+
     if (!booking) {
-      return res.status(404).json({
-        message: 'Booking not found!'
-      });
+      throw AppError.fromErrorCode(ErrorMap.BOOKING_NOT_FOUND);
     }
     // thong tin don hang
     const date = new Date();
@@ -71,93 +87,25 @@ class PaymentController {
     vnp_Params['vnp_SecureHash'] = signed;
     const paymentUrl = vnp_Url + '?' + qs.stringify(vnp_Params, { encode: false });
 
-    // lưu giao dịch là đã thanh toán
+    // tạm lưu giao dịch là đã thanh toán
     // TODO: tạo callback để vnpay gọi sau khi đã thanh toán thành công => lúc này mới cập nhật db
-    const payment = this.paymentRepo.create({
+    const payment = this.transactionHistoryRepo.create({
       amount,
-      gatewayTransactionId: Date.now().toString(),
-      createdAt: Date.now()
+      createdAt: new Date(),
+      bookingId: booking.bookingId,
+      userId: +requester.id
     });
 
     booking.status = BookingStatus.Paid;
 
     await this.bookingRepo.save(booking);
-    await this.paymentRepo.save(payment);
+    await this.transactionHistoryRepo.save(payment);
+    // create ticket
+    ticketController.generateTickets(booking, user, req.body.eventId);
 
     res.json({
       message: 'Create payment url successfull',
       data: { url: paymentUrl }
-    });
-  };
-
-  querydr = async (req: Request, res: Response<BaseResponse<{ url: string }>>, next: NextFunction) => {
-    const vnp_TmnCode = config.vnp.vnp_TmnCode;
-    const vnp_HashSecret = config.vnp.vnp_HashSecret;
-    const vnp_Api = config.vnp.query_transaction_api;
-
-    const vnp_TxnRef = req.body.orderId;
-    const vnp_TransactionDate = req.body.transDate;
-    const date = new Date();
-
-    const vnp_RequestId = format(date, 'HHmmss');
-    const vnp_Version = '2.1.0';
-    const vnp_Command = 'querydr';
-    const vnp_OrderInfo = 'Truy van GD ma:' + vnp_TxnRef;
-
-    const vnp_IpAddr = '127.0.0.1';
-    const currCode = 'VND';
-    const vnp_CreateDate = format(date, 'YYYYMMddHHmmss');
-
-    const data =
-      vnp_RequestId +
-      '|' +
-      vnp_Version +
-      '|' +
-      vnp_Command +
-      '|' +
-      vnp_TmnCode +
-      '|' +
-      vnp_TxnRef +
-      '|' +
-      vnp_TransactionDate +
-      '|' +
-      vnp_CreateDate +
-      '|' +
-      vnp_IpAddr +
-      '|' +
-      vnp_OrderInfo;
-    if (!vnp_HashSecret) {
-      throw new Error('Missing VNPAY hash secret!');
-    }
-    const hmac = crypto.createHmac('sha512', vnp_HashSecret);
-    const vnp_SecureHash = hmac.update(new Buffer(data, 'utf-8')).digest('hex');
-
-    let dataObj = {
-      vnp_RequestId: vnp_RequestId,
-      vnp_Version: vnp_Version,
-      vnp_Command: vnp_Command,
-      vnp_TmnCode: vnp_TmnCode,
-      vnp_TxnRef: vnp_TxnRef,
-      vnp_OrderInfo: vnp_OrderInfo,
-      vnp_TransactionDate: vnp_TransactionDate,
-      vnp_CreateDate: vnp_CreateDate,
-      vnp_IpAddr: vnp_IpAddr,
-      vnp_SecureHash: vnp_SecureHash
-    };
-
-    return new Promise((resolve, reject) => {
-      request(
-        {
-          url: vnp_Api,
-          method: 'POST',
-          json: true,
-          body: dataObj
-        },
-        (error, response, body) => {
-          if (error) return reject(error);
-          resolve(body);
-        }
-      );
     });
   };
 

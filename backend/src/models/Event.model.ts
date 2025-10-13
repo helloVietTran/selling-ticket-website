@@ -5,7 +5,6 @@ import { TicketType } from './TicketType.model';
 import { EventStatus } from '../types/enum';
 import { Category } from './Category.model';
 import { EmailSetting } from './EmailSetting.model';
-import { TransactionHistory } from './TransactionHistory.model';
 
 @Entity('event')
 export class Event {
@@ -26,6 +25,9 @@ export class Event {
 
   @Column({ type: 'text' })
   eventInfo!: string;
+
+  @Column()
+  eventImage!: string
 
   @OneToOne(() => Venue, (v) => v.event, { nullable: false, cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'venueId', referencedColumnName: 'venueId' })

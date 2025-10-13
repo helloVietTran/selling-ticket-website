@@ -19,11 +19,9 @@ export enum BookingStatus {
 }
 
 export enum TicketState {
-  Sold = 'SOLD',
   Expired = 'EXPIRED',
   Cancelled = 'CANCELLED',
   Available = 'AVAILABLE',
-  Held = 'HELD'
 }
 
 export enum Category {

@@ -2,7 +2,6 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn
 import { QrCode } from './QrCode.model';
 import { TicketState } from '../types/enum';
 import { TicketType } from './TicketType.model';
-import { User } from './User.model';
 
 @Entity('ticket')
 export class Ticket {
@@ -18,11 +17,14 @@ export class Ticket {
   @Column({ nullable: true })
   seatNumber?: number;
 
+  @Column({type: 'int'})
+  ownerId!: number;
+
+  @Column({type: 'int'})
+  eventId!: number;
+
   @ManyToOne(() => TicketType, (tt) => tt.tickets, { nullable: false, onDelete: 'CASCADE' })
   ticketType!: TicketType;
-
-  @ManyToOne(() => User, (u) => u.tickets, { nullable: false })
-  owner?: User;
 
   @OneToOne(() => QrCode, (q) => q.ticket, { cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'ticketId' })

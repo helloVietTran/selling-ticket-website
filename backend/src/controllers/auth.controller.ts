@@ -10,7 +10,6 @@ import { LoginInput, LogoutInput, RegisterInput } from '../validators/auth.valid
 import { BaseResponse, LoginOutput } from '../types/response.type';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
-import validator from 'validator';
 
 export class AuthController {
   private userRepo = AppDataSource.getRepository(User);
