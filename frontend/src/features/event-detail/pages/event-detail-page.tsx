@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { getProvinces, getDistricts, getWards } from 'sub-vn';
 
 import { useApi } from '@/api/hooks/useApi';
 import { getEventById } from '@/api/eventApi';
@@ -14,25 +15,21 @@ import OrganizerCard from '@/features/event-detail/components/organizer-card';
 
 const EventDetailPage = () => {
   const { eventId } = useParams();
-  const navigate = useNavigate();
-
-  const { data, exec, isPending, isError } = useApi(getEventById);
+  const { data, exec, isPending } = useApi(getEventById);
 
   useEffect(() => {
     if (eventId) exec(eventId);
   }, [eventId]);
 
-  // useEffect(() => {
-  //   if (isError || !data?.data) {
-  //     navigate('/not-found', { replace: true });
-  //   }
-  // }, [isError, data, navigate]);
+  const provinces = getProvinces();
+  const districts = getDistricts();
+  const wards = getWards();
+
+  const event = data?.data;
 
   if (isPending) {
     return <p className="text-center py-10">Đang tải chi tiết sự kiện...</p>;
   }
-
-  const event = data?.data;
 
   if (!event) return null;
 
@@ -46,16 +43,14 @@ const EventDetailPage = () => {
             'linear-gradient(rgb(39, 39, 42) 48.04%, rgb(0, 0, 0) 100%)',
         }}>
         <EventTicketCard
+          eventId={event.eventId}
           title={event.title}
-          date={format(event.startTime, 'dd/MM/yyyy', { locale: vi })}
-          time={format(event.startTime, 'HH:mm', { locale: vi })}
-          province={event.venue.province}
+          date={format(event.startTime, 'HH:mm dd/MM/yyyy', { locale: vi })}
+          province={provinces.find((p: any) => p.code === event.venue.province)?.name}
           address={
-            event.venue.street +
-            ', ' +
-            event.venue.ward +
-            ', ' +
-            event.venue.district
+            `${event.venue.street}, ` +
+            `${wards.find((w: any) => w.code === event.venue.ward)?.name}, ` +
+            `${districts.find((d: any) => d.code === event.venue.district)?.name}, `
           }
           price={event.minPriceTicketType}
           image={event.eventImage}

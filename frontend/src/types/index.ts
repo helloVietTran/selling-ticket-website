@@ -99,6 +99,10 @@ export type SelectTicketTypePayload = {
   }[];
 };
 
+export interface CreatePaymentPayload {
+  orderId: string | number;
+}
+
 // dùng chung
 export interface BaseResponse<T> {
   message: string;
@@ -189,8 +193,17 @@ export interface User {
 export interface Booking {
   bookingId: number;
   status: string;
-  createdAt?: Date;
-  expiresAt?: Date;
+  createdAt: Date;
+  expiresAt: Date;
+  amount: number;
+  attendee: User;
+  bookingItems: BookingItem[];
+
+}
+
+export interface BookingItem {
+  quantity: number;
+  ticketType: TicketType;
 }
 
 export interface StatsTicketType {

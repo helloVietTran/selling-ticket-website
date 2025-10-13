@@ -15,9 +15,9 @@ export default function OrganizerCard({
   return (
     <Card className="bg-white shadow-2xs rounded-2xl border border-gray-200 w-full max-w-3xl p-4">
       <CardContent className="flex gap-4 p-0 items-center">
-        <Avatar className="w-20 h-20 rounded-xl">
+        <Avatar className="size-32 rounded-xl">
           <AvatarImage src={image} alt={name} />
-          <AvatarFallback className="text-lg font-bold">
+          <AvatarFallback className="text-xl font-bold rounded-none">
             {name.charAt(0).toUpperCase()}
           </AvatarFallback>
         </Avatar>

@@ -1,44 +1,47 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getProvinces, getDistricts, getWards } from 'sub-vn';
+import { toast } from 'sonner';
 
-import { getTicketTypesByEventId } from '@/api/ticketTypeApi';
+import { bookingTicketType, getTicketTypesByEventId } from '@/api/ticketTypeApi';
 import { useApi } from '@/api/hooks/useApi';
+import type { SelectTicketTypePayload, TicketType } from '@/types';
+import { getEventById } from '@/api/eventApi';
+import { formatDateTime } from '@/lib/formatDateTime';
 import TicketItem from './ticket-item';
 import TicketSummary from './ticket-summary';
-import type { TicketType } from '@/types';
-
-const MOCK_TICKETS = [
-  { id: 'standard', name: 'Vé Thường (Workshop Nước Hoa Lăn)', price: 310000 },
-  {
-    id: 'discount',
-    name: '(Vé Ưu Đãi) Workshop Nước Hoa Lăn',
-    price: 279000,
-    description: 'Vé ưu đãi giảm 10% dành cho nhóm khách đăng ký trên 4 slot',
-  },
-];
-
-const formatVND = (n: number) =>
-  n.toLocaleString('vi-VN', { maximumFractionDigits: 0 }) + ' đ';
-
 
 export default function TicketSelector() {
   const { eventId } = useParams<{ eventId: string }>();
   const [qty, setQty] = useState<Record<number, number>>({});
+  const navigate = useNavigate();
 
   const {
-    data,
-    exec,
+    data: ticketTypeData,
+    exec: fetchTicketTypes,
   } = useApi(getTicketTypesByEventId);
 
+  const { data: eventData, exec: fetchEvent } = useApi(getEventById);
+  const { data: bookingData, exec: createBooking, isError, isSuccess } = useApi(bookingTicketType);
+
+  // fetch data
   useEffect(() => {
     if (eventId) {
-      exec(eventId);
+      fetchTicketTypes(eventId);
+      fetchEvent(eventId);
     }
   }, [eventId]);
 
-  const ticketTypes = data?.data || [];
+  const ticketTypes = ticketTypeData?.data || [];
+  const event = eventData?.data;
 
+  const provinces = getProvinces();
+  const districts = getDistricts();
+  const wards = getWards();
+
+  // initialize qty state based on ticket types
   useEffect(() => {
+
     if (!ticketTypes || ticketTypes.length === 0) return;
     setQty(prev => {
       const next = { ...prev };
@@ -52,6 +55,15 @@ export default function TicketSelector() {
       return next;
     });
   }, [ticketTypes]);
+
+  useEffect(() => {
+    if (isSuccess) {
+      toast.success("Đặt vé thành công!");
+      navigate(`/events/${eventId}/booking/${bookingData?.data?.bookingId}`);
+    } else if (isError) {
+      toast.error("Loại vé này không còn khả dụng");
+    }
+  }, [isError, isSuccess])
 
 
   const ticketMap = useMemo(() => {
@@ -89,10 +101,18 @@ export default function TicketSelector() {
   const total = uiTickets.reduce((s, t) => s + t.subtotal, 0);
   const hasSelected = total > 0;
 
+  const handleCheckout = async () => {
+    //format payload for api
+    const selected: SelectTicketTypePayload = {
+      ticketTypes: uiTickets
+        .filter(t => t.count > 0)
+        .map(t => ({
+          ticketTypeId: String(t.id),
+          quantity: t.count,
+        })),
+    };
+    await createBooking(selected);
 
-  const handleCheckout = () => {
-    const selected = uiTickets
-      .filter(t => t.count > 0)
   };
 
   return (
@@ -122,7 +142,7 @@ export default function TicketSelector() {
                   min={t.minPerUser}
                   max={t.maxPerUser}
                   onChange={changeQty}
-                  formatVND={formatVND}
+
                 />
               ))}
               <div className="border-t border-dashed border-neutral-700 pt-6" />
@@ -130,15 +150,26 @@ export default function TicketSelector() {
           </div>
         </div>
 
-        <aside className="w-full lg:w-96">
-          <TicketSummary
-            tickets={uiTickets}
-            total={total}
-            hasSelected={hasSelected}
-            formatVND={formatVND}
-            onCheckout={handleCheckout}
-          />
-        </aside>
+        {event && (
+          <aside className="w-full lg:w-96">
+            <TicketSummary
+              tickets={uiTickets}
+              total={total}
+              hasSelected={hasSelected}
+              onCheckout={handleCheckout}
+              eventName={event.title}
+              startTime={formatDateTime(event.startTime)}
+              province={
+                provinces.find((p: any) => p.code === event.venue.province)?.name
+              }
+              detailAddress={
+                `${event.venue.street}, ` +
+                `${wards.find((w: any) => w.code === event.venue.ward)?.name}, ` +
+                `${districts.find((d: any) => d.code === event.venue.district)?.name}, `
+              }
+            />
+          </aside>
+        )}
       </div>
     </div>
   );

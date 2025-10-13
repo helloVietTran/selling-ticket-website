@@ -12,9 +12,10 @@ export default function HomePage() {
         <div className="main-container">
           <EventSlider />
 
-          <EventList wrapperClassName="mt-4" category={EventCategory.SPORT} />
-
-
+          <EventList category={EventCategory.ART} />
+          <EventList category={EventCategory.MUSIC} />
+          <EventList category={EventCategory.SPORT} />
+          <EventList category={EventCategory.OTHER} />
         </div>
       </div>
       <Footer />
