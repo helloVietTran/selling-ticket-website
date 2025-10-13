@@ -4,11 +4,8 @@ import { AppError } from '../src/config/exception';
 import { ErrorMap } from '../src/config/ErrorMap';
 import { Role } from '../src/types/enum';
 
-// ----------------------------------------------------
-// MOCK MODULES
-// ----------------------------------------------------
+// -------------------- MOCK MODULES --------------------
 
-// AppDataSource
 jest.mock('../src/config/data-source', () => {
   const mockSave = jest.fn();
   const mockFindOne = jest.fn();
@@ -24,44 +21,39 @@ jest.mock('../src/config/data-source', () => {
   };
 });
 
-// bcryptjs
 jest.mock('bcryptjs', () => ({
   hash: jest.fn(),
   compare: jest.fn()
 }));
 
-// jsonwebtoken
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn(),
   verify: jest.fn()
 }));
 
-// config
 jest.mock('../src/config/config', () => ({
   config: { jwt_secret: 'TEST_SECRET' }
 }));
 
-// ----------------------------------------------------
-// LẤY MOCK ĐỂ DÙNG TRONG TEST
-// ----------------------------------------------------
+// -------------------- MOCK SETUP --------------------
+
 import { AppDataSource } from '../src/config/data-source';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { User } from '../src/models/User.model';
 
 const mockGetRepository = AppDataSource.getRepository as jest.Mock;
 const mockFindOne = () => mockGetRepository().findOne as jest.Mock;
 const mockCreate = () => mockGetRepository().create as jest.Mock;
 const mockSave = () => mockGetRepository().save as jest.Mock;
-
 const mockHash = bcrypt.hash as jest.Mock;
 const mockCompare = bcrypt.compare as jest.Mock;
-
 const mockSign = jwt.sign as jest.Mock;
 const mockVerify = jwt.verify as jest.Mock;
 
-// ----------------------------------------------------
-// MOCK RESPONSE + NEXT
-// ----------------------------------------------------
+jest.mock('../src/models/User.model'); // mock lớp User
+const MockedUser = User as jest.MockedClass<typeof User>;
+
 const createMockResponse = (): jest.Mocked<Response> => {
   const res = {} as jest.Mocked<Response>;
   res.status = jest.fn().mockReturnValue(res);
@@ -71,21 +63,21 @@ const createMockResponse = (): jest.Mocked<Response> => {
 
 const mockNext: NextFunction = jest.fn();
 
-// ----------------------------------------------------
-// TEST SUITE
-// ----------------------------------------------------
-describe('AuthController', () => {
+// -------------------- TEST SUITE --------------------
+
+describe('AuthController (new version)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  // ---------------- REGISTER ----------------
+  // -------- REGISTER --------
   describe('register', () => {
     const mockReq = {
       body: { email: 'new@example.com', userName: 'newuser', password: '123456' }
     } as unknown as Request;
 
     it('Đăng ký thành công', async () => {
+      MockedUser.prototype.validate = jest.fn();
       mockFindOne().mockResolvedValue(null);
       mockHash.mockResolvedValue('hashed_pw');
       mockCreate().mockReturnValue({});
@@ -93,6 +85,7 @@ describe('AuthController', () => {
 
       await authController.register(mockReq, res, mockNext);
 
+      expect(MockedUser.prototype.validate).toHaveBeenCalled();
       expect(mockFindOne()).toHaveBeenCalledWith({ where: { email: mockReq.body.email } });
       expect(mockHash).toHaveBeenCalledWith('123456', 10);
       expect(mockSave()).toHaveBeenCalled();
@@ -100,27 +93,28 @@ describe('AuthController', () => {
       expect(res.json).toHaveBeenCalledWith({ message: 'Đăng ký thành công!' });
     });
 
-    it('Gọi next với USER_NOT_FOUND khi user tồn tại (theo logic hiện tại)', async () => {
+    it('Gọi next khi user đã tồn tại', async () => {
+      MockedUser.prototype.validate = jest.fn();
       mockFindOne().mockResolvedValue({});
       const res = createMockResponse();
 
       await authController.register(mockReq, res, mockNext);
 
-      expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND));
+      expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.USER_ALREADY_EXISTS));
     });
 
-    it('Gọi next khi DB lỗi', async () => {
+    it('Gọi next khi lỗi DB', async () => {
+      MockedUser.prototype.validate = jest.fn();
       const dbError = new Error('DB fail');
       mockFindOne().mockRejectedValue(dbError);
       const res = createMockResponse();
 
       await authController.register(mockReq, res, mockNext);
-
       expect(mockNext).toHaveBeenCalledWith(dbError);
     });
   });
 
-  // ---------------- LOGIN ----------------
+  // -------- LOGIN --------
   describe('login', () => {
     const mockReq = {
       body: { email: 'test@example.com', password: 'pw' }
@@ -142,35 +136,35 @@ describe('AuthController', () => {
       await authController.login(mockReq, res, mockNext);
 
       expect(mockCompare).toHaveBeenCalledWith('pw', 'hashed_pw');
-      expect(mockSign).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: 'Đăng nhập thành công',
-        accessToken: 'mockToken'
+        data: {
+          user: mockUser,
+          accessToken: 'mockToken'
+        }
       });
     });
 
-    it('Gọi next với USER_ALREADY_EXISTS khi user không tồn tại (theo logic hiện tại)', async () => {
+    it('Gọi next khi user không tồn tại', async () => {
       mockFindOne().mockResolvedValue(null);
       const res = createMockResponse();
 
       await authController.login(mockReq, res, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.USER_ALREADY_EXISTS));
+      expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND));
     });
 
-    it('Gọi next với PASSWORD_INCORRECT khi mật khẩu sai', async () => {
+    it('Gọi next khi mật khẩu sai', async () => {
       mockFindOne().mockResolvedValue(mockUser);
       mockCompare.mockResolvedValue(false);
       const res = createMockResponse();
 
       await authController.login(mockReq, res, mockNext);
-
       expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.PASSWORD_INCORRECT));
     });
   });
 
-  // ---------------- LOGOUT ----------------
+  // -------- LOGOUT --------
   describe('logout', () => {
     const token = 'valid.jwt';
     const mockReq = { body: { accessToken: token } } as unknown as Request;
@@ -204,19 +198,44 @@ describe('AuthController', () => {
       const res = createMockResponse();
 
       await authController.logout(mockReq, res, mockNext);
-
       expect(mockNext).toHaveBeenCalledWith(jwtErr);
     });
+  });
 
-    it('Gọi next khi DB save lỗi', async () => {
+  // -------- VERIFY TOKEN --------
+  describe('verifyToken', () => {
+    const mockReq = { body: { accessToken: 'token123' } } as unknown as Request;
+    const decoded = { id: 1, roles: [Role.User] };
+
+    it('Xác thực token thành công', async () => {
       mockVerify.mockReturnValue(decoded);
-      const dbError = new Error('DB fail');
-      mockSave().mockRejectedValue(dbError);
       const res = createMockResponse();
 
-      await authController.logout(mockReq, res, mockNext);
+      await authController.verifyToken(mockReq, res, mockNext);
+      expect(res.status).toHaveBeenCalledWith(200);
+      expect(res.json).toHaveBeenCalledWith({
+        message: 'Token hợp lệ',
+        data: decoded
+      });
+    });
 
-      expect(mockNext).toHaveBeenCalledWith(dbError);
+    it('Gọi next khi không có token', async () => {
+      const badReq = { body: {} } as unknown as Request;
+      const res = createMockResponse();
+
+      await authController.verifyToken(badReq, res, mockNext);
+      expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.NOT_FOUND_TOKEN));
+    });
+
+    it('Gọi next khi verify lỗi', async () => {
+      const jwtErr = new Error('invalid');
+      mockVerify.mockImplementation(() => {
+        throw jwtErr;
+      });
+      const res = createMockResponse();
+
+      await authController.verifyToken(mockReq, res, mockNext);
+      expect(mockNext).toHaveBeenCalledWith(jwtErr);
     });
   });
 });

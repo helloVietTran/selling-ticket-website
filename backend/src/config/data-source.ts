@@ -15,6 +15,7 @@ import { DisabledToken } from '../models/DisabledToken.model';
 import { Category } from '../models/Category.model';
 import { EmailSetting } from '../models/EmailSetting.model';
 import { Image } from '../models/Image.model';
+import { TransactionHistory } from '../models/TransactionHistory.model';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -40,6 +41,7 @@ export const AppDataSource = new DataSource({
     Category,
     EmailSetting,
     Image
+    TransactionHistory
   ],
   migrations: [],
   subscribers: []

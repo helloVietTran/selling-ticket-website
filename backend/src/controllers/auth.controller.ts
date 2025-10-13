@@ -1,7 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
-
 import { AppDataSource } from '../config/data-source';
 import { Role } from '../types/enum';
 import { config } from '../config/config';
@@ -11,24 +10,23 @@ import { LoginInput, LogoutInput, RegisterInput } from '../validators/auth.valid
 import { BaseResponse, LoginOutput } from '../types/response.type';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
+import validator from 'validator';
 
 export class AuthController {
   private userRepo = AppDataSource.getRepository(User);
   private disabledTokenRepo = AppDataSource.getRepository(DisabledToken);
 
   register: RequestHandler = async (
-    req: Request<{}, RegisterInput>,
+    req: Request<{}, {}, RegisterInput>,
     res: Response<BaseResponse<{}>>,
     next: NextFunction
   ) => {
     try {
       const { email, userName, password } = req.body;
-
       const existedUser = await this.userRepo.findOne({ where: { email } });
       if (existedUser) {
         throw AppError.fromErrorCode(ErrorMap.USER_ALREADY_EXISTS);
       }
-
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const newUser = this.userRepo.create({
@@ -53,7 +51,6 @@ export class AuthController {
   ) => {
     try {
       const { email, password } = req.body;
-
       const user = await this.userRepo.findOne({ where: { email } });
       if (!user) {
         throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
