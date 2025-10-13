@@ -8,7 +8,7 @@ export class Organizer {
   organizerId!: number;
 
   @Column({ nullable: true })
-  organizationName?: string;
+  organizerName?: string;
 
   @Column({ nullable: true })
   organizerInfo?: string;

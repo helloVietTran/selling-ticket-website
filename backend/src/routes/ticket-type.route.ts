@@ -7,8 +7,8 @@ import { selectTicketSchema } from '../validators/ticket.validate';
 
 const router = Router();
 
-router.get('/all/events/:eventId', ticketTypeController.getTicketTypesByEventId);
-router.post('/select-ticket-type', auth, validate(selectTicketSchema), ticketTypeController.bookingTicket);
+router.post('/booking', auth, validate(selectTicketSchema), ticketTypeController.bookingTicketType);
 router.get('/stats', auth, ticketTypeController.statisticalTicketType);
+router.get('/all/events/:eventId', ticketTypeController.getTicketTypesByEventId);
 
 export default router;

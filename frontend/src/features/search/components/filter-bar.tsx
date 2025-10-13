@@ -1,11 +1,14 @@
 import { useState } from "react"
 import { useSearchParams } from "react-router-dom"
-import { Button } from "@/components/ui/button"
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
-import { Calendar } from "@/components/ui/calendar"
 import { format } from "date-fns"
 import { Filter } from "lucide-react"
 import type { DateRange } from "react-day-picker"
+
+import { Button } from "@/components/ui/button"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { Calendar } from "@/components/ui/calendar"
+
+import { EventCategory, categoryLabels } from "@/constant"
 
 export default function FilterBar() {
   const [, setSearchParams] = useSearchParams()
@@ -17,19 +20,16 @@ export default function FilterBar() {
     const params = new URLSearchParams()
     if (dateRange?.from) params.set("startDate", dateRange.from.toISOString())
     if (dateRange?.to) params.set("endDate", dateRange.to.toISOString())
-    if (location) params.set("location", location)
+    if (location) params.set("province", location)
     if (categories.length > 0) params.set("categories", categories.join(","))
     setSearchParams(params)
   }
 
-  const catArray = ["Nhạc sống", "Nghệ thuật", "Thể Thao", "Khác"];
-
   const locArray = [
-    { id: "toanquoc", label: "Toàn quốc" },
-    { id: "hcm", label: "Hồ Chí Minh" },
-    { id: "hanoi", label: "Hà Nội" },
-    { id: "dalat", label: "Đà Lạt" },
-    { id: "khac", label: "Vị trí khác" },
+    { id: "all", label: "Toàn quốc" },
+    { id: "79", label: "Hồ Chí Minh" },
+    { id: "01", label: "Hà Nội" },
+    { id: "48", label: "Đà Nẵng" },
   ]
 
   const resetFilters = () => {
@@ -51,7 +51,7 @@ export default function FilterBar() {
 
   return (
     <div className="flex justify-between items-end pb-6">
-      <h2 className="text-emerald-600 text-sm font-semibold">Kết quả tìm kiếm:</h2>
+      <h2 className="text-gray-200 text-sm font-semibold">Kết quả tìm kiếm:</h2>
       <div className="flex items-center gap-3">
         {/* Date Range Picker */}
         <Popover>
@@ -82,8 +82,7 @@ export default function FilterBar() {
             </Button>
           </PopoverTrigger>
           <PopoverContent align="end" className="w-96 space-y-6 p-4">
-            {/* Vị trí */}
-            <div>
+            <>
               <label className="text-sm font-bold">Vị trí</label>
               <div className="mt-2 space-y-2">
                 {locArray.map(({ id, label }) => (
@@ -101,35 +100,37 @@ export default function FilterBar() {
                   </label>
                 ))}
               </div>
-            </div>
+            </>
 
 
-            {/* Thể loại */}
             <div className="border-t pt-4">
               <label className="text-sm font-bold">Thể loại</label>
               <div className="flex flex-wrap gap-2 mt-2">
-                {catArray.map((item) => {
-                  const isSelected = categories.includes(item)
-                  return (
-                    <button
-                      key={item}
-                      type="button"
-                      onClick={() =>
-                        setCategories(
-                          isSelected
-                            ? categories.filter((c) => c !== item) // bỏ chọn
-                            : [...categories, item]                // thêm chọn
-                        )
-                      }
-                      className={`text-sm px-4 py-1 rounded-full border transition-colors cursor-pointer ${isSelected
-                        ? "bg-emerald-500 text-white border-emerald-500"
-                        : "bg-white text-black border-gray-300"
-                        }`}
-                    >
-                      {item}
-                    </button>
-                  )
-                })}
+                {Object.entries(categoryLabels)
+                  .filter(([key]) => key !== EventCategory.ALL) // bỏ "Tất cả"
+                  .map(([key, label]) => {
+                    const isSelected = categories.includes(key)
+                    return (
+                      <Button
+                        key={key}
+                        type="button"
+                        variant={isSelected ? "default" : "outline"}
+                        onClick={() =>
+                          setCategories(
+                            isSelected
+                              ? categories.filter((c) => c !== key)
+                              : [...categories, key]
+                          )
+                        }
+                        className={`text-sm px-4 py-1 rounded-full ${isSelected
+                          ? "bg-emerald-500 hover:bg-emerald-600 text-white"
+                          : "border-gray-300 text-black hover:bg-emerald-50"
+                          }`}
+                      >
+                        {label}
+                      </Button>
+                    )
+                  })}
               </div>
             </div>
 

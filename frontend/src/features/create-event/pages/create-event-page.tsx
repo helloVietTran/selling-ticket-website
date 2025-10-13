@@ -12,6 +12,7 @@ import { useApi } from "@/api/hooks/useApi";
 import { createFullEvent } from "@/api/eventApi";
 import TOAST_MESSAGES from "@/constant/toast";
 import type { CreateEventPayload } from "@/types";
+import { useNavigate } from "react-router-dom";
 
 const steps = [
   { id: "eventInfo", label: "Thông tin sự kiện" }, // STEP 1
@@ -24,6 +25,7 @@ export default function CreateEventPage() {
   const [currentStepId, setCurrentStepId] = useState(steps[0].id);
   const [formData, setFormData] = useState<CreateEventFormData>({});
 
+  const navigate = useNavigate();
   const { exec, error, isError, isSuccess } = useApi(createFullEvent);
 
   const handleNextFromStep = <T extends keyof CreateEventFormData>(
@@ -75,6 +77,7 @@ export default function CreateEventPage() {
     }
 
     if (isSuccess) {
+      navigate('/organizer/events');
       toast.success(CREATE_EVENT.success.title, {
         description: CREATE_EVENT.success.description,
       });

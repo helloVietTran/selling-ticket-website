@@ -1,14 +1,14 @@
-import { User } from '../models/User.model';
 import { Role } from './enum';
 
 export interface BaseResponse<T> {
   message: string;
   status?: string | number;
   data?: T;
-  accessToken?: string;
-  url?: String;
 }
 
+export interface UploadResponse {
+  url: string;
+}
 export interface statsResponse<T> {
   message: String;
   data: T;

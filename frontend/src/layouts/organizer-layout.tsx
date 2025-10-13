@@ -3,9 +3,14 @@ import { useEffect, useState } from 'react';
 
 import Sidebar from '@/features/organizer/components/sidebar';
 import TopBar from '@/features/organizer/components/top-bar';
+import { useApi } from '@/api/hooks/useApi';
+import { getMyOrganizerRecord } from '@/api/organizerApi';
+import { LOCAL_STORAGE_KEYS } from '@/constant';
 
 const OrganizerLayout = () => {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+
+  const { exec, data: organizerData } = useApi(getMyOrganizerRecord)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -14,6 +19,15 @@ const OrganizerLayout = () => {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
+
+  useEffect(() => {
+    exec()
+  }, [])
+
+  // store organizerId to use in other places
+  if (organizerData?.data) {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.ORGANIZER_ID, JSON.stringify(organizerData.data.organizerId))
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black/90 to-gray-900 text-white flex">

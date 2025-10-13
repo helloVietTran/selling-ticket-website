@@ -1,61 +1,58 @@
 import React, { useEffect } from 'react';
-import EventCard from '@/components/event-card';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { ChevronRight } from 'lucide-react';
-import api from '@/api/api';
-import type { Event } from '@/types';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination } from 'swiper/modules';
+
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
+
+import EventCard from '@/components/event-card';
+import type { Event, GetEventsParams } from '@/types';
 import { useApi } from '@/api/hooks/useApi';
-import { isAfter } from "date-fns";
-
-
-export type PaginateResponse<T> = {
-  message: string;
-  data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    totalItems: number;
-    totalPages: number;
-  };
-};
-
-
-export async function filterEvents(params: Record<string, any>): Promise<PaginateResponse<Event>> {
-  const qs = new URLSearchParams(params).toString();
-  const res = await api.get(`/events/filter?${qs}`);
-
-
-  return res.data;
-}
+import { getEvents } from '@/api/eventApi';
+import { categoryLabels, EventCategory } from '@/constant';
 
 type EventListProps = {
-  wrapperClassName?: string;
-  category: string;
+  category?: EventCategory;
 };
 
-const EventList: React.FC<EventListProps> = ({ wrapperClassName = "", category }) => {
+const EventList: React.FC<EventListProps> = ({ category }) => {
   const location = useLocation();
-  const isSearchPage = location.pathname === "/search";
+  const [searchParams] = useSearchParams();
+  const isSearchPage = location.pathname === '/search';
 
-  const { data, exec, isPending, isError } = useApi(filterEvents);
+  const { data, exec } = useApi(getEvents);
+
+  const startTime = searchParams.get("startDate") || undefined;
+  const endTime = searchParams.get("endDate") || undefined;
+  const province = searchParams.get("province") || undefined;
+  const categories = searchParams.get("categories") || undefined;
+  const keyword = searchParams.get("keyword") || undefined;
 
   useEffect(() => {
-    if (isSearchPage) {
-      // lấy query string từ url, convert sang object
-      const params = Object.fromEntries(new URLSearchParams(location.search));
-      exec(params);
-    } else {
-      // trang khác /search -> chỉ dùng category + limit=4
-      exec({ category, limit: 4 });
+    const params: GetEventsParams = {};
+
+    if (startTime) params.startTime = startTime;
+    if (endTime) params.endTime = endTime;
+    if (province) params.province = province;
+    if (categories) params.category = categories;
+    if (keyword) params.keyword = keyword;
+
+    if (!isSearchPage && category) {
+      params.category = category;
     }
-  }, [location, category, isSearchPage, exec]);
+
+    exec(params);
+  }, [startTime, endTime, province, categories, keyword, category, isSearchPage]);
 
   const events: Event[] = data?.data ?? [];
 
   return (
-    <div className={wrapperClassName}>
+    <>
       <div className="flex justify-between items-center mt-6 mb-4 px-1">
-        <h2 className="text-white text-lg font-semibold">{category}</h2>
+        {category && <h2 className="text-white text-lg font-semibold">{categoryLabels[category]}</h2>}
 
         {!isSearchPage && (
           <Link
@@ -68,23 +65,45 @@ const EventList: React.FC<EventListProps> = ({ wrapperClassName = "", category }
         )}
       </div>
 
-      {isPending && <p className="text-gray-400">Đang tải...</p>}
-      {isError && <p className="text-red-400">Có lỗi xảy ra khi tải sự kiện</p>}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
-        {events.map((event: Event) => (
-          <EventCard
-            key={event.eventId}
-            title={event.title}
-            date={event.startTime}
-            img={event.eventImage}
-            status={isAfter(new Date(), new Date(event.endTime)) ? "Đã kết thúc" : ""}
-            minPrice={event.minPriceTicketType}
-            eventId={event.eventId}
-          />
-        ))}
+      <div className="pb-6 overflow-x-hidden">
+        <Swiper
+          modules={[Navigation, Pagination]}
+          navigation={{
+            nextEl: '.swiper-button-next-custom',
+            prevEl: '.swiper-button-prev-custom',
+          }}
+          pagination={false}
+          spaceBetween={10}
+          slidesPerView={2}
+          breakpoints={{
+            640: { slidesPerView: 2, spaceBetween: 20 },
+            768: { slidesPerView: 3, spaceBetween: 24 },
+            1024: { slidesPerView: 4, spaceBetween: 28 },
+          }}
+          className="rounded-lg relative"
+          loop={true}
+        >
+          {events.map((event: Event, index) => (
+            <SwiperSlide key={`${event.eventId}-${index}`}>
+              <EventCard
+                title={event.title}
+                startTime={event.startTime}
+                img={event.eventImage}
+                status={event.status}
+                minPrice={event.ticketTypes?.[0]?.price}
+                eventId={event.eventId}
+              />
+            </SwiperSlide>
+          ))}
+          <div className="swiper-button-prev-custom absolute top-1/3 -translate-y-1/2 left-2 bg-black text-white p-2.5 rounded-md cursor-pointer z-10 opacity-40 hover:opacity-100 transition">
+            <ChevronRight className="rotate-180" size={20} />
+          </div>
+          <div className="swiper-button-next-custom absolute top-1/3 -translate-y-1/2 right-2 bg-black text-white p-2.5 rounded-md cursor-pointer z-10 opacity-40 hover:opacity-100 transition">
+            <ChevronRight size={20} />
+          </div>
+        </Swiper>
       </div>
-    </div>
+    </>
   );
 };
 

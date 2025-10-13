@@ -1,51 +1,55 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Calendar, MapPin } from 'lucide-react';
+import { formatVND } from '@/lib/formatVND';
 
 type SummaryTicket = {
   id: number;
   name: string;
   count: number;
   subtotal: number;
+
 };
 
 type TicketSummaryProps = {
   tickets: SummaryTicket[];
   total: number;
   hasSelected: boolean;
-  formatVND: (n: number) => string;
   onCheckout: () => void;
+  eventName: string;
+  startTime: string;
+  province: string;
+  detailAddress: string;
 };
 
 export default function TicketSummary({
   tickets,
   total,
   hasSelected,
-  formatVND,
   onCheckout,
+  startTime,
+  eventName,
+  province,
+  detailAddress
+
 }: TicketSummaryProps) {
   return (
     <div className="space-y-4 sticky top-8">
       <Card className="bg-neutral-800 text-white rounded-xl overflow-hidden py-2">
         <CardContent className="p-4">
           <h4 className="text-base font-bold uppercase">
-            [FLOWER 1969's] ROLLERBALL PERFUME WORKSHOP
+            {eventName}
           </h4>
 
           <div className="mt-4 flex items-center gap-3 text-neutral-200">
             <Calendar className="w-5 h-5" />
-            <div className="text-sm">17:00, 13 tháng 9, 2025</div>
+            <div className="text-sm">{startTime}</div>
           </div>
 
-          <div className="mt-6 flex items-start gap-3">
+          <div className="mt-6 flex items-center gap-3">
             <MapPin className="w-5 h-5 text-emerald-400 mt-0.5" />
-            <div>
-              <div className="text-sm font-semibold text-white">
-                The Seat Cafe
-              </div>
-              <div className="text-xs text-neutral-300">
-                Địa chỉ cụ thể, Quận X
-              </div>
+            <div className="text-xs text-neutral-300">
+              {province}, {detailAddress}
             </div>
           </div>
         </CardContent>
@@ -72,11 +76,10 @@ export default function TicketSummary({
           </div>
 
           <Button
-            className={`w-full mt-6 py-6 text-lg rounded ${
-              hasSelected
-                ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
-                : 'bg-neutral-200 text-gray-500 cursor-not-allowed'
-            }`}
+            className={`w-full mt-6 py-6 text-lg rounded ${hasSelected
+              ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+              : 'bg-neutral-200 text-gray-500 cursor-not-allowed'
+              }`}
             disabled={!hasSelected}
             onClick={onCheckout}>
             {hasSelected ? (

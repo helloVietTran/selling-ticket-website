@@ -1,9 +1,16 @@
+import type { EventStatus } from "@/constant";
+
 // params
 export type GetEventsParams = {
   startTime?: string;
   endTime?: string;
   category?: string;
   province?: string;
+  keyword?: string;
+};
+
+export type GetMyEventParams = {
+  status?: string;
   keyword?: string;
 };
 
@@ -92,6 +99,10 @@ export type SelectTicketTypePayload = {
   }[];
 };
 
+export interface CreatePaymentPayload {
+  orderId: string | number;
+}
+
 // dùng chung
 export interface BaseResponse<T> {
   message: string;
@@ -99,7 +110,20 @@ export interface BaseResponse<T> {
   data?: T;
 }
 
+
+export type PaginateResponse<T> = {
+  message: string;
+  data: T[];
+  pagination: {
+    page: number;
+    limit: number;
+    totalItems: number;
+    totalPages: number;
+  };
+};
+
 export type Organizer = {
+  organizerId: number;
   organizerName: string;
   organizerInfo: string;
 };
@@ -132,6 +156,7 @@ export type Event = {
   startTime: string;
   endTime: string;
   eventImage: string;
+  status: EventStatus;
 
   ticketTypes: TicketType[];
   minPriceTicketType: number;
@@ -168,8 +193,17 @@ export interface User {
 export interface Booking {
   bookingId: number;
   status: string;
-  createdAt?: Date;
-  expiresAt?: Date;
+  createdAt: Date;
+  expiresAt: Date;
+  amount: number;
+  attendee: User;
+  bookingItems: BookingItem[];
+
+}
+
+export interface BookingItem {
+  quantity: number;
+  ticketType: TicketType;
 }
 
 export interface StatsTicketType {

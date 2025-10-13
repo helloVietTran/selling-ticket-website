@@ -3,14 +3,14 @@ import QRCode from 'qrcode';
 import fs from 'fs';
 import path from 'path';
 import { Request, Response, NextFunction } from 'express';
+
 import { TicketType } from '../models/TicketType.model';
 import { AppDataSource } from '../config/data-source';
 import { Event } from '../models/Event.model';
 import { User } from '../models/User.model';
 import { Ticket } from '../models/Ticket.model';
-import { email } from 'zod';
 
-class emailController {
+class EmailController {
   private userRepo = AppDataSource.getRepository(User);
   private ticketRepo = AppDataSource.getRepository(Ticket);
   private ticketTypeRepo = AppDataSource.getRepository(TicketType);
@@ -51,12 +51,12 @@ class emailController {
         ticketType: ticketType.ticketTypeName,
         price: ticketType.price || 0,
         year: new Date().getFullYear(),
-        organizationName: event.organizer.organizationName || ' '
+        organizerName: event.organizer.organizerName || ' '
       };
 
       // 1) QR payload
       const qrPayload = JSON.stringify({
-        organization: ticketData.organizationName,
+        organization: ticketData.organizerName,
         name: ticketData.userName,
         event: ticketData.eventName
       });
@@ -81,7 +81,7 @@ class emailController {
         .replace(/{{ticketType}}/g, ticketData.ticketType)
         .replace(/{{year}}/g, ticketData.year.toString())
         .replace(/{{price}}/g, ticketData.price.toString())
-        .replace(/{{organizerName}}/g, ticketData.organizationName)
+        .replace(/{{organizerName}}/g, ticketData.organizerName)
         .replace(/{{qrSrc}}/g, 'cid:qr1'); // fix chỗ cid
 
       // 4) Gửi mail
@@ -104,4 +104,4 @@ class emailController {
   };
 }
 
-export default new emailController();
+export default new EmailController();

@@ -30,12 +30,12 @@ export default function App() {
           <Route path="/" element={<HomeLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/search" element={<SearchPage />} />
-            <Route path="/events/:id" element={<EventDetailPage />} />
+            <Route path="/events/:eventId" element={<EventDetailPage />} />
             <Route
-              path="/events/:id/select-ticket"
+              path="/events/:eventId/select-ticket"
               element={<SelectTicketPage />}
             />
-            <Route path="/events/:id/bookings/:id" element={<BookingPage />} />
+            <Route path="/events/:eventId/booking/:bookingId" element={<BookingPage />} />
           </Route>
 
           <Route path="/organizer" element={<OrganizerLayout />}>

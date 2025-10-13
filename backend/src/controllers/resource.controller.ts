@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import sharp from 'sharp';
 import path from 'path';
-import fs from 'fs';
-import { Resource } from '../models/Resource.model';
+import { Image } from '../models/Image.model';
 import { AppDataSource } from '../config/data-source';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
@@ -10,8 +9,9 @@ import { BaseResponse } from '../types/response.type';
 import { config } from '../config/config';
 
 class ResourceController {
-  private resourceRepo = AppDataSource.getRepository(Resource);
-  uploadImage = async (req: Request, res: Response<BaseResponse<any>>, next: NextFunction) => {
+  private imageRepo = AppDataSource.getRepository(Image);
+
+  uploadImage = async (req: Request, res: Response<BaseResponse<Image>>, next: NextFunction) => {
     try {
       const urlPre = config.resource_path;
       const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
@@ -22,11 +22,13 @@ class ResourceController {
 
       // Resize và lưu ảnh
       await sharp(req.file.buffer).resize(800).jpeg({ quality: 90 }).toFile(filePath);
-      const resource = this.resourceRepo.create({
+
+      const resource = this.imageRepo.create({
         id: imageId,
         url: `${urlPre}/uploads/${fileName}`
       });
-      await this.resourceRepo.save(resource);
+      await this.imageRepo.save(resource);
+
       return res.json({
         message: 'upload image successfully',
         data: resource
