@@ -273,33 +273,29 @@ class EventController {
     }
   };
 
-  getEventById = async (
-  req: Request<{ eventId: string }>,
-  res: Response<BaseResponse<Event>>,
-  next: NextFunction
-) => {
-  try {
-    const { eventId } = req.params;
+  getEventById = async (req: Request<{ eventId: string }>, res: Response<BaseResponse<Event>>, next: NextFunction) => {
+    try {
+      const { eventId } = req.params;
 
-    const eventRepo = AppDataSource.getRepository(Event);
+      const eventRepo = AppDataSource.getRepository(Event);
 
-    const event = await eventRepo.findOne({
-      where: { eventId: Number(eventId) },
-      relations: ['venue', 'organizer', 'ticketTypes', 'category']
-    });
+      const event = await eventRepo.findOne({
+        where: { eventId: Number(eventId) },
+        relations: ['venue', 'organizer', 'ticketTypes', 'category']
+      });
 
-    if (!event) {
-      throw AppError.fromErrorCode(ErrorMap.EVENT_NOT_FOUND);
+      if (!event) {
+        throw AppError.fromErrorCode(ErrorMap.EVENT_NOT_FOUND);
+      }
+
+      return res.status(200).json({
+        message: 'Get event detail successfully',
+        data: event
+      });
+    } catch (error) {
+      next(error);
     }
-
-    return res.status(200).json({
-      message: 'Get event detail successfully',
-      data: event
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  };
 }
 
 export default new EventController();

@@ -8,8 +8,9 @@ import { ErrorMap } from '../config/ErrorMap';
 import { BaseResponse, UploadResponse } from '../types/response.type';
 import { config } from '../config/config';
 
-class UploadController {
-  private resourceRepo = AppDataSource.getRepository(Image);
+class ResourceController {
+  private imageRepo = AppDataSource.getRepository(Image);
+
   uploadImage = async (req: Request, res: Response<BaseResponse<UploadResponse>>, next: NextFunction) => {
     try {
       const urlPre = config.resource_path;
@@ -22,11 +23,11 @@ class UploadController {
       // Resize và lưu ảnh
       await sharp(req.file.buffer).resize(800).jpeg({ quality: 90 }).toFile(filePath);
 
-      const resource = this.resourceRepo.create({
+      const resource = this.imageRepo.create({
         id: imageId,
         url: `${urlPre}/uploads/${fileName}`
       });
-      await this.resourceRepo.save(resource);
+      await this.imageRepo.save(resource);
 
       return res.json({
         message: 'upload image successfully',
@@ -37,4 +38,4 @@ class UploadController {
     }
   };
 }
-export default new UploadController();
+export default new ResourceController();

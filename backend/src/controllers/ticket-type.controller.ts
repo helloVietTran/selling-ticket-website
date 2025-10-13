@@ -58,7 +58,7 @@ class TicketTypeController {
 
         ticketTypeEntity.validate(ticketType, item, now);
         ticketType.soldTicket += item.quantity;
-        
+
         await queryRunner.manager.save(ticketType);
 
         totalAmount += Number(ticketType.price) * item.quantity;

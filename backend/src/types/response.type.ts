@@ -4,10 +4,9 @@ export interface BaseResponse<T> {
   message: string;
   status?: string | number;
   data?: T;
-
 }
 
-export interface UploadResponse{
+export interface UploadResponse {
   url: string;
 }
 export interface statsResponse<T> {
