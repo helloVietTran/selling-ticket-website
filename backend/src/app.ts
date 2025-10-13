@@ -6,9 +6,10 @@ import route from './routes';
 import { AppDataSource } from './config/data-source';
 import { responseErr } from './config/exception';
 import { startCronTicketBooking } from './controllers/cron/booking.cron';
+import path from 'path';
 const app: Application = express();
 
-// middleware
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

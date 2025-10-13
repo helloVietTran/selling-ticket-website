@@ -32,7 +32,16 @@ export interface UserOutput {
   roles: Role;
 }
 
+
+export interface RevenueResponse {
+  weeklyRevenue: Record<string, number>;
+  monthlyRevenue: Record<string, number>;
+  totalWeeklyRevenue: number;
+  totalMonthlyRevenue: number;
+}
+
 export interface LoginOutput {
   user: UserOutput;
   accessToken: string;
 }
+

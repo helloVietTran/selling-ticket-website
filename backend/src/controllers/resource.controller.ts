@@ -5,12 +5,12 @@ import { Image } from '../models/Image.model';
 import { AppDataSource } from '../config/data-source';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
-import { BaseResponse, UploadResponse } from '../types/response.type';
+import { BaseResponse } from '../types/response.type';
 import { config } from '../config/config';
 
 class UploadController {
   private resourceRepo = AppDataSource.getRepository(Image);
-  uploadImage = async (req: Request, res: Response<BaseResponse<UploadResponse>>, next: NextFunction) => {
+  uploadImage = async (req: Request, res: Response<BaseResponse<Image>>, next: NextFunction) => {
     try {
       const urlPre = config.resource_path;
       const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
@@ -21,11 +21,11 @@ class UploadController {
 
       // Resize và lưu ảnh
       await sharp(req.file.buffer).resize(800).jpeg({ quality: 90 }).toFile(filePath);
-
       const resource = this.resourceRepo.create({
         id: imageId,
         url: `${urlPre}/uploads/${fileName}`
       });
+
       await this.resourceRepo.save(resource);
 
       return res.json({

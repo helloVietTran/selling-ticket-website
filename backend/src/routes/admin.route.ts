@@ -1,11 +1,9 @@
 import { Router } from 'express';
-import organizerController from '../controllers/organizer.controller';
+import adminController from '../controllers/admin.controller';
 import { auth } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.get('/my', auth, organizerController.getMyOrganizerRecord);
-
-
+router.put('/accept/:eventId', auth, adminController.acceptEvent);
 
 export default router;

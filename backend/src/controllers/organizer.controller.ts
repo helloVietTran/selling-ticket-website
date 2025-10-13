@@ -8,7 +8,7 @@ import { Organizer } from '../models/Organizer.model';
 import { Requester } from '../types';
 import { User } from '../models/User.model';
 
-class organizerController {
+class OrganizerController {
   private userRepo = AppDataSource.getRepository(User);
 
   getMyOrganizerRecord = async (req: Request, res: Response<BaseResponse<Organizer>>, next: NextFunction) => {
@@ -31,6 +31,6 @@ class organizerController {
     } catch (error) {
       next(error);
     }
-  };
+  }; 
 }
-export default new organizerController();
+export default new OrganizerController();
