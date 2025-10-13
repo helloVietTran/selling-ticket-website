@@ -32,7 +32,7 @@ export interface CreateEventPayload {
     eventInfo: string;
     startTime: string;
     endTime: string;
-    eventImage?: Record<string, any>;
+    eventImage: string;
     organizer?: {
       organizerName: string;
       organizerInfo: string;
@@ -74,6 +74,7 @@ export type RegisterPayload = {
   userName: string;
   confirmPassword: string;
 };
+
 
 export type LoginPayLoad = {
   email: string;
@@ -121,6 +122,12 @@ export type PaginateResponse<T> = {
     totalPages: number;
   };
 };
+
+export type Image = {
+  url: string;
+  id: string;
+  createdAt: Date
+}
 
 export type Organizer = {
   organizerId: number;
