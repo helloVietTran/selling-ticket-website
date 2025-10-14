@@ -12,6 +12,7 @@ import { Requester } from '../types';
 import { User } from '../models/User.model';
 import { BookingStatus } from '../types/enum';
 import { BookingItem } from '../models/BookingItem.model';
+import { LessThan } from 'typeorm';
 
 class TicketTypeController {
   private ticketTypeRepo = AppDataSource.getRepository(TicketType);
@@ -20,8 +21,19 @@ class TicketTypeController {
     try {
       const { eventId } = req.params;
       if (!eventId) return AppError.fromErrorCode(ErrorMap.EVENT_NOT_EXISTS);
-      const ticketTypes = await this.ticketTypeRepo.findBy({ event: { eventId: Number(eventId) } });
-      return res.status(200).json({ message: 'Lấy danh sách thành công', data: ticketTypes });
+
+      const now = new Date();
+      const ticketTypes = await this.ticketTypeRepo.find({
+        where: {
+          event: { eventId: Number(eventId) },
+          startSellDate: LessThan(now)
+        }
+      });
+
+      return res.status(200).json({
+        message: 'Lấy danh sách thành công',
+        data: ticketTypes
+      });
     } catch (error) {
       next(error);
     }

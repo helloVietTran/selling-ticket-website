@@ -17,16 +17,16 @@ export class Ticket {
   @Column({ nullable: true })
   seatNumber?: number;
 
-  @Column({type: 'int'})
+  @Column({ type: 'int' })
   ownerId!: number;
 
-  @Column({type: 'int'})
+  @Column({ type: 'int' })
   eventId!: number;
 
   @ManyToOne(() => TicketType, (tt) => tt.tickets, { nullable: false, onDelete: 'CASCADE' })
   ticketType!: TicketType;
 
   @OneToOne(() => QrCode, (q) => q.ticket, { cascade: true, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'ticketId' })
+  @JoinColumn({ name: 'qrCodeId' })
   qrCode?: QrCode;
 }
