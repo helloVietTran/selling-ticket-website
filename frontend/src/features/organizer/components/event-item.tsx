@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ScanLine, Edit3, Trash2, MapPin, Calendar } from 'lucide-react';
+import { ScanLine, Trash2, MapPin, Calendar, DollarSign, ShoppingCart, CheckSquare } from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -25,6 +25,7 @@ import QrScanner from './qr-scanner';
 import { deleteEvent } from '@/api/eventApi';
 import { useApi } from '@/api/hooks/useApi';
 import { EventStatus, LOCAL_STORAGE_KEYS } from '@/constant';
+import { Link } from 'react-router-dom';
 
 export type EventItemProps = {
   eventId: number;
@@ -104,16 +105,45 @@ export default function EventItem({
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="start" className="bg-[#2A2A2D] text-white rounded-xl">
-              <DropdownMenuItem onClick={() => alert(`Sửa sự kiện ${eventId}`)}>
-                <Edit3 className="w-4 h-4 mr-2 " /> Sửa sự kiện
-              </DropdownMenuItem>
-
               <DropdownMenuItem
-                className="text-red-400 focus:text-red-500"
-                onClick={() => setConfirmOpen(true)}>
-                <Trash2 className="w-4 h-4 mr-2 text-red-400" /> Xóa sự kiện
+                className="text-red-500 hover:bg-red-50 focus:bg-red-50 focus:text-red-600"
+                onClick={() => setConfirmOpen(true)}
+              >
+                <div className="flex items-center gap-4">
+                  <Trash2 className="w-4 h-4 mr-2 text-red-500" />
+                  <span>Xóa sự kiện</span>
+                </div>
               </DropdownMenuItem>
 
+              <DropdownMenuItem className="text-yellow-600 hover:bg-yellow-50 focus:bg-yellow-50">
+                <Link
+                  className="flex items-center gap-4 w-full"
+                  to={`/organizer/revenue/events/${eventId}`}
+                >
+                  <DollarSign className="w-4 h-4 mr-2 text-yellow-600" />
+                  <span>Doanh thu</span>
+                </Link>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem className="text-emerald-600 hover:bg-emerald-50 focus:bg-emerald-50">
+                <Link
+                  className="flex items-center gap-4 w-full"
+                  to={`/organizer/check-in/events/${eventId}`}
+                >
+                  <CheckSquare className="w-4 h-4 mr-2 text-emerald-600" />
+                  <span>Check-in</span>
+                </Link>
+              </DropdownMenuItem>
+
+              <DropdownMenuItem className="text-neutral-400 hover:bg-gray-10 focus:bg-gray-100">
+                <Link
+                  className="flex items-center gap-4 w-full"
+                  to={`/organizer/orders/events/${eventId}`}
+                >
+                  <ShoppingCart className="w-4 h-4 mr-2 text-neutral-400" />
+                  <span>Đơn hàng</span>
+                </Link>
+              </DropdownMenuItem>
 
             </DropdownMenuContent>
           </DropdownMenu>

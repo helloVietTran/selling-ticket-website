@@ -9,6 +9,7 @@ import { useApi } from '@/api/hooks/useApi';
 import { getMyEvents } from '@/api/eventApi';
 import type { Event } from '@/types';
 import { formatDateTime } from '@/lib/formatDateTime';
+import { ClipboardList } from 'lucide-react';
 
 const EventsPage = () => {
   const [keyword, setKeyword] = useState('');
@@ -35,21 +36,28 @@ const EventsPage = () => {
     setSearchParams({ keyword });
   };
 
-
   return (
     <>
-      <div className="flex flex-col gap-4 pb-6 lg:flex-row lg:items-center lg:justify-between lg:gap-0">
-        <SearchBox
-          placeholder="Tìm sự kiện"
-          value={keyword}
-          onChange={setKeyword}
-          onSearch={handleSearch}
-          className="w-full lg:w-auto"
-        />
-        <div className="w-full lg:w-auto">
+      <h2 className="font-semibold text-xl mb-4 flex gap-2 text-gray-300">
+        <ClipboardList />
+        Sự kiện của tôi
+      </h2>
+      <div className="flex flex-col gap-4 pb-6 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex-1 min-w-0">
+          <SearchBox
+            placeholder="Tìm sự kiện"
+            value={keyword}
+            onChange={setKeyword}
+            onSearch={handleSearch}
+            className="w-full"
+          />
+        </div>
+
+        <div className="flex-1 min-w-0">
           <StatusTabs />
         </div>
       </div>
+
       <div className="flex flex-col gap-4">
         {myEventsData && myEventsData.data.map((event: Event) => (
           <EventItem

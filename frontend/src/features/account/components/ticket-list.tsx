@@ -1,37 +1,41 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Ticket, Calendar, MapPin } from 'lucide-react';
+import { Ticket, Calendar, Loader2 } from 'lucide-react';
 import PageTitle from '@/components/page-title';
+import { useApi } from '@/api/hooks/useApi';
+import { getMyTickets } from '@/api/ticketApi';
+import { useEffect } from 'react';
+import { formatDateTime } from '@/lib/formatDateTime';
 
 export default function MyTicketList() {
-  const tickets = [
-    {
-      id: 'TCK-001',
-      eventName: 'Concert BlackPink 2025',
-      date: '20/10/2025',
-      location: 'SVĐ Quốc gia Mỹ Đình',
-      status: 'valid',
-    },
-    {
-      id: 'TCK-002',
-      eventName: 'TechConf Vietnam',
-      date: '15/11/2025',
-      location: 'Trung tâm Hội nghị Quốc gia',
-      status: 'used',
-    },
-  ];
-
   const statusColor: Record<string, string> = {
-    valid: 'bg-green-600',
-    used: 'bg-gray-500',
-    canceled: 'bg-red-600',
+    AVAILABLE: 'bg-green-600',
+    EXPIRED: 'bg-gray-500',
+    CANCELED: 'bg-red-600',
   };
 
   const statusText: Record<string, string> = {
-    valid: 'Còn hiệu lực',
-    used: 'Đã sử dụng',
-    canceled: 'Đã hủy',
+    AVAILABLE: 'Còn hiệu lực',
+    EXPIRED: 'Đã sử dụng',
+    CANCELED: 'Đã hủy',
   };
+
+  const { exec, data, apiStatus } = useApi(getMyTickets);
+
+  useEffect(() => {
+    exec();
+  }, [])
+
+
+  if (apiStatus === 'PENDING') {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+        <span>Đang tải dữ liệu...</span>
+      </div>
+    );
+  }
+
 
   return (
     <div className="space-y-6">
@@ -40,29 +44,26 @@ export default function MyTicketList() {
       </PageTitle>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {tickets.map(ticket => (
+        {data?.data && data?.data.map(ticket => (
           <Card
-            key={ticket.id}
+            key={ticket.ticketId}
             className="bg-[#323234] border border-[#2a2a2c]">
             <CardHeader>
               <CardTitle className="flex justify-between items-center text-white">
                 {ticket.eventName}
-                <Badge className={`${statusColor[ticket.status]} text-white`}>
-                  {statusText[ticket.status]}
+                <Badge className={`${statusColor[ticket.ticketStatus]} text-white`}>
+                  {statusText[ticket.ticketStatus]}
                 </Badge>
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-2 text-sm text-gray-300">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-400" />
-                <span>{ticket.date}</span>
+                <span>{formatDateTime(ticket.eventStartTime)}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-gray-400" />
-                <span>{ticket.location}</span>
-              </div>
+
               <div className="flex items-center gap-2 text-gray-400">
-                Mã vé: <span className="font-mono">{ticket.id}</span>
+                Mã vé: <span className="font-mono">{ticket.ticketId}</span>
               </div>
             </CardContent>
           </Card>

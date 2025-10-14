@@ -221,3 +221,15 @@ export interface StatsTicketType {
   sold: number;
   total: number;
 }
+
+
+export interface TicketResponse {
+  ticketId: number;
+  ticketType: string;
+  checkedIn: boolean;
+  seatNumber?: number;
+  eventName: string;
+  eventStartTime: string;
+  eventEndTime: string;
+  ticketStatus: 'EXPIRED' | 'AVAILABLE' | "CANCELED"
+}

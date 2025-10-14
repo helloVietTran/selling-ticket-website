@@ -41,9 +41,9 @@ export default function App() {
           <Route path="/organizer" element={<OrganizerLayout />}>
             <Route path="create-event" element={<CreateEventPage />} />
             <Route path="events" element={<EventsPage />} />
-            <Route path="revenue" element={<RevenuePage />} />
-            <Route path="orders" element={<OrdersPage />} />
-            <Route path="check-in" element={<CheckinPage />} />
+            <Route path="revenue/events/:eventId" element={<RevenuePage />} />
+            <Route path="orders/events/:eventId" element={<OrdersPage />} />
+            <Route path="check-in/events/:eventId" element={<CheckinPage />} />
           </Route>
 
           <Route path="/my" element={<AccountLayout />}>

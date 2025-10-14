@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import RevenueChart from '@/features/organizer/components/revenue-chart';
 import CircleChart from '@/features/organizer/components/circle-chart';
+import { ChartColumn, Menu } from 'lucide-react';
+import EventDrawer from '../components/event-drawer';
 
 type SummaryProps = {
   revenue: number;
@@ -18,6 +20,8 @@ export default function RevenuePage() {
     ticketsTotal: 2000,
   });
 
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const revenuePercent = Math.round(
     (summary.revenue / summary.revenueTotal) * 100
   );
@@ -26,9 +30,28 @@ export default function RevenuePage() {
   );
 
   return (
-    <div>
-      <h2 className="font-semibold text-xl pb-2">Tổng quan</h2>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
+    <>
+      <div className='flex justify-between items-center'>
+        <h2 className="font-semibold text-xl mb-4 flex gap-2 text-gray-300">
+          <ChartColumn />
+          Tổng quan
+        </h2>
+        <button
+          onClick={() => setDrawerOpen(true)}
+          className="p-2 rounded-md cursor-pointer"
+          aria-label="Mở menu"
+        >
+          <Menu size={22} className="text-gray-300 hover:text-gray-400 transition-colors" />
+        </button>
+
+        <EventDrawer
+          isOpen={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+          eventId={1}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Card Doanh thu */}
         <Card className="bg-[#282629] text-white border-[#1f1d1f]">
           <CardContent className="flex justify-between items-center">
@@ -69,6 +92,6 @@ export default function RevenuePage() {
       </div>
 
       <RevenueChart />
-    </div>
+    </>
   );
 }

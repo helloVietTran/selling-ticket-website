@@ -23,7 +23,7 @@ export default function SearchBox({
 }: SearchBoxProps) {
   return (
     <div
-      className={`flex w-[350px] max-w-md items-center rounded-sm bg-white shadow-sm ${className}`}>
+      className={`flex max-w-md items-center rounded-sm bg-white shadow-sm ${className}`}>
       <div className="flex items-center px-3 flex-1 relative">
         <Search className="size-4 text-gray-500 mr-2" />
         <Input
