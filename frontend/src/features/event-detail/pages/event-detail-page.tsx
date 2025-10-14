@@ -59,7 +59,7 @@ const EventDetailPage = () => {
 
       <div className="px-4 py-6 space-y-6 bg-[#f6f7fc]">
         <EventDescription htmlContent={event.eventInfo} />
-        <TicketTypeList ticketTypes={event.ticketTypes} />
+        <TicketTypeList ticketTypes={event.ticketTypes} eventId={event.eventId} />
 
         <OrganizerCard
           name={event.organizer.organizerName}
