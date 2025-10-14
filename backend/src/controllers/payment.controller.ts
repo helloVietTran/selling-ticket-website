@@ -4,23 +4,23 @@ import { config } from '../config/config';
 import { format } from 'date-fns';
 import qs from 'qs';
 import crypto from 'crypto';
+import { v4 as uuidv4 } from 'uuid';
 
 import { AppDataSource } from '../config/data-source';
 import { Booking } from '../models/Booking.model';
-import { BookingStatus } from '../types/enum';
+import { BookingStatus, TicketState } from '../types/enum';
 import { CreatePaymentInput } from '../validators/payment.validate';
 import { TransactionHistory } from '../models/TransactionHistory.model';
 import { Requester } from '../types';
-import ticketController from './ticket.controller';
 import { User } from '../models/User.model';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
-import emailController from './email.controller';
+import { QrCode } from '../models/QrCode.model';
+import { Ticket } from '../models/Ticket.model';
 
 class PaymentController {
   private bookingRepo = AppDataSource.getRepository(Booking);
   private userRepo = AppDataSource.getRepository(User);
-  private transactionHistoryRepo = AppDataSource.getRepository(TransactionHistory);
 
   createPaymentUrl = async (
     req: Request<{}, {}, CreatePaymentInput>,
@@ -38,75 +38,102 @@ class PaymentController {
       relations: ['attendee', 'bookingItems', 'bookingItems.ticketType']
     });
 
-    if (!user) {
-      throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
-    }
+    if (!user) throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
+    if (!booking) throw AppError.fromErrorCode(ErrorMap.BOOKING_NOT_FOUND);
 
-    if (!booking) {
-      throw AppError.fromErrorCode(ErrorMap.BOOKING_NOT_FOUND);
-    }
-    // thong tin don hang
+    // Build VNPAY payment url
     const date = new Date();
     const createDate = format(date, 'yyyyMMddHHmmss');
     const orderId = req.body.orderId;
     const amount = booking.amount;
 
-    // thong tin config vnpay
     const tmnCode = config.vnp.vnp_TmnCode;
     const vnp_HashSecret = config.vnp.vnp_HashSecret;
     const vnp_Url = config.vnp.payment_api;
-    const returnUrl = 'http://localhost:5173/my/tickets'; //return về my ticket page
+    const returnUrl = 'http://localhost:5173/my/tickets';
 
     const locale = 'vn';
     const currCode = 'VND';
-    const ipAddr = '127.0.0.1';
+    const ipAddr = req.ip || '127.0.0.1';
 
-    let vnp_Params: any = {};
-    vnp_Params['vnp_Version'] = '2.1.0';
-    vnp_Params['vnp_Command'] = 'pay';
-    vnp_Params['vnp_TmnCode'] = tmnCode;
-    vnp_Params['vnp_Locale'] = locale;
-    vnp_Params['vnp_CurrCode'] = currCode;
-    vnp_Params['vnp_TxnRef'] = orderId;
-    vnp_Params['vnp_OrderInfo'] = 'Thanh toan cho ma GD:' + orderId;
-    vnp_Params['vnp_OrderType'] = 'other';
-    vnp_Params['vnp_Amount'] = amount * 100;
-    vnp_Params['vnp_ReturnUrl'] = returnUrl;
-    vnp_Params['vnp_IpAddr'] = ipAddr;
-    vnp_Params['vnp_CreateDate'] = createDate;
+    let vnp_Params: any = {
+      vnp_Version: '2.1.0',
+      vnp_Command: 'pay',
+      vnp_TmnCode: tmnCode,
+      vnp_Locale: locale,
+      vnp_CurrCode: currCode,
+      vnp_TxnRef: orderId,
+      vnp_OrderInfo: 'Thanh toan cho ma GD:' + orderId,
+      vnp_OrderType: 'other',
+      vnp_Amount: amount * 100,
+      vnp_ReturnUrl: returnUrl,
+      vnp_IpAddr: ipAddr,
+      vnp_CreateDate: createDate
+    };
 
     vnp_Params = this.sortObject(vnp_Params);
+    const signData = qs.stringify(vnp_Params, { encode: false });
+    if (!vnp_HashSecret) throw new Error('Missing VNPAY hash secret!');
 
-    let signData = qs.stringify(vnp_Params, { encode: false });
-
-    if (!vnp_HashSecret) {
-      throw new Error('Missing VNPAY hash secret!');
-    }
     const hmac = crypto.createHmac('sha512', vnp_HashSecret);
-    let signed = hmac.update(new Buffer(signData, 'utf-8')).digest('hex');
+    const signed = hmac.update(Buffer.from(signData, 'utf-8')).digest('hex');
     vnp_Params['vnp_SecureHash'] = signed;
     const paymentUrl = vnp_Url + '?' + qs.stringify(vnp_Params, { encode: false });
 
-    // tạm lưu giao dịch là đã thanh toán
-    // TODO: tạo callback để vnpay gọi sau khi đã thanh toán thành công => lúc này mới cập nhật db
-    const payment = this.transactionHistoryRepo.create({
-      amount,
-      createdAt: new Date(),
-      bookingId: booking.bookingId,
-      userId: +requester.id
-    });
+    const queryRunner = AppDataSource.createQueryRunner();
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
 
-    booking.status = BookingStatus.Paid;
+    try {
+      // Lưu transaction history
+      const payment = queryRunner.manager.create(TransactionHistory, {
+        amount,
+        createdAt: new Date(),
+        bookingId: booking.bookingId,
+        userId: +requester.id
+      });
+      await queryRunner.manager.save(payment);
 
-    await this.bookingRepo.save(booking);
-    await this.transactionHistoryRepo.save(payment);
-    // create ticket
-    ticketController.generateTickets(booking, user, req.body.eventId);
+      // Cập nhật trạng thái booking
+      booking.status = BookingStatus.Paid;
+      await queryRunner.manager.save(booking);
 
-    res.json({
-      message: 'Create payment url successfull',
-      data: { url: paymentUrl }
-    });
+      //  Tạo ticket + qrcode cho từng booking item
+      for (const item of booking.bookingItems) {
+        for (let i = 0; i < item.quantity; i++) {
+          const randomCode = uuidv4();
+          const issuedAt = new Date();
+          const qrEntity = queryRunner.manager.create(QrCode, {
+            randomCode,
+            issuedAt
+          });
+          const savedQr = await queryRunner.manager.save(qrEntity);
+
+          const ticket = queryRunner.manager.create(Ticket, {
+            ticketType: item.ticketType,
+            ownerId: user.id,
+            eventId: req.body.eventId,
+            checkedIn: false,
+            seatNumber: 1, // tạm để số ghế là 1
+            ticketStatus: TicketState.Available,
+            qrCode: savedQr
+          });
+          await queryRunner.manager.save(ticket);
+        }
+      }
+
+      await queryRunner.commitTransaction();
+
+      res.json({
+        message: 'Create payment url successfull',
+        data: { url: paymentUrl }
+      });
+    } catch (error) {
+      await queryRunner.rollbackTransaction();
+      next(error);
+    } finally {
+      await queryRunner.release();
+    }
   };
 
   private sortObject(obj: Record<string, string | number>): Record<string, string> {

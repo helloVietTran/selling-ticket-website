@@ -102,6 +102,7 @@ export type SelectTicketTypePayload = {
 
 export interface CreatePaymentPayload {
   orderId: string | number;
+  eventId: string | number;
 }
 
 // dùng chung

@@ -43,8 +43,10 @@ const BookingPage = () => {
     try {
       const res = await payBooking(data);
       const paymentUrl = res.data?.url;
+
       if (paymentUrl) {
         window.open(paymentUrl, '_blank');
+        navigate(`/my/tickets`)
       }
 
     } catch (error) {
@@ -71,7 +73,7 @@ const BookingPage = () => {
           }))
         }
         onChangeTicket={() => handleDeleteBooking(booking.bookingId)}
-        onContinue={() => handlePayBooking({ orderId: booking.bookingId })}
+        onContinue={() => handlePayBooking({ orderId: booking.bookingId, eventId: event.eventId })}
       />
     </div>
   );
