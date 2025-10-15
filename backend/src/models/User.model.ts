@@ -1,11 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { Role } from '../types/enum';
-import { Ticket } from './Ticket.model';
 import { Booking } from './Booking.model';
 import { Organizer } from './Organizer.model';
-import { TransactionHistory } from './TransactionHistory.model';
-import { AppError } from '../config/exception';
-import { ErrorMap } from '../config/ErrorMap';
 
 @Entity('user')
 export class User {
