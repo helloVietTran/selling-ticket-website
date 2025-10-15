@@ -31,7 +31,9 @@ export default function EventBanner({
   const navigate = useNavigate();
   useEffect(() => {
     const expiry =
-      expiresAt instanceof Date ? expiresAt : parseISO(String(expiresAt).replace(' ', 'T'));
+      expiresAt instanceof Date
+        ? expiresAt
+        : parseISO(String(expiresAt).replace(' ', 'T'));
 
     const updateTimeLeft = () => {
       const now = new Date();
@@ -58,10 +60,9 @@ export default function EventBanner({
   const seconds = String(timeLeft % 60).padStart(2, '0');
 
   const handleCloseModal = () => {
-    setShowModal(false)
-    navigate(`/events/${eventId}`)
-    
-  }
+    setShowModal(false);
+    navigate(`/events/${eventId}`);
+  };
 
   return (
     <>

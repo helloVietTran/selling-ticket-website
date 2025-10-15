@@ -55,7 +55,8 @@ export default function BookingInfo({
               <div className="text-right space-y-1">
                 <p>{String(ticketType.quantity).padStart(2, '0')}</p>
                 <p className="text-gray-500">
-                  {(ticketType.price * ticketType.quantity).toLocaleString()} VND
+                  {(ticketType.price * ticketType.quantity).toLocaleString()}{' '}
+                  VND
                 </p>
               </div>
             </div>

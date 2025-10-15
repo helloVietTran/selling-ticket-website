@@ -24,8 +24,7 @@ export default function MyTicketList() {
 
   useEffect(() => {
     exec();
-  }, [])
-
+  }, []);
 
   if (apiStatus === 'PENDING') {
     return (
@@ -36,7 +35,6 @@ export default function MyTicketList() {
     );
   }
 
-
   return (
     <div className="space-y-6">
       <PageTitle icon={<Ticket className="w-6 h-6 text-green-400" />}>
@@ -44,30 +42,34 @@ export default function MyTicketList() {
       </PageTitle>
 
       <div className="grid md:grid-cols-2 gap-6">
-        {data?.data && data?.data.map(ticket => (
-          <Card
-            key={ticket.ticketId}
-            className="bg-[#323234] border border-[#2a2a2c]">
-            <CardHeader>
-              <CardTitle className="flex justify-between items-center text-white">
-                {ticket.eventName}
-                <Badge className={`${statusColor[ticket.ticketStatus]} text-white`}>
-                  {statusText[ticket.ticketStatus]}
-                </Badge>
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-2 text-sm text-gray-300">
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-gray-400" />
-                <span>{formatDateTime(ticket.eventStartTime)}</span>
-              </div>
+        {data?.data &&
+          data?.data.map(ticket => (
+            <Card
+              key={ticket.ticketId}
+              className="bg-[#323234] border border-[#2a2a2c]">
+              <CardHeader>
+                <CardTitle className="flex justify-between items-center text-white">
+                  {ticket.eventName}
+                  <Badge
+                    className={`${
+                      statusColor[ticket.ticketStatus]
+                    } text-white`}>
+                    {statusText[ticket.ticketStatus]}
+                  </Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm text-gray-300">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-4 h-4 text-gray-400" />
+                  <span>{formatDateTime(ticket.eventStartTime)}</span>
+                </div>
 
-              <div className="flex items-center gap-2 text-gray-400">
-                Mã vé: <span className="font-mono">{ticket.ticketId}</span>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                <div className="flex items-center gap-2 text-gray-400">
+                  Mã vé: <span className="font-mono">{ticket.ticketId}</span>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
       </div>
     </div>
   );

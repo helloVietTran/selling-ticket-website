@@ -1,12 +1,28 @@
 import { Outlet, NavLink } from 'react-router-dom';
-import { useState } from 'react';
-import { User, Ticket, Calendar, X, ListCheck } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { User, Ticket, Calendar, X, ListCheck, Loader2 } from 'lucide-react';
 import Breadcrumb from '@/components/bread-crumb';
 import Header from '@/components/header';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { useApi } from '@/api/hooks/useApi';
+import { getMyInfo } from '@/api/userApi';
 
 export default function AccountLayout() {
   const [open, setOpen] = useState(false);
+  const { exec, data, isPending } = useApi(getMyInfo);
+
+  useEffect(() => {
+    exec();
+  }, []);
+
+  if (isPending) {
+    return (
+      <div className="flex justify-center items-center h-96">
+        <Loader2 className="mr-2 h-8 w-8 animate-spin" />
+        <span>Đang tải dữ liệu...</span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#272729] text-white flex flex-col">
@@ -40,15 +56,14 @@ export default function AccountLayout() {
 
             <div className="flex items-center gap-4 mb-6">
               <Avatar className="w-12 h-12">
-                <AvatarImage
-                  src="https://github.com/shadcn.png"
-                  alt="Việt Trần Danh"
-                />
-                <AvatarFallback>V</AvatarFallback>
+                <AvatarImage src={data?.data?.avatar} alt="Việt Trần Danh" />
+                <AvatarFallback className="bg-gray-600 text-gray-300">
+                  {data?.data?.userName.charAt(0).toUpperCase()}
+                </AvatarFallback>
               </Avatar>
               <div>
                 <div className="text-sm text-gray-300">Tài khoản của</div>
-                <div className="font-bold text-lg">Việt Trần Danh</div>
+                <div className="font-bold text-lg">{data?.data?.userName}</div>
               </div>
             </div>
 

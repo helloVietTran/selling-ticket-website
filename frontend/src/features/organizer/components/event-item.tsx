@@ -1,5 +1,13 @@
 import { useState } from 'react';
-import { ScanLine, Trash2, MapPin, Calendar, DollarSign, ShoppingCart, CheckSquare } from 'lucide-react';
+import {
+  ScanLine,
+  Trash2,
+  MapPin,
+  Calendar,
+  DollarSign,
+  ShoppingCart,
+  CheckSquare,
+} from 'lucide-react';
 import { toast } from 'sonner';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -44,7 +52,7 @@ export default function EventItem({
   startDate,
   endDate,
   image,
-  eventStatus
+  eventStatus,
 }: EventItemProps) {
   const [scannerOpen, setScannerOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -55,10 +63,8 @@ export default function EventItem({
     const organizerId = localStorage.getItem(LOCAL_STORAGE_KEYS.ORGANIZER_ID);
     if (!organizerId) return;
     try {
-
       await deleteEventExec(eventId, organizerId);
       toast.success('Xóa sự kiện thành công');
-
     } catch (err) {
       toast.error('Xóa sự kiện thất bại! Vui lòng thử lại sau');
       console.error(err);
@@ -77,7 +83,9 @@ export default function EventItem({
               alt={title}
               className="object-cover w-full h-full"
             />
-            <AvatarFallback>{title?.charAt(0)?.toUpperCase() || '?'}</AvatarFallback>
+            <AvatarFallback>
+              {title?.charAt(0)?.toUpperCase() || '?'}
+            </AvatarFallback>
           </Avatar>
         </div>
       </div>
@@ -104,11 +112,12 @@ export default function EventItem({
                 Quản lý
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" className="bg-[#2A2A2D] text-white rounded-xl">
+            <DropdownMenuContent
+              align="start"
+              className="bg-[#2A2A2D] text-white rounded-xl">
               <DropdownMenuItem
                 className="text-red-500 hover:bg-red-50 focus:bg-red-50 focus:text-red-600"
-                onClick={() => setConfirmOpen(true)}
-              >
+                onClick={() => setConfirmOpen(true)}>
                 <div className="flex items-center gap-4">
                   <Trash2 className="w-4 h-4 mr-2 text-red-500" />
                   <span>Xóa sự kiện</span>
@@ -118,8 +127,7 @@ export default function EventItem({
               <DropdownMenuItem className="text-yellow-600 hover:bg-yellow-50 focus:bg-yellow-50">
                 <Link
                   className="flex items-center gap-4 w-full"
-                  to={`/organizer/revenue/events/${eventId}`}
-                >
+                  to={`/organizer/revenue/events/${eventId}`}>
                   <DollarSign className="w-4 h-4 mr-2 text-yellow-600" />
                   <span>Doanh thu</span>
                 </Link>
@@ -128,8 +136,7 @@ export default function EventItem({
               <DropdownMenuItem className="text-emerald-600 hover:bg-emerald-50 focus:bg-emerald-50">
                 <Link
                   className="flex items-center gap-4 w-full"
-                  to={`/organizer/check-in/events/${eventId}`}
-                >
+                  to={`/organizer/check-in/events/${eventId}`}>
                   <CheckSquare className="w-4 h-4 mr-2 text-emerald-600" />
                   <span>Check-in</span>
                 </Link>
@@ -138,13 +145,11 @@ export default function EventItem({
               <DropdownMenuItem className="text-neutral-400 hover:bg-gray-10 focus:bg-gray-100">
                 <Link
                   className="flex items-center gap-4 w-full"
-                  to={`/organizer/orders/events/${eventId}`}
-                >
+                  to={`/organizer/orders/events/${eventId}`}>
                   <ShoppingCart className="w-4 h-4 mr-2 text-neutral-400" />
                   <span>Đơn hàng</span>
                 </Link>
               </DropdownMenuItem>
-
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -158,7 +163,6 @@ export default function EventItem({
             </Button>
           )}
 
-
           <QrScanner
             open={scannerOpen}
             onClose={() => setScannerOpen(false)}
@@ -171,18 +175,21 @@ export default function EventItem({
             <AlertDialogHeader>
               <AlertDialogTitle>Xác nhận xóa sự kiện</AlertDialogTitle>
               <AlertDialogDescription>
-                Bạn có chắc chắn muốn xóa <strong>{title}</strong> không? Hành động này không thể hoàn tác.
+                Bạn có chắc chắn muốn xóa <strong>{title}</strong> không? Hành
+                động này không thể hoàn tác.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
               <AlertDialogCancel>Hủy</AlertDialogCancel>
-              <AlertDialogAction onClick={handleDelete} className="bg-red-500 hover:bg-red-600">
+              <AlertDialogAction
+                onClick={handleDelete}
+                className="bg-red-500 hover:bg-red-600">
                 Xóa
               </AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
       </CardContent>
-    </Card >
+    </Card>
   );
 }

@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button";
-import { formatVND } from "@/lib/formatVND";
+import { Button } from '@/components/ui/button';
+import { formatVND } from '@/lib/formatVND';
 
 type TicketItemProps = {
   id: number;
@@ -41,7 +41,6 @@ export default function TicketItem({
 
           <div className="flex justify-center lg:justify-end mt-3">
             <div className="flex items-center gap-2">
-
               <Button
                 variant="secondary"
                 size="icon"
@@ -49,17 +48,14 @@ export default function TicketItem({
                 aria-label={`Giảm ${name}`}
                 disabled={isMinDisabled}
                 className={`w-10 h-10 rounded-md shadow-sm 
-                  ${isMinDisabled ? "cursor-not-allowed opacity-50" : ""}
-                `}
-              >
+                  ${isMinDisabled ? 'cursor-not-allowed opacity-50' : ''}
+                `}>
                 −
               </Button>
-
 
               <div className="w-12 h-10 grid place-items-center bg-neutral-900 border border-neutral-700 rounded-md text-white">
                 {count}
               </div>
-
 
               <Button
                 variant="outline"
@@ -68,9 +64,8 @@ export default function TicketItem({
                 aria-label={`Tăng ${name}`}
                 disabled={isMaxDisabled}
                 className={`w-10 h-10 rounded-md border-emerald-500 text-emerald-400 hover:bg-emerald-500/10 
-                  ${isMaxDisabled ? "cursor-not-allowed opacity-50" : ""}
-                `}
-              >
+                  ${isMaxDisabled ? 'cursor-not-allowed opacity-50' : ''}
+                `}>
                 +
               </Button>
             </div>

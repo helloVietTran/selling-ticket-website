@@ -46,11 +46,15 @@ const EventDetailPage = () => {
           eventId={event.eventId}
           title={event.title}
           date={format(event.startTime, 'HH:mm dd/MM/yyyy', { locale: vi })}
-          province={provinces.find((p: any) => p.code === event.venue.province)?.name}
+          province={
+            provinces.find((p: any) => p.code === event.venue.province)?.name
+          }
           address={
             `${event.venue.street}, ` +
             `${wards.find((w: any) => w.code === event.venue.ward)?.name}, ` +
-            `${districts.find((d: any) => d.code === event.venue.district)?.name}, `
+            `${
+              districts.find((d: any) => d.code === event.venue.district)?.name
+            }, `
           }
           price={event.minPriceTicketType}
           image={event.eventImage}
@@ -59,7 +63,10 @@ const EventDetailPage = () => {
 
       <div className="px-4 py-6 space-y-6 bg-[#f6f7fc]">
         <EventDescription htmlContent={event.eventInfo} />
-        <TicketTypeList ticketTypes={event.ticketTypes} eventId={event.eventId} />
+        <TicketTypeList
+          ticketTypes={event.ticketTypes}
+          eventId={event.eventId}
+        />
 
         <OrganizerCard
           name={event.organizer.organizerName}

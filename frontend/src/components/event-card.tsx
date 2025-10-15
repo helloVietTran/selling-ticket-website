@@ -27,8 +27,7 @@ const EventCard: React.FC<EventCardProps> = ({
   return (
     <Link
       to={`/events/${eventId}`}
-      className="rounded-lg overflow-hidden hover:-translate-y-1 transition-transform duration-300 cursor-pointer text-white no-underline"
-    >
+      className="rounded-lg overflow-hidden hover:-translate-y-1 transition-transform duration-300 cursor-pointer text-white no-underline">
       <div className="relative">
         <Avatar className="w-full h-50 rounded-xl">
           <AvatarImage

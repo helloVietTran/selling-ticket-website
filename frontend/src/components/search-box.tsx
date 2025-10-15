@@ -30,16 +30,15 @@ export default function SearchBox({
           type="text"
           placeholder={placeholder}
           value={value}
-          onChange={(e) => onChange(e.target.value)}
+          onChange={e => onChange(e.target.value)}
           className={`border-0 focus-visible:ring-0 focus:outline-none flex-1 text-[#333333] pr-6 ${inputClassName}`}
         />
-        
+
         {value && (
           <button
             onClick={() => onChange('')}
             className="absolute right-3 text-gray-400 hover:text-gray-600 transition-colors"
-            type="button"
-          >
+            type="button">
             <X className="size-4" />
           </button>
         )}

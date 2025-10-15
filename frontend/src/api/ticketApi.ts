@@ -1,4 +1,4 @@
-import type { BaseResponse, TicketResponse } from "@/types";
+import type { BaseResponse, StatsTicket, TicketResponse } from "@/types";
 import api from "./api";
 
 async function getMyTickets(): Promise<BaseResponse<TicketResponse[]>> {
@@ -7,6 +7,15 @@ async function getMyTickets(): Promise<BaseResponse<TicketResponse[]>> {
   return res.data;
 }
 
+async function statsTickets(eventId: string): Promise<BaseResponse<StatsTicket>> {
+  const res = await api.get(`/tickets/events/${eventId}`)
+  
+  return res.data;
+}
+
+
+
 export {
-   getMyTickets
+   getMyTickets,
+   statsTickets
 }

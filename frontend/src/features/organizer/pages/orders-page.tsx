@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Table,
   TableBody,
@@ -8,69 +8,45 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { useApi } from '@/api/hooks/useApi';
+import { useParams } from 'react-router-dom';
 
-type Order = {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  checkedIn: boolean;
-};
-
-const orders: Order[] = [
-  {
-    id: 'DH123454',
-    name: 'Hoàng Trung',
-    email: 'h***05@gmail.com',
-    phone: '+84353***166',
-    checkedIn: true,
-  },
-  {
-    id: 'DH123455',
-    name: 'Phong Nguyen',
-    email: 'p***nguyen@gmail.com',
-    phone: '+84353***177',
-    checkedIn: false,
-  },
-  {
-    id: 'DH123456',
-    name: 'Thuat Nguyen',
-    email: 't***nguyen@gmail.com',
-    phone: '+84353***199',
-    checkedIn: true,
-  },
-];
+import { getPaidBookingsByEventId } from '@/api/bookingApi';
+import SectionHeader from '../components/section-header';
+import { ShoppingCart } from 'lucide-react';
 
 export default function OrdersTable() {
   const [search, setSearch] = useState('');
-  const [filter, setFilter] = useState<'all' | 'checked' | 'unchecked'>('all');
+  const { eventId } = useParams();
+  const { exec, data, error } = useApi(getPaidBookingsByEventId);
 
-  const filteredOrders = orders.filter(order => {
-    const matchSearch =
-      order.name.toLowerCase().includes(search.toLowerCase()) ||
-      order.id.includes(search);
+  useEffect(() => {
+    if (eventId) exec(eventId);
+    if (error) {
+      console.log(error);
+    }
+  }, [eventId]);
 
-    const matchFilter =
-      filter === 'all'
-        ? true
-        : filter === 'checked'
-        ? order.checkedIn
-        : !order.checkedIn;
+  const orders = data?.data || [];
 
-    return matchSearch && matchFilter;
+  const filteredOrders = orders.filter((order: any) => {
+    const searchText = search.toLowerCase();
+    return (
+      order.attendee?.userName?.toLowerCase().includes(searchText) ||
+      order.attendee?.email?.toLowerCase().includes(searchText) ||
+      order.bookingId?.toString().includes(searchText)
+    );
   });
 
-  const filters = [
-    { key: 'all', label: 'Tất cả' },
-    { key: 'checked', label: 'Đã check-in' },
-    { key: 'unchecked', label: 'Chưa check-in' },
-  ] as const;
-
   return (
-    <div className="text-white">
-      <h1 className="mb-4 font-semibold">Đơn hàng</h1>
+    <>
+      <SectionHeader
+        title="Đơn hàng"
+        eventId={eventId || ''}
+        icon={ShoppingCart}
+      />
+
       <Input
         placeholder="Tìm kiếm đơn hàng..."
         value={search}
@@ -78,23 +54,7 @@ export default function OrdersTable() {
         className="bg-white text-[#333] placeholder:text-gray-500 rounded"
       />
 
-      <div className="flex gap-2 mt-4">
-        {filters.map(f => (
-          <Button
-            key={f.key}
-            variant="outline"
-            className={`rounded-full cursor-pointer ${
-              filter === f.key
-                ? 'bg-emerald-500 text-white'
-                : 'bg-transparent text-gray-300 border-gray-600'
-            }`}
-            onClick={() => setFilter(f.key)}>
-            {f.label}
-          </Button>
-        ))}
-      </div>
-
-      <p className="mt-4 text-sm text-gray-40 mb-4">
+      <p className="mt-4 text-sm text-gray-400 mb-4">
         Có {filteredOrders.length} đơn hàng
       </p>
 
@@ -111,43 +71,35 @@ export default function OrdersTable() {
                 Số điện thoại
               </TableHead>
               <TableHead className="text-white px-4 py-2">Trạng thái</TableHead>
-              <TableHead className="text-white px-4 py-2">Hành động</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredOrders.length > 0 ? (
-              filteredOrders.map(order => (
+              filteredOrders.map((order: any) => (
                 <TableRow
-                  key={order.id}
+                  key={order.bookingId}
                   className="bg-[#2c2f35] border-b border-[#1f1d1f] hover:bg-[#383c44]">
-                  <TableCell className="px-4 py-2">{order.id}</TableCell>
-                  <TableCell className="px-4 py-2">{order.name}</TableCell>
-                  <TableCell className="px-4 py-2">{order.email}</TableCell>
-                  <TableCell className="px-4 py-2">{order.phone}</TableCell>
+                  <TableCell className="px-4 py-2">{order.bookingId}</TableCell>
                   <TableCell className="px-4 py-2">
-                    <Badge
-                      className={
-                        order.checkedIn
-                          ? 'bg-emerald-500 text-white'
-                          : 'bg-gray-500 text-white'
-                      }>
-                      {order.checkedIn ? 'Đã check-in' : 'Chưa check-in'}
-                    </Badge>
+                    {order.attendee?.userName}
                   </TableCell>
                   <TableCell className="px-4 py-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="text-red-500 border-red-500 hover:bg-red-500 hover:text-white">
-                      Hoàn tiền
-                    </Button>
+                    {order.attendee?.email}
+                  </TableCell>
+                  <TableCell className="px-4 py-2">
+                    {order.attendee?.phoneNumber || '—'}
+                  </TableCell>
+                  <TableCell className="px-4 py-2">
+                    <Badge className="bg-emerald-500 text-white">
+                      Đã thanh toán
+                    </Badge>
                   </TableCell>
                 </TableRow>
               ))
             ) : (
               <TableRow>
                 <TableCell
-                  colSpan={6}
+                  colSpan={5}
                   className="text-center py-6 text-gray-400">
                   Không có đơn hàng
                 </TableCell>
@@ -156,6 +108,6 @@ export default function OrdersTable() {
           </TableBody>
         </Table>
       </div>
-    </div>
+    </>
   );
 }

@@ -1,4 +1,4 @@
-import { UserMinus, UserPlus } from 'lucide-react';
+import { UserMinus } from 'lucide-react';
 import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import CircleChart from './circle-chart';
 
@@ -20,7 +20,6 @@ const CheckinSummary = ({
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      {/* Card lớn - Check-in */}
       <Card className="relative bg-[#282629] text-white border-[#1f1d1f] h-full">
         <CardHeader>
           <CardTitle className="text-lg">Đã check-in</CardTitle>
@@ -44,7 +43,6 @@ const CheckinSummary = ({
         </CardContent>
       </Card>
 
-      {/* 2 card nhỏ */}
       <div className="flex flex-col gap-4 h-full">
         <Card className="bg-[#282629] text-white border-[#1f1d1f] flex flex-row justify-between items-center p-4 flex-1">
           <span className="flex items-center gap-4">
