@@ -88,18 +88,12 @@ export default function CreateEventPage() {
   return (
     <Tabs value={currentStepId} onValueChange={setCurrentStepId}>
       <div
-        className="
-          bg-black/30 backdrop-blur-md border-b border-[#38383D]
-          fixed top-[72px] z-49 pt-6
-          left-0 right-0
-          min-[1150px]:left-[288px] 
-          min-[1150px]:w-[calc(100%-288px)] w-full
-        "
+        className='bg-black/30 backdrop-blur-md border-b border-[#38383D] fixed z-49 px-16 pt-4 left-0 right-0 top-16'
       >
         <CreateProcessBar steps={steps} currentStepId={currentStepId} />
       </div>
 
-      <div className="pt-16">
+      <div className="pt-30">
         <TabsContent value="eventInfo">
           <InfoForm
             initial={formData.eventInfo}

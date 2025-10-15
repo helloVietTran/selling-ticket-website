@@ -6,7 +6,7 @@ export default function TopBar() {
   const navigate = useNavigate();
 
   return (
-    <header className="w-full bg-emerald-500 text-white">
+    <header className="w-full bg-emerald-500 text-white fixed top-0 right-0 left-0 z-49">
       <div className="header-container flex items-center justify-between relative px-4 py-2">
         <Link to="/">
           <img
