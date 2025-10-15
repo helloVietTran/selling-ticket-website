@@ -14,7 +14,7 @@ class ResourceController {
   uploadImage = async (req: Request, res: Response<BaseResponse<Image>>, next: NextFunction) => {
     try {
       const domain = config.domain;
-      console.log(domain)
+      console.log(domain);
       const UPLOAD_DIR = path.join(process.cwd(), 'uploads');
       if (!req.file) throw AppError.fromErrorCode(ErrorMap.NO_FILE_UPLOAD);
       const imageId = Date.now() + '-' + Math.round(Math.random() * 1e9);

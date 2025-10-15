@@ -20,7 +20,7 @@ jest.mock('../src/config/data-source', () => {
     save: mockSave,
     remove: mockRemove,
     create: mockCreate,
-    createQueryBuilder: mockCreateQueryBuilder,
+    createQueryBuilder: mockCreateQueryBuilder
   };
 
   const manager = {
@@ -28,15 +28,15 @@ jest.mock('../src/config/data-source', () => {
     save: jest.fn(),
     remove: jest.fn(),
     create: jest.fn(),
-    getRepository: jest.fn(() => repo),
+    getRepository: jest.fn(() => repo)
   };
 
   return {
     AppDataSource: {
       manager,
       getRepository: jest.fn(() => repo),
-      transaction: jest.fn((fn) => fn(manager)),
-    },
+      transaction: jest.fn((fn) => fn(manager))
+    }
   };
 });
 
@@ -62,12 +62,12 @@ const mockRequest = <P extends object = {}, Q extends object = {}>(
 
 // Repository helpers
 const mockGetRepository = AppDataSource.getRepository as jest.Mock;
-const mockFindOne = () => (mockGetRepository().findOne as jest.Mock);
-const mockFind = () => (mockGetRepository().find as jest.Mock);
-const mockSave = () => (mockGetRepository().save as jest.Mock);
-const mockRemove = () => (mockGetRepository().remove as jest.Mock);
-const mockCreate = () => (mockGetRepository().create as jest.Mock);
-const mockCreateQueryBuilder = () => (mockGetRepository().createQueryBuilder as jest.Mock);
+const mockFindOne = () => mockGetRepository().findOne as jest.Mock;
+const mockFind = () => mockGetRepository().find as jest.Mock;
+const mockSave = () => mockGetRepository().save as jest.Mock;
+const mockRemove = () => mockGetRepository().remove as jest.Mock;
+const mockCreate = () => mockGetRepository().create as jest.Mock;
+const mockCreateQueryBuilder = () => mockGetRepository().createQueryBuilder as jest.Mock;
 
 const mockNext: NextFunction = jest.fn();
 
@@ -79,72 +79,93 @@ describe('EventController', () => {
 
   // ---------------- createEvent ----------------
   describe('createEvent', () => {
-  it('should create event successfully', async () => {
-    const req = mockRequest({}, {}, {
-      event: {
-        title: 'Event A',
-        eventInfo: 'Info',
-        category: 'Category A',
-        startTime: new Date(),
-        endTime: new Date(),
-      },
-      venue: { province: 'A', district: 'B', ward: 'C', street: 'D' },
-      organizer: { organizerName: 'Org A', organizerInfo: 'Info' },
-      ticketTypes: [
-        { name: 'VIP', description: 'VIP', quantity: 10, price: 100, maxPerUser: 2, minPerUser: 1, startSellDate: new Date(), endSellDate: new Date() },
-      ],
-      setting: { messageToReceiver: 'Welcome' },
+    it('should create event successfully', async () => {
+      const req = mockRequest(
+        {},
+        {},
+        {
+          event: {
+            title: 'Event A',
+            eventInfo: 'Info',
+            category: 'Category A',
+            startTime: new Date(),
+            endTime: new Date()
+          },
+          venue: { province: 'A', district: 'B', ward: 'C', street: 'D' },
+          organizer: { organizerName: 'Org A', organizerInfo: 'Info' },
+          ticketTypes: [
+            {
+              name: 'VIP',
+              description: 'VIP',
+              quantity: 10,
+              price: 100,
+              maxPerUser: 2,
+              minPerUser: 1,
+              startSellDate: new Date(),
+              endSellDate: new Date()
+            }
+          ],
+          setting: { messageToReceiver: 'Welcome' }
+        }
+      );
+
+      const res = createMockResponse();
+      const mockEvent = { eventId: 1, title: 'Event A' };
+
+      (AppDataSource.transaction as jest.Mock).mockImplementation(async (fn) => {
+        const mockUserRepo = {
+          findOne: jest.fn().mockResolvedValue({ id: 1, organizer: null }),
+          save: jest.fn(),
+          create: jest.fn((x) => x)
+        };
+        const mockOrganizerRepo = {
+          findOne: jest.fn().mockResolvedValue(null),
+          save: jest.fn().mockResolvedValue({ organizerId: 1, organizationName: 'Org A' }),
+          create: jest.fn((x) => x)
+        };
+        const mockCategoryRepo = {
+          findOne: jest.fn().mockResolvedValue({ categoryId: 1, categoryName: 'Category A' })
+        };
+        const mockEventRepo = {
+          create: jest.fn((x) => x),
+          save: jest.fn().mockResolvedValue(mockEvent)
+        };
+        const mockVenueRepo = { create: jest.fn((x) => x) };
+        const mockTicketTypeRepo = { create: jest.fn((x) => x) };
+        const mockEmailSettingRepo = { create: jest.fn((x) => x) };
+
+        const manager = {
+          getRepository: jest.fn().mockImplementation((model) => {
+            switch (model.name) {
+              case 'User':
+                return mockUserRepo;
+              case 'Organizer':
+                return mockOrganizerRepo;
+              case 'Category':
+                return mockCategoryRepo;
+              case 'Event':
+                return mockEventRepo;
+              case 'Venue':
+                return mockVenueRepo;
+              case 'TicketType':
+                return mockTicketTypeRepo;
+              case 'EmailSetting':
+                return mockEmailSettingRepo;
+              default:
+                return {};
+            }
+          })
+        };
+
+        return await fn(manager);
+      });
+
+      await eventController.createEvent(req, res, mockNext);
+
+      expect(res.status).toHaveBeenCalledWith(201);
+      expect(res.json).toHaveBeenCalledWith({ message: 'Create event successfully', data: mockEvent });
     });
-
-    const res = createMockResponse();
-    const mockEvent = { eventId: 1, title: 'Event A' };
-
-    (AppDataSource.transaction as jest.Mock).mockImplementation(async (fn) => {
-      const mockUserRepo = {
-        findOne: jest.fn().mockResolvedValue({ id: 1, organizer: null }),
-        save: jest.fn(),
-        create: jest.fn((x) => x),
-      };
-      const mockOrganizerRepo = {
-        findOne: jest.fn().mockResolvedValue(null),
-        save: jest.fn().mockResolvedValue({ organizerId: 1, organizationName: 'Org A' }),
-        create: jest.fn((x) => x),
-      };
-      const mockCategoryRepo = {
-        findOne: jest.fn().mockResolvedValue({ categoryId: 1, categoryName: 'Category A' }),
-      };
-      const mockEventRepo = {
-        create: jest.fn((x) => x),
-        save: jest.fn().mockResolvedValue(mockEvent),
-      };
-      const mockVenueRepo = { create: jest.fn((x) => x) };
-      const mockTicketTypeRepo = { create: jest.fn((x) => x) };
-      const mockEmailSettingRepo = { create: jest.fn((x) => x) };
-
-      const manager = {
-        getRepository: jest.fn().mockImplementation((model) => {
-          switch (model.name) {
-            case 'User': return mockUserRepo;
-            case 'Organizer': return mockOrganizerRepo;
-            case 'Category': return mockCategoryRepo;
-            case 'Event': return mockEventRepo;
-            case 'Venue': return mockVenueRepo;
-            case 'TicketType': return mockTicketTypeRepo;
-            case 'EmailSetting': return mockEmailSettingRepo;
-            default: return {};
-          }
-        }),
-      };
-
-      return await fn(manager);
-    });
-
-    await eventController.createEvent(req, res, mockNext);
-
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({ message: 'Create event successfully', data: mockEvent });
   });
-});
 
   // ---------------- deleteEvent ----------------
   describe('deleteEvent', () => {
@@ -176,7 +197,7 @@ describe('EventController', () => {
         orderBy: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         take: jest.fn().mockReturnThis(),
-        getManyAndCount: jest.fn().mockResolvedValue([mockEvents, 1]),
+        getManyAndCount: jest.fn().mockResolvedValue([mockEvents, 1])
       };
       mockCreateQueryBuilder().mockReturnValue(qb);
 
@@ -186,7 +207,7 @@ describe('EventController', () => {
       expect(res.json).toHaveBeenCalledWith({
         message: 'Get event successfully',
         data: mockEvents,
-        pagination: { page: 1, limit: 10, totalPages: 1, totalItems: 1 },
+        pagination: { page: 1, limit: 10, totalPages: 1, totalItems: 1 }
       });
     });
   });
@@ -194,7 +215,10 @@ describe('EventController', () => {
   // ---------------- getEventsByOrganizer ----------------
   describe('getEventsByOrganizer', () => {
     it('should return organizer events', async () => {
-      const req = mockRequest<{ organizerId: string }, { status?: EventStatus }>({ organizerId: '1' }, { status: undefined });
+      const req = mockRequest<{ organizerId: string }, { status?: EventStatus }>(
+        { organizerId: '1' },
+        { status: undefined }
+      );
       const res = createMockResponse();
 
       const mockEvents = [{ eventId: 1, title: 'Event A' }];
@@ -206,7 +230,7 @@ describe('EventController', () => {
       expect(res.json).toHaveBeenCalledWith({
         message: 'Get events by organizer successfully',
         data: mockEvents,
-        pagination: { page: 1, limit: mockEvents.length, totalItems: mockEvents.length, totalPages: 1 },
+        pagination: { page: 1, limit: mockEvents.length, totalItems: mockEvents.length, totalPages: 1 }
       });
     });
   });
@@ -225,7 +249,7 @@ describe('EventController', () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: 'Get event by id successfully',
-        data: mockEvent,
+        data: mockEvent
       });
     });
   });

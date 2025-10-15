@@ -59,7 +59,7 @@ export interface PredictRevenue {
   percentage: number | string;
 }
 
-export interface StatsTicket{
+export interface StatsTicket {
   eventId: number;
   totalSold: number;
   totalCheckedIn: number;

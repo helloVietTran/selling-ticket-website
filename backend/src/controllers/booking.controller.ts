@@ -88,12 +88,11 @@ class BookingController {
           status: BookingStatus.Paid
         },
         relations: {
-          attendee: true,
+          attendee: true
         },
         order: { createdAt: 'DESC' }
       });
 
-      
       return res.status(200).json({
         message: 'Get orders successfully',
         data: paidBookings

@@ -8,5 +8,4 @@ const router = Router();
 
 router.post('/', auth, validate(createPaymentSchema), paymentController.createPaymentUrl);
 
-
 export default router;

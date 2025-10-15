@@ -21,7 +21,7 @@ export enum BookingStatus {
 export enum TicketState {
   Expired = 'EXPIRED',
   Canceled = 'CANCELED',
-  Available = 'AVAILABLE',
+  Available = 'AVAILABLE'
 }
 
 export enum Category {
