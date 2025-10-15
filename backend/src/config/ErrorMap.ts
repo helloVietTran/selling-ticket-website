@@ -12,6 +12,7 @@ export const ErrorMap = {
   PASSWORD_INCORRECT: { code: 'PASSWORD_INCORRECT', statusCode: 401, message: 'password incorrect' } as IErrorCode,
   DATA_NOT_EMPTY: { code: 'DATA_NOT_EMPTY', statusCode: 400, message: ' email or password not empty' } as IErrorCode,
   TICKET_TYPE_NOT_FOUND: { code: 'TICKET_TYPE_NOT_FOUND', statusCode: 404, message: 'Not found ticket' } as IErrorCode,
+  TICKET_NOT_FOUND: { code: 'TICKET_NOT_FOUND', statusCode: 404, message: 'Ticket not found' } as IErrorCode,
   FORMAT_EMAIL_INCORRECT: { code: 'FORMAT_EMAIL_INCORRECT', statusCode: 400, message: 'Email invalid' } as IErrorCode,
   EMAIL_NOT_FOUND: { code: 'EMAIL_NOT_FOUND', statusCode: 400, message: 'Hãy Nhập email' } as IErrorCode,
   USERNAME_NOT_FOUND: { code: 'USERNAME_NOT_FOUND', statusCode: 400, message: 'Hãy Nhập tên người dùng' } as IErrorCode,
@@ -85,5 +86,16 @@ export const ErrorMap = {
     code: 'NOT_ENOUGH_PERMISSION',
     statusCode: 400,
     message: 'not enough permission'
+  } as IErrorCode,
+
+  INVALID_QR_CODE: {
+    code: 'INVALID_QR_CODE',
+    statusCode: 400,
+    message: 'Invalid qr code'
+  } as IErrorCode,
+  TICKET_ALREADY_CHECKED_IN: {
+    code: 'TICKET_ALREADY_CHECKED_IN',
+    statusCode: 400,
+    message: 'Ticket is used'
   } as IErrorCode
 };
