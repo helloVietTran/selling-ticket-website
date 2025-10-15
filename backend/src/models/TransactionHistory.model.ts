@@ -11,6 +11,9 @@ export class TransactionHistory {
   @Column({ name: 'booking_id' })
   bookingId!: number;
 
+  @Column({ name: 'event_id' })
+  eventId!: number;
+
   @Column('double precision')
   amount!: number;
 

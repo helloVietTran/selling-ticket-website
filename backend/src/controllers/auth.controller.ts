@@ -6,7 +6,7 @@ import { Role } from '../types/enum';
 import { config } from '../config/config';
 import { User } from '../models/User.model';
 import { DisabledToken } from '../models/DisabledToken.model';
-import { LoginInput, LogoutInput, RegisterInput } from '../validators/auth.validate';
+import { LoginInput, RegisterInput, TokenInput } from '../validators/auth.validate';
 import { BaseResponse, LoginOutput } from '../types/response.type';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
@@ -60,7 +60,7 @@ export class AuthController {
         throw AppError.fromErrorCode(ErrorMap.PASSWORD_INCORRECT);
       }
 
-      const token = jwt.sign({ id: user.id, roles: user.roles }, config.jwt_secret, { expiresIn: '30m' });
+      const token = jwt.sign({ id: user.id, roles: user.roles }, config.jwt_secret, { expiresIn: '90m' });
 
       return res.status(200).json({
         message: 'Đăng nhập thành công',
@@ -81,7 +81,7 @@ export class AuthController {
   };
 
   logout: RequestHandler = async (
-    req: Request<{}, LogoutInput>,
+    req: Request<{}, {}, TokenInput>,
     res: Response<BaseResponse<{}>>,
     next: NextFunction
   ) => {
@@ -108,7 +108,11 @@ export class AuthController {
     }
   };
 
-  verifyToken = (req: Request, res: Response<BaseResponse<{}>>, next: NextFunction) => {
+  verifyToken = (
+    req: Request<{}, {}, TokenInput>,
+    res: Response<BaseResponse<{ isAuthenticated: boolean }>>,
+    next: NextFunction
+  ) => {
     try {
       const token = req.body.accessToken;
       if (!token) {
@@ -119,7 +123,9 @@ export class AuthController {
 
       return res.status(200).json({
         message: 'Token hợp lệ',
-        data: decoded
+        data: {
+          isAuthenticated: !!decoded
+        }
       });
     } catch (error) {
       next(error);

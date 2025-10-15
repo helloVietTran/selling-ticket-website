@@ -8,6 +8,7 @@ import { User } from '../models/User.model';
 import { AppDataSource } from '../config/data-source';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
+import { BookingStatus } from '../types/enum';
 
 class BookingController {
   private userRepo = AppDataSource.getRepository(User);
@@ -67,6 +68,35 @@ class BookingController {
       return res.status(200).json({
         message: 'Xóa booking thành công.',
         data: null
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  getPaidBookingsByEventId = async (
+    req: Request<{ eventId: string }>,
+    res: Response<BaseResponse<Booking[]>>,
+    next: NextFunction
+  ) => {
+    try {
+      const eventId = Number(req.params.eventId);
+
+      const paidBookings = await this.bookingRepo.find({
+        where: {
+          eventId,
+          status: BookingStatus.Paid
+        },
+        relations: {
+          attendee: true,
+        },
+        order: { createdAt: 'DESC' }
+      });
+
+      
+      return res.status(200).json({
+        message: 'Get orders successfully',
+        data: paidBookings
       });
     } catch (error) {
       next(error);

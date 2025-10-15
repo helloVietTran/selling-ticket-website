@@ -21,7 +21,7 @@ app.use(cors());
 // cron job
 startCronTicketBooking();
 
-// // send ticket mail job
+// send ticket mail job
 // cron.schedule('*/3 * * * *', async () => {
 //   await emailController.sendTicketMail();
 // });

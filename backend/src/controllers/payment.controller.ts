@@ -90,11 +90,11 @@ class PaymentController {
         amount,
         createdAt: new Date(),
         bookingId: booking.bookingId,
-        userId: +requester.id
+        userId: +requester.id,
+        eventId: +requester.id
       });
       await queryRunner.manager.save(payment);
 
-      // Cập nhật trạng thái booking
       booking.status = BookingStatus.Paid;
       await queryRunner.manager.save(booking);
 
