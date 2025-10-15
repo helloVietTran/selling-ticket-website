@@ -9,6 +9,7 @@ import { AppDataSource } from './config/data-source';
 import { responseErr } from './config/exception';
 import { startCronTicketBooking } from './controllers/cron/booking.cron';
 import emailController from './controllers/email.controller';
+import adminController from './controllers/admin.controller';
 
 const app: Application = express();
 
@@ -31,8 +32,9 @@ route(app);
 
 // connect to db
 AppDataSource.initialize()
-  .then(() => {
+  .then(async () => {
     console.log('INFO: Data Source has been initialized!');
+    await adminController.initAdmin();
   })
   .catch((err) => {
     console.error('ERROR: Error during Data Source initialization:', err);

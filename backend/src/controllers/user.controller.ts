@@ -1,10 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { AppDataSource } from '../config/data-source';
 import { User } from '../models/User.model';
-import ApiResponse from '../utils/ApiResponse';
-import { Role } from '../types/enum';
-import bcrypt from 'bcrypt';
-import { Organizer } from '../models/Organizer.model';
 import { BaseResponse } from '../types/response.type';
 import { UpdateUserInput } from '../validators/user.validate';
 import { Requester } from '../types';
