@@ -81,7 +81,7 @@ export type LoginPayLoad = {
   password: string;
 };
 
-export type LogoutPayload = {
+export type TokenPayload = {
   accessToken: string;
 };
 
@@ -215,9 +215,48 @@ export interface BookingItem {
 }
 
 export interface StatsTicketType {
-  type: string;
-  price: number;
-  checkedIn: number;
-  sold: number;
-  total: number;
+  ticketTypeName: string;
+  totalQuantity: number;
+  soldTicket: number;
+  percentage: string | number;
+  totalTicket: number;
+  totalSoldTicket: number;
+  overallPercentage?: string | number;
+}
+
+export interface StatsTicket{
+  eventId: number;
+  totalSold: number;
+  totalCheckedIn: number;
+  percentage: number | string;
+  predictTicketSold: number;
+}
+
+export interface TicketResponse {
+  ticketId: number;
+  ticketType: string;
+  checkedIn: boolean;
+  seatNumber?: number;
+  eventName: string;
+  eventStartTime: string;
+  eventEndTime: string;
+  ticketStatus: 'EXPIRED' | 'AVAILABLE' | "CANCELED"
+}
+
+export interface PredictRevenue {
+  predictRevenue: number;
+  realityRevenue: number;
+  percentage: number | string;
+}
+
+
+export interface WeeklyRevenueResponse {
+  eventId: number;
+  totalRevenue: number;
+  totalTicketsSold: number;
+  dailyRevenue: {
+    date: string;
+    revenue: number;
+    ticketsSold: number;
+  }[];
 }

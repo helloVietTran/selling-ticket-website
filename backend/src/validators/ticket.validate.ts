@@ -6,7 +6,8 @@ export const selectTicketSchema = z.object({
       ticketTypeId: z.string().min(1, 'ticketTypeId is required'),
       quantity: z.number().min(1, 'quantity must be at least 1')
     })
-  )
+  ),
+  eventId: z.string().nonoptional('EventId is required')
 });
 
 export type SelectTicketInput = z.infer<typeof selectTicketSchema>;

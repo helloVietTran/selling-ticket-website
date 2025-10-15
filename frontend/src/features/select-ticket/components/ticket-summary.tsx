@@ -8,7 +8,6 @@ type SummaryTicket = {
   name: string;
   count: number;
   subtotal: number;
-
 };
 
 type TicketSummaryProps = {
@@ -30,16 +29,13 @@ export default function TicketSummary({
   startTime,
   eventName,
   province,
-  detailAddress
-
+  detailAddress,
 }: TicketSummaryProps) {
   return (
     <div className="space-y-4 sticky top-8">
       <Card className="bg-neutral-800 text-white rounded-xl overflow-hidden py-2">
         <CardContent className="p-4">
-          <h4 className="text-base font-bold uppercase">
-            {eventName}
-          </h4>
+          <h4 className="text-base font-bold uppercase">{eventName}</h4>
 
           <div className="mt-4 flex items-center gap-3 text-neutral-200">
             <Calendar className="w-5 h-5" />
@@ -76,10 +72,11 @@ export default function TicketSummary({
           </div>
 
           <Button
-            className={`w-full mt-6 py-6 text-lg rounded ${hasSelected
-              ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
-              : 'bg-neutral-200 text-gray-500 cursor-not-allowed'
-              }`}
+            className={`w-full mt-6 py-6 text-lg rounded ${
+              hasSelected
+                ? 'bg-emerald-500 hover:bg-emerald-600 text-white'
+                : 'bg-neutral-200 text-gray-500 cursor-not-allowed'
+            }`}
             disabled={!hasSelected}
             onClick={onCheckout}>
             {hasSelected ? (

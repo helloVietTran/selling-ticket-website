@@ -4,6 +4,7 @@ import { auth } from '../middlewares/auth.middleware';
 
 const router = Router();
 
-router.post('/my', auth, ticketController.getMyTickets);
+router.get('/my', auth, ticketController.getMyTickets);
+router.get('/events/:eventId', ticketController.statsTickets);
 
 export default router;

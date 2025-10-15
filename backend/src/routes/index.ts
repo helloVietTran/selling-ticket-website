@@ -19,8 +19,8 @@ function route(app: Application) {
   app.use(`${urlPrefix}/auth`, authRoute);
   app.use(`${urlPrefix}/events`, eventRoutes);
   app.use(`${urlPrefix}/ticket-types`, ticketTypeRoutes);
-  app.use(`${urlPrefix}/ticket`, ticketRoutes);
-  app.use(`${urlPrefix}/user`, userRoute);
+  app.use(`${urlPrefix}/tickets`, ticketRoutes);
+  app.use(`${urlPrefix}/users`, userRoute);
   app.use(`${urlPrefix}/booking`, bookingRoute);
   app.use(`${urlPrefix}/revenue`, revenueRoute);
   app.use(`${urlPrefix}/organizer`, organizerRoute);

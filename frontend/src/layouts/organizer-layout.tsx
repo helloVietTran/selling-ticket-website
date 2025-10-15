@@ -1,44 +1,31 @@
 import { Outlet } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import Sidebar from '@/features/organizer/components/sidebar';
 import TopBar from '@/features/organizer/components/top-bar';
 import { useApi } from '@/api/hooks/useApi';
 import { getMyOrganizerRecord } from '@/api/organizerApi';
 import { LOCAL_STORAGE_KEYS } from '@/constant';
 
 const OrganizerLayout = () => {
-  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-
-  const { exec, data: organizerData } = useApi(getMyOrganizerRecord)
+  const { exec, data: organizerData } = useApi(getMyOrganizerRecord);
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setMobileSidebarOpen(false);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
+    exec();
   }, []);
-
-  useEffect(() => {
-    exec()
-  }, [])
 
   // store organizerId to use in other places
   if (organizerData?.data) {
-    localStorage.setItem(LOCAL_STORAGE_KEYS.ORGANIZER_ID, JSON.stringify(organizerData.data.organizerId))
+    localStorage.setItem(
+      LOCAL_STORAGE_KEYS.ORGANIZER_ID,
+      JSON.stringify(organizerData.data.organizerId)
+    );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black/90 to-gray-900 text-white flex">
-      <Sidebar
-        mobileOpen={mobileSidebarOpen}
-        onRequestClose={() => setMobileSidebarOpen(false)}
-      />
-
-      <div className="flex-1 flex flex-col min-w-full min-[1150px]:min-w-[calc(100%-288px)]">
-        <TopBar onToggleMobileSidebar={() => setMobileSidebarOpen(s => !s)} />
-        <main className="mt-[72px] overflow-y-auto scrollbar-hidden p-8">
+    <div className="min-h-screen bg-gradient-to-b from-black/90 to-gray-900 text-white">
+      <TopBar />
+      <div className="max-w-[1100px] p-6 mx-auto">
+        <main className="overflow-y-auto scrollbar-hidden">
           <Outlet />
         </main>
       </div>

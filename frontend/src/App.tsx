@@ -19,7 +19,7 @@ import { SelectTicketPage } from '@/features/select-ticket';
 import { BookingPage } from '@/features/booking';
 import { CreateEventPage } from '@/features/create-event';
 import { MyInfoPage, MyTicketPage } from '@/features/account';
-import NotFoundPage from '@/components/not-found';
+import { NotFoundPage } from '@/components/not-found';
 
 export default function App() {
   return (
@@ -35,15 +35,18 @@ export default function App() {
               path="/events/:eventId/select-ticket"
               element={<SelectTicketPage />}
             />
-            <Route path="/events/:eventId/booking/:bookingId" element={<BookingPage />} />
+            <Route
+              path="/events/:eventId/booking/:bookingId"
+              element={<BookingPage />}
+            />
           </Route>
 
           <Route path="/organizer" element={<OrganizerLayout />}>
             <Route path="create-event" element={<CreateEventPage />} />
             <Route path="events" element={<EventsPage />} />
-            <Route path="revenue" element={<RevenuePage />} />
-            <Route path="orders" element={<OrdersPage />} />
-            <Route path="check-in" element={<CheckinPage />} />
+            <Route path="revenue/events/:eventId" element={<RevenuePage />} />
+            <Route path="orders/events/:eventId" element={<OrdersPage />} />
+            <Route path="check-in/events/:eventId" element={<CheckinPage />} />
           </Route>
 
           <Route path="/my" element={<AccountLayout />}>

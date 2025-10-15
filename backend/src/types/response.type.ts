@@ -9,9 +9,15 @@ export interface BaseResponse<T> {
 export interface UploadResponse {
   url: string;
 }
-export interface statsResponse<T> {
-  message: String;
-  data: T;
+
+export interface StatsTicketType {
+  ticketTypeName: string;
+  totalQuantity: number;
+  soldTicket: number;
+  percentage: string | number;
+  totalTicket: number;
+  totalSoldTicket: number;
+  overallPercentage?: string | number;
 }
 
 export interface PaginateResponse<T> extends BaseResponse<T[]> {
@@ -31,12 +37,15 @@ export interface UserOutput {
   roles: Role;
 }
 
-
-export interface RevenueResponse {
-  weeklyRevenue: Record<string, number>;
-  monthlyRevenue: Record<string, number>;
-  totalWeeklyRevenue: number;
-  totalMonthlyRevenue: number;
+export interface WeeklyRevenueResponse {
+  eventId: number;
+  totalRevenue: number;
+  totalTicketsSold: number;
+  dailyRevenue: {
+    date: string;
+    revenue: number;
+    ticketsSold: number;
+  }[];
 }
 
 export interface LoginOutput {
@@ -44,3 +53,16 @@ export interface LoginOutput {
   accessToken: string;
 }
 
+export interface PredictRevenue {
+  predictRevenue: number;
+  realityRevenue: number;
+  percentage: number | string;
+}
+
+export interface StatsTicket {
+  eventId: number;
+  totalSold: number;
+  totalCheckedIn: number;
+  percentage: number | string;
+  predictTicketSold: number;
+}

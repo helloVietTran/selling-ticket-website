@@ -38,13 +38,28 @@ export const ErrorMap = {
   } as IErrorCode,
   INVALID_REQUEST: { code: 'INVALID_REQUEST', statusCode: 400, message: 'Invalid request' } as IErrorCode,
 
-
-  DELETE_EVENT_FORBIDDEN:{code: "DELETE_EVENT_FORBIDDEN",message: "You are not allowed to delete this event",statusCode: 403,}as IErrorCode,
-  EVENT_NOT_FOUND: { code: "EVENT_NOT_FOUND", message: "event not found", statusCode: 404 } as IErrorCode,
-  ORGANIZER_MISMATCH: {code: "ORGANIZER_MISMATCH",message: "Organizer mismatch. Cannot delete this event",statusCode: 403,} as IErrorCode,
-  VIEW_EVENTS_FORBIDDEN:{code: "VIEW_EVENTS_FORBIDDEN",message: "You are not allowed to view events",statusCode: 403,} as IErrorCode,
-  EMAIL_ALREADY_EXISTS:{code: "EMAIL_ALREADY_EXISTS",message: "Email đã tồn tại",statusCode: 400,} as IErrorCode,
-  ERROR_GENERATING_TICKETS:{code: 'ERROR_GENERATING_TICKETS',message:'Error generating tickets',statusCode: 500}  as IErrorCode,
+  DELETE_EVENT_FORBIDDEN: {
+    code: 'DELETE_EVENT_FORBIDDEN',
+    message: 'You are not allowed to delete this event',
+    statusCode: 403
+  } as IErrorCode,
+  EVENT_NOT_FOUND: { code: 'EVENT_NOT_FOUND', message: 'event not found', statusCode: 404 } as IErrorCode,
+  ORGANIZER_MISMATCH: {
+    code: 'ORGANIZER_MISMATCH',
+    message: 'Organizer mismatch. Cannot delete this event',
+    statusCode: 403
+  } as IErrorCode,
+  VIEW_EVENTS_FORBIDDEN: {
+    code: 'VIEW_EVENTS_FORBIDDEN',
+    message: 'You are not allowed to view events',
+    statusCode: 403
+  } as IErrorCode,
+  EMAIL_ALREADY_EXISTS: { code: 'EMAIL_ALREADY_EXISTS', message: 'Email đã tồn tại', statusCode: 400 } as IErrorCode,
+  ERROR_GENERATING_TICKETS: {
+    code: 'ERROR_GENERATING_TICKETS',
+    message: 'Error generating tickets',
+    statusCode: 500
+  } as IErrorCode,
   TICKET_TYPE_IMPOSITIVE: {
     code: 'TICKET_TYPE_IMPOSITIVE',
     statusCode: 400,
@@ -60,7 +75,11 @@ export const ErrorMap = {
   BOOKING_NOT_FOUND: { code: 'BOOKING_NOT_FOUND', statusCode: 400, message: 'booking not found' } as IErrorCode,
   NO_FILE_UPLOAD: { code: 'NO_FILE_UPLOAD', statusCode: 400, message: 'no file upload' } as IErrorCode,
   NOT_FOUND_TOKEN: { code: 'NOT_FOUND_TOKEN', statusCode: 400, message: 'not found token' } as IErrorCode,
-  BOOKING_ID_REQUIRED: { code: 'BOOKING_ID_REQUIRED', statusCode: 400, message: 'Booking id is required' } as IErrorCode,
+  BOOKING_ID_REQUIRED: {
+    code: 'BOOKING_ID_REQUIRED',
+    statusCode: 400,
+    message: 'Booking id is required'
+  } as IErrorCode,
   NOT_FOUND_EVENT_ID: { code: 'NOT_FOUND_EVENT_ID', statusCode: 400, message: 'not found event id' } as IErrorCode,
   NOT_ENOUGH_PERMISSION: {
     code: 'NOT_ENOUGH_PERMISSION',

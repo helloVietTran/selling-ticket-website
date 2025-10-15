@@ -16,17 +16,17 @@ jest.mock('../src/config/data-source', () => {
       getRepository: jest.fn(() => ({
         findOne: mockFindOne,
         findOneBy: mockFindOneBy,
-        save: mockSave,
-      })),
-    },
+        save: mockSave
+      }))
+    }
   };
 });
 
 // ----------------------- HELPERS -----------------------
 const mockGetRepository = AppDataSource.getRepository as jest.Mock;
-const mockFindOne = () => (mockGetRepository().findOne as jest.Mock);
-const mockFindOneBy = () => (mockGetRepository().findOneBy as jest.Mock);
-const mockSave = () => (mockGetRepository().save as jest.Mock);
+const mockFindOne = () => mockGetRepository().findOne as jest.Mock;
+const mockFindOneBy = () => mockGetRepository().findOneBy as jest.Mock;
+const mockSave = () => mockGetRepository().save as jest.Mock;
 
 const createMockResponse = (): jest.Mocked<Response> => {
   const res = {} as jest.Mocked<Response>;
@@ -58,7 +58,7 @@ describe('UserController', () => {
       expect(res.json).toHaveBeenCalledWith({
         message: 'User information retrieved successfully',
         status: 200,
-        data: { id: 1, email: 'test@mail.com', userName: 'John' },
+        data: { id: 1, email: 'test@mail.com', userName: 'John' }
       });
     });
 
@@ -85,7 +85,7 @@ describe('UserController', () => {
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: 'Get my info successfully',
-        data: { id: 2, email: 'me@mail.com', userName: 'Me' },
+        data: { id: 2, email: 'me@mail.com', userName: 'Me' }
       });
     });
 
@@ -120,7 +120,7 @@ describe('UserController', () => {
       expect(res.json).toHaveBeenCalledWith({
         message: 'Update user successfully',
         status: 200,
-        data: { id: 3, email: 'new@mail.com', userName: 'New', phoneNumber: '123' },
+        data: { id: 3, email: 'new@mail.com', userName: 'New', phoneNumber: '123' }
       });
     });
 

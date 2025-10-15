@@ -7,7 +7,6 @@ import { TransactionHistory } from './TransactionHistory.model';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
 
-
 @Entity('user')
 export class User {
   @PrimaryGeneratedColumn()
@@ -40,5 +39,4 @@ export class User {
   })
   @JoinColumn({ name: 'organizerId', referencedColumnName: 'organizerId' })
   organizer?: Organizer;
-
 }

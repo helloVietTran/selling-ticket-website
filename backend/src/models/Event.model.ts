@@ -27,7 +27,7 @@ export class Event {
   eventInfo!: string;
 
   @Column()
-  eventImage!: string
+  eventImage!: string;
 
   @OneToOne(() => Venue, (v) => v.event, { nullable: false, cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'venueId', referencedColumnName: 'venueId' })
@@ -47,5 +47,4 @@ export class Event {
   @OneToOne(() => EmailSetting, { nullable: true, cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'emailSettingId', referencedColumnName: 'emailSettingId' })
   emailSetting?: EmailSetting | null;
-
 }

@@ -1,110 +1,115 @@
-// src/controllers/revenue.controller.ts
 import { NextFunction, Request, Response } from 'express';
 import { AppDataSource } from '../config/data-source';
 import { TransactionHistory } from '../models/TransactionHistory.model';
-import { BaseResponse, RevenueResponse } from '../types/response.type';
-import { Requester } from '../types';
-import { AppError } from '../config/exception';
-import { ErrorMap } from '../config/ErrorMap';
-import { User } from '../models/User.model';
+import { BaseResponse, PredictRevenue, WeeklyRevenueResponse } from '../types/response.type';
 
-function formatDate(d: Date | string): string {
-  const date = new Date(d);
-  return date.toISOString().split('T')[0];
-}
+import { TicketType } from '../models/TicketType.model';
+import { Ticket } from '../models/Ticket.model';
+import { Between } from 'typeorm';
 
 class RevenueController {
-  private userRepo = AppDataSource.getRepository(User);
+  private transactionRepo = AppDataSource.getRepository(TransactionHistory);
+  private ticketRepo = AppDataSource.getRepository(Ticket);
+  private ticketTypeRepo = AppDataSource.getRepository(TicketType);
 
-  getMyRevenue = async (
-    req: Request,
-    res: Response<BaseResponse<RevenueResponse>>,
+  getWeeklyRevenue = async (req: Request, res: Response<BaseResponse<WeeklyRevenueResponse>>, next: NextFunction) => {
+    try {
+      const eventId = parseInt(req.params.eventId);
+
+      // thống kê 7 ngày kể cả hôm nay
+      const now = new Date();
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(now.getDate() - 6);
+
+      const transactions = await this.transactionRepo.find({
+        where: {
+          eventId,
+          createdAt: Between(sevenDaysAgo, now)
+        }
+      });
+
+      const tickets = await this.ticketRepo.find({
+        where: {
+          eventId,
+          createdAt: Between(sevenDaysAgo, now)
+        }
+      });
+
+      const revenueByDate: Record<string, { revenue: number; tickets: number }> = {};
+
+      for (const t of transactions) {
+        const dateKey = t.createdAt.toISOString().slice(0, 10);
+        if (!revenueByDate[dateKey]) revenueByDate[dateKey] = { revenue: 0, tickets: 0 };
+        revenueByDate[dateKey].revenue += t.amount;
+      }
+
+      for (const tk of tickets) {
+        const dateKey = tk.createdAt.toISOString().slice(0, 10);
+        if (!revenueByDate[dateKey]) revenueByDate[dateKey] = { revenue: 0, tickets: 0 };
+        revenueByDate[dateKey].tickets += 1;
+      }
+
+      const dailyRevenue = Array.from({ length: 7 }).map((_, i) => {
+        const d = new Date(sevenDaysAgo);
+        d.setDate(sevenDaysAgo.getDate() + i);
+        const key = d.toISOString().slice(0, 10);
+        return {
+          date: key,
+          revenue: revenueByDate[key]?.revenue ?? 0,
+          ticketsSold: revenueByDate[key]?.tickets ?? 0
+        };
+      });
+
+      const totalRevenue = transactions.reduce((sum, t) => sum + t.amount, 0);
+      const totalTicketsSold = tickets.length;
+
+      const response: WeeklyRevenueResponse = {
+        eventId,
+        totalRevenue,
+        totalTicketsSold,
+        dailyRevenue
+      };
+
+      return res.status(200).json({
+        message: 'Weekly revenue stats successfully',
+        data: response
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  statsRevenue = async (
+    req: Request<{ eventId: string }>,
+    res: Response<BaseResponse<PredictRevenue>>,
     next: NextFunction
   ) => {
     try {
-      const requester = res.locals.requester as Requester;
+      const eventId = Number(req.params.eventId);
 
-       if (!requester?.id) {
-        throw AppError.fromErrorCode(ErrorMap.UNAUTHORIZED);
-      }
+      const ticketTypes = await this.ticketTypeRepo.find({
+        where: { event: { eventId } },
 
-      const user = await this.userRepo.findOne({
-        where: { id: Number(requester.id) },
-        relations: ['organizer']
-      });
-     
-      if (!user || !user.organizer) {
-        throw AppError.fromErrorCode(ErrorMap.ORGANIZER_NOT_FOUND);
-      }
-      const organizerId = user.organizer.organizerId;
-      const repo = AppDataSource.getRepository(TransactionHistory);
-
-      const weeklyRaw = await repo
-        .createQueryBuilder('th')
-        .where('th.organizer_id = :organizerId', { organizerId: organizerId })
-        .andWhere('th.created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)')
-        .select([
-          `DATE(th.created_at) AS date`,
-          `COALESCE(SUM(th.amount), 0) AS revenue`,
-        ])
-        .groupBy('DATE(th.created_at)')
-        .orderBy('DATE(th.created_at)', 'ASC')
-        .getRawMany<{ date: string; revenue: string }>();
-
-      const weeklyRevenue: Record<string, number> = {};
-      for (let i = 6; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        const key = formatDate(date);
-        weeklyRevenue[key] = 0;
-      }
-      weeklyRaw.forEach((row) => {
-        const key = formatDate(row.date);
-        weeklyRevenue[key] = parseFloat(row.revenue) || 0;
+        order: { startSellDate: 'ASC' }
       });
 
-      const totalWeeklyRevenue = Object.values(weeklyRevenue).reduce(
-        (sum, val) => sum + val,
-        0
-      );
+      const predictRevenue = ticketTypes.reduce((acc, tt) => {
+        return acc + tt.totalQuantity * tt.price;
+      }, 0);
 
-      const monthlyRaw = await repo
-        .createQueryBuilder('th')
-        .where('th.organizer_id = :organizerId', { organizerId: organizerId })
-        .andWhere('th.created_at >= DATE_SUB(CURDATE(), INTERVAL 1 MONTH)')
-        .select([
-          `DATE(th.created_at) AS date`,
-          `COALESCE(SUM(th.amount), 0) AS revenue`,
-        ])
-        .groupBy('DATE(th.created_at)')
-        .orderBy('DATE(th.created_at)', 'ASC')
-        .getRawMany<{ date: string; revenue: string }>();
+      const realityRevenue = ticketTypes.reduce((acc, tt) => {
+        return acc + tt.soldTicket * tt.price;
+      }, 0);
 
-      const monthlyRevenue: Record<string, number> = {};
-      for (let i = 29; i >= 0; i--) {
-        const date = new Date();
-        date.setDate(date.getDate() - i);
-        const key = formatDate(date);
-        monthlyRevenue[key] = 0;
-      }
-      monthlyRaw.forEach((row) => {
-        const key = formatDate(row.date);
-        monthlyRevenue[key] = parseFloat(row.revenue) || 0;
-      });
+      const percentage = predictRevenue > 0 ? ((realityRevenue / predictRevenue) * 100).toFixed(2) : '0.00';
 
-      const totalMonthlyRevenue = Object.values(monthlyRevenue).reduce(
-        (sum, val) => sum + val,
-        0
-      );
-
-      return res.status(200).json({
-        message: 'Get my revenue successfully',
+      return res.json({
+        message: 'Success',
         data: {
-          weeklyRevenue,
-          totalWeeklyRevenue,
-          monthlyRevenue,
-          totalMonthlyRevenue,
-        },
+          realityRevenue,
+          predictRevenue,
+          percentage: percentage
+        }
       });
     } catch (error) {
       next(error);

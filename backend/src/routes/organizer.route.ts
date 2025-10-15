@@ -6,5 +6,4 @@ const router = Router();
 
 router.get('/my', auth, organizerController.getMyOrganizerRecord);
 
-
 export default router;

@@ -3,8 +3,7 @@ import { TicketType } from '../models/TicketType.model';
 import { AppDataSource } from '../config/data-source';
 
 import { ErrorMap } from '../config/ErrorMap';
-import { statsData } from '../types';
-import { BaseResponse, statsResponse } from '../types/response.type';
+import { BaseResponse, StatsTicketType } from '../types/response.type';
 import { SelectTicketInput } from '../validators/ticket.validate';
 import { Booking } from '../models/Booking.model';
 import { AppError } from '../config/exception';
@@ -87,6 +86,7 @@ class TicketTypeController {
       newBooking.bookingItems = bookingItems;
       newBooking.amount = totalAmount;
       newBooking.status = BookingStatus.Waiting;
+      newBooking.eventId = +req.body.eventId;
       newBooking.createdAt = new Date();
       newBooking.expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
@@ -109,37 +109,45 @@ class TicketTypeController {
     }
   };
 
-  statisticalTicketType = async (req: Request, res: Response<statsResponse<any>>, next: NextFunction) => {
+  statsTicketType = async (req: Request, res: Response<BaseResponse<StatsTicketType[]>>, next: NextFunction) => {
     try {
-      const eventId = parseInt(req.params.eventId, 10);
+      const eventId = parseInt(req.params.eventId);
 
-      const existedEvent = await this.ticketTypeRepo.findOne({
+      // Lấy tất cả ticket types thuộc event
+      const ticketTypes = await this.ticketTypeRepo.find({
         where: { event: { eventId } },
         relations: ['event']
       });
-      if (!existedEvent) {
+
+      if (!ticketTypes || ticketTypes.length === 0) {
         throw AppError.fromErrorCode(ErrorMap.TICKET_TYPE_NOT_FOUND);
       }
-      const totalTicket = await this.ticketTypeRepo.sum('totalQuantity', {
-        event: { eventId: existedEvent.event.eventId }
-      });
 
-      const totalSoldTicket = await this.ticketTypeRepo.sum('soldTicket', {
-        event: { eventId: existedEvent.event.eventId }
-      });
+      const totalTicket =
+        (await this.ticketTypeRepo.sum('totalQuantity', {
+          event: { eventId }
+        })) ?? 0;
 
-      const percentage = totalTicket && totalSoldTicket ? (totalSoldTicket / totalTicket) * 100 : 0;
-      const statistical: statsData = {
-        ticketType: existedEvent.ticketTypeName,
-        totalQuantity: existedEvent.totalQuantity,
-        soldTicket: existedEvent.soldTicket,
-        totalTicket: totalTicket,
-        totalsoldTicket: totalSoldTicket,
-        percentage: percentage.toFixed(2)
-      };
-      return res.status(201).json({
-        message: 'statistical featch successfully',
-        data: statistical
+      const totalSoldTicket =
+        (await this.ticketTypeRepo.sum('soldTicket', {
+          event: { eventId }
+        })) ?? 0;
+
+      const overallPercentage = totalTicket && totalSoldTicket ? (totalSoldTicket / totalTicket) * 100 : 0;
+
+      const statsData: StatsTicketType[] = ticketTypes.map((t) => ({
+        ticketTypeName: t.ticketTypeName,
+        totalQuantity: t.totalQuantity,
+        soldTicket: t.soldTicket,
+        totalTicket,
+        totalSoldTicket,
+        percentage: t.totalQuantity > 0 ? ((t.soldTicket / t.totalQuantity) * 100).toFixed(2) : 0,
+        overallPercentage: overallPercentage.toFixed(2)
+      }));
+
+      return res.status(200).json({
+        message: 'Stats successfully',
+        data: statsData
       });
     } catch (error) {
       next(error);

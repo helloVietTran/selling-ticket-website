@@ -1,10 +1,12 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination } from 'swiper/modules';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 type Event = {
   id: number;
@@ -18,25 +20,25 @@ const events: Event[] = [
     id: 1,
     img: 'https://picsum.photos/id/1011/800/400',
     alt: 'Event 1',
-    href: 'detail.html',
+    href: '/events/1',
   },
   {
     id: 2,
     img: 'https://picsum.photos/id/1015/800/400',
     alt: 'Event 2',
-    href: 'detail.html',
+    href: '/events/2',
   },
   {
     id: 3,
     img: 'https://picsum.photos/id/1025/800/400',
     alt: 'Event 3',
-    href: 'detail.html',
+    href: '/events/3',
   },
   {
     id: 4,
     img: 'https://picsum.photos/id/1035/800/400',
     alt: 'Event 4',
-    href: 'detail.html',
+    href: '/events/4',
   },
 ];
 
@@ -62,19 +64,20 @@ const EventSlider: React.FC = () => {
         loop={true}>
         {events.map(event => (
           <SwiperSlide key={event.id}>
-            <a href={event.href} className="relative block">
+            <Link to={event.href} className="relative block group">
               <img
                 src={event.img}
                 alt={event.alt}
-                className="w-full rounded-lg cursor-pointer"
+                className="w-full rounded-lg cursor-pointer transition-transform duration-300 group-hover:scale-[1.02]"
               />
-              <button className="absolute bottom-4 left-4 bg-white text-black px-3 py-2 text-sm rounded hover:bg-emerald-500 hover:text-white transition cursor-pointer">
+              <button className="absolute bottom-4 left-4 bg-white text-black px-3 py-2 text-sm rounded shadow-md hover:bg-emerald-500 hover:text-white transition">
                 Xem chi tiết
               </button>
-            </a>
+            </Link>
           </SwiperSlide>
         ))}
 
+        {/* Nút điều hướng custom */}
         <div className="swiper-button-prev-custom absolute top-1/2 -translate-y-1/2 left-2 bg-black text-white p-3 rounded-md cursor-pointer z-10 opacity-40 hover:opacity-100 transition">
           <ChevronLeft />
         </div>

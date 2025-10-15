@@ -8,6 +8,9 @@ export class Booking {
   @PrimaryGeneratedColumn()
   bookingId!: number;
 
+  @Column({ type: 'int', nullable: false })
+  eventId!: number;
+
   @Column({ type: 'enum', enum: BookingStatus, default: BookingStatus.Waiting })
   status!: BookingStatus;
 

@@ -1,5 +1,5 @@
 import api from './api';
-import type { BaseResponse, LoginPayLoad, LogoutPayload, RegisterPayload } from '@/types';
+import type { BaseResponse, LoginPayLoad, TokenPayload, RegisterPayload } from '@/types';
 import type { LoginResponse }  from '@/types';
 
 async function signup(payload: RegisterPayload) {
@@ -12,8 +12,14 @@ async function signin(payload: LoginPayLoad): Promise<BaseResponse<LoginResponse
     return res.data;
 }
 
-async function logout(payload: LogoutPayload) {
+async function logout(payload: TokenPayload) {
     const res = await api.post("/auth/logout", payload);
+
+    return res.data;
+}
+
+async function verifyToken(payload: TokenPayload): Promise<BaseResponse<{isAuthenticated: boolean}>> {
+    const res = await api.post("/auth/verify-token", payload);
 
     return res.data;
 }
@@ -21,5 +27,6 @@ async function logout(payload: LogoutPayload) {
 export {
     signup,
     signin,
-    logout
+    logout,
+    verifyToken
 }

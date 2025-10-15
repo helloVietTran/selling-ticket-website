@@ -10,7 +10,10 @@ export function formatDateTime(dateString?: string) {
   }
 }
 
-export function formatRangeTime(startTime: string | Date, endTime: string | Date): string {
+export function formatRangeTime(
+  startTime: string | Date,
+  endTime: string | Date
+): string {
   const start = new Date(startTime);
   const end = new Date(endTime);
 
