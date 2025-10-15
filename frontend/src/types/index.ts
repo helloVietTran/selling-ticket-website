@@ -261,3 +261,10 @@ export interface WeeklyRevenueResponse {
     ticketsSold: number;
   }[];
 }
+
+export interface CheckinPayload {
+  eventId: number;
+  ticketId: number;
+  userId: number;
+  code: string;
+}

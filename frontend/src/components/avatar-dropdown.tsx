@@ -62,8 +62,7 @@ export default function AvatarDropdown({
 
         <DropdownMenuItem
           className="flex items-center gap-2 text-red-600 cursor-pointer"
-          onClick={() => logout()}
-        >
+          onClick={() => logout()}>
           <LogOut className="w-4 h-4" />
           Đăng xuất
         </DropdownMenuItem>

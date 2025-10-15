@@ -41,11 +41,13 @@ export default function OrdersTable() {
 
   return (
     <>
-      <SectionHeader
-        title="Đơn hàng"
-        eventId={eventId || ''}
-        icon={ShoppingCart}
-      />
+      <div className="mt-16">
+        <SectionHeader
+          title="Đơn hàng"
+          eventId={eventId || ''}
+          icon={ShoppingCart}
+        />
+      </div>
 
       <Input
         placeholder="Tìm kiếm đơn hàng..."

@@ -33,11 +33,13 @@ export default function RevenuePage() {
 
   return (
     <>
-      <SectionHeader
-        title="Tổng quan"
-        eventId={eventId || ''}
-        icon={ChartColumn}
-      />
+      <div className="mt-16">
+        <SectionHeader
+          title="Tổng quan"
+          eventId={eventId || ''}
+          icon={ChartColumn}
+        />
+      </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <Card className="bg-[#282629] text-white border-[#1f1d1f]">

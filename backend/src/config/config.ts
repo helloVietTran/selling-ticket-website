@@ -32,5 +32,10 @@ export const config = {
     vnp_HashSecret: process.env.vnp_HashSecret,
     payment_api: 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html',
     query_transaction_api: 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'
+  },
+  smtp: {
+    user: process.env.SMTP_USER,
+
+    pass: process.env.SMTP_PASS
   }
 };

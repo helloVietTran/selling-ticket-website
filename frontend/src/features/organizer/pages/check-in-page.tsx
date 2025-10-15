@@ -21,11 +21,13 @@ export default function CheckinPage() {
   const statsTicketData = data?.data;
   return (
     <>
-      <SectionHeader
-        title="Check in"
-        eventId={eventId || ''}
-        icon={TicketCheck}
-      />
+      <div className="mt-16">
+        <SectionHeader
+          title="Check in"
+          eventId={eventId || ''}
+          icon={TicketCheck}
+        />
+      </div>
 
       <div className="flex flex-col gap-6">
         <h1 className="text-lg font-semibold px-2">Check in</h1>

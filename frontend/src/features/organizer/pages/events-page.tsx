@@ -33,12 +33,12 @@ const EventsPage = () => {
   }, [keywordQuery, status]);
 
   const handleSearch = () => {
-    setSearchParams({ keyword });
+    setSearchParams({ keyword }); 
   };
 
   return (
     <>
-      <h2 className="font-semibold text-xl mb-4 flex gap-2 text-gray-300">
+      <h2 className="font-semibold text-xl mb-4 flex gap-2 text-gray-300 mt-16">
         <ClipboardList />
         Sự kiện của tôi
       </h2>

@@ -34,6 +34,8 @@ import { deleteEvent } from '@/api/eventApi';
 import { useApi } from '@/api/hooks/useApi';
 import { EventStatus, LOCAL_STORAGE_KEYS } from '@/constant';
 import { Link } from 'react-router-dom';
+import type { CheckinPayload } from '@/types';
+import { checkin } from '@/api/ticketApi';
 
 export type EventItemProps = {
   eventId: number;
@@ -72,6 +74,21 @@ export default function EventItem({
       setConfirmOpen(false);
     }
   };
+
+  const handleScan = async (data: CheckinPayload) => {
+    try {
+      if (!data) {
+        return;
+      }
+      const userData = await checkin(data);
+
+      toast.success(`Người dùng ${userData.data?.userName} checkin thành công`)
+    } catch (error) {
+      console.log(error);
+
+      toast.error('Check in thất bại. Vui lòng thử lại!')
+    }
+  }
 
   return (
     <Card className="flex flex-col md:flex-row p-4 gap-4 bg-[#282629] text-white rounded-2xl shadow-md border border-[#1f1d1f]">
@@ -166,7 +183,7 @@ export default function EventItem({
           <QrScanner
             open={scannerOpen}
             onClose={() => setScannerOpen(false)}
-            onScan={data => console.log('Gửi server kiểm tra vé:', data)}
+            onScan={(data: CheckinPayload) => handleScan(data)}
           />
         </div>
 
