@@ -98,6 +98,7 @@ export type SelectTicketTypePayload = {
     ticketTypeId: string;
     quantity: number;
   }[];
+  eventId: string | number
 };
 
 export interface CreatePaymentPayload {
