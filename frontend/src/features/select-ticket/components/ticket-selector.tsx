@@ -58,7 +58,7 @@ export default function TicketSelector() {
 
   useEffect(() => {
     if (isSuccess) {
-      toast.success("Đặt vé thành công!");
+      toast.success("Đặt trước vé thành công!");
       navigate(`/events/${eventId}/booking/${bookingData?.data?.bookingId}`);
     } else if (isError) {
       toast.error("Loại vé này không còn khả dụng");
@@ -102,6 +102,9 @@ export default function TicketSelector() {
   const hasSelected = total > 0;
 
   const handleCheckout = async () => {
+    if(!eventId){
+      return;
+    }
     //format payload for api
     const selected: SelectTicketTypePayload = {
       ticketTypes: uiTickets
@@ -110,6 +113,7 @@ export default function TicketSelector() {
           ticketTypeId: String(t.id),
           quantity: t.count,
         })),
+      eventId: eventId
     };
     await createBooking(selected);
 
