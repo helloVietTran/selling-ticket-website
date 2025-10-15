@@ -71,7 +71,7 @@ export default function RegisterModal() {
         duration: 4000,
       });
     }
-  }, [isSuccess, isError, closeModal, openLogin]);
+  }, [isSuccess, isError]);
 
   return (
     <Dialog open={open} onOpenChange={closeModal}>

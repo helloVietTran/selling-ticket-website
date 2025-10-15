@@ -50,7 +50,7 @@ export default function LoginModal() {
       console.log(data.data)
       login(data.data.user, data.data.accessToken);
       toast.success('Đăng nhập thành công');
-      closeModal();
+      closeModal()
     } else {
       console.error('Login Failed:', error);
       toast.error('Đăng nhập thất bại, vui lòng thử lại!');
