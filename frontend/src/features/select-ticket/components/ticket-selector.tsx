@@ -20,7 +20,7 @@ export default function TicketSelector() {
     data: ticketTypeData,
     exec: fetchTicketTypes,
   } = useApi(getTicketTypesByEventId);
-
+ 
   const { data: eventData, exec: fetchEvent } = useApi(getEventById);
   const { data: bookingData, exec: createBooking, isError, isSuccess } = useApi(bookingTicketType);
 
