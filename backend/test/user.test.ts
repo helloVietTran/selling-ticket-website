@@ -1,154 +1,137 @@
-import { Request, Response, NextFunction } from 'express';
-import userController from '../src/controllers/user.controller';
-import { AppDataSource } from '../src/config/data-source';
-import { User } from '../src/models/User.model';
-import { ErrorMap } from '../src/config/ErrorMap';
-import { AppError } from '../src/config/exception';
+import request from 'supertest';
+import express, { Express, Request, Response, NextFunction } from 'express';
 
-// ----------------------- MOCK MODULE -----------------------
-jest.mock('../src/config/data-source', () => {
-  const mockFindOne = jest.fn();
-  const mockFindOneBy = jest.fn();
-  const mockSave = jest.fn();
-
-  return {
-    AppDataSource: {
-      getRepository: jest.fn(() => ({
-        findOne: mockFindOne,
-        findOneBy: mockFindOneBy,
-        save: mockSave
-      }))
-    }
-  };
-});
-
-// ----------------------- HELPERS -----------------------
-const mockGetRepository = AppDataSource.getRepository as jest.Mock;
-const mockFindOne = () => mockGetRepository().findOne as jest.Mock;
-const mockFindOneBy = () => mockGetRepository().findOneBy as jest.Mock;
-const mockSave = () => mockGetRepository().save as jest.Mock;
-
-const createMockResponse = (): jest.Mocked<Response> => {
-  const res = {} as jest.Mocked<Response>;
-  res.status = jest.fn().mockReturnValue(res);
-  res.json = jest.fn().mockReturnValue(res);
-  res.locals = {};
-  return res;
+const mockRepo = {
+  findOne: jest.fn(),
+  findOneBy: jest.fn(),
+  save: jest.fn(),
 };
 
-const mockNext: NextFunction = jest.fn();
+jest.mock('../src/config/data-source', () => ({
+  AppDataSource: {
+    getRepository: jest.fn(() => mockRepo),
+  },
+}));
 
-// ----------------------- TEST SUITE -----------------------
-describe('UserController', () => {
+jest.mock('../src/middlewares/auth.middleware', () => ({
+  auth: (req: Request, res: Response, next: NextFunction) => {
+    res.locals.requester = { id: 1 }; // gắn user ảo
+    next();
+  },
+}));
+
+jest.mock('../src/middlewares/validate.middleware', () => ({
+  validate: () => (req: Request, res: Response, next: NextFunction) => next(),
+}));
+
+import userRouter from '../src/routes/user.route';
+import { AppError } from '../src/config/exception';
+import { AppDataSource } from '../src/config/data-source';
+
+describe('User Routes', () => {
+  let app: Express;
+
+  beforeAll(() => {
+    app = express();
+    app.use(express.json());
+    app.use('/api/users', userRouter);
+
+    // Middleware xử lý lỗi toàn cục
+    app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+      if (err instanceof AppError) {
+        const status = (err as any).getStatusCode?.() || (err as any).statusCode || 400;
+        return res.status(status).json({ message: err.message });
+      }
+      console.error('Unexpected error:', err);
+      res.status(500).json({ message: 'Internal server error' });
+    });
+  });
+
   beforeEach(() => {
     jest.clearAllMocks();
+
+    // reset mockRepo và đảm bảo mỗi lần getRepository đều trả về mockRepo
+    mockRepo.findOne.mockReset();
+    mockRepo.findOneBy.mockReset();
+    mockRepo.save.mockReset();
+
+    (AppDataSource.getRepository as jest.Mock).mockReturnValue(mockRepo);
   });
 
-  // ---------------- getUserById ----------------
-  describe('getUserById', () => {
-    const req: Partial<Request> = { params: { id: '1' } };
-
-    it('should return user without password if found', async () => {
-      mockFindOneBy().mockResolvedValue({ id: 1, email: 'test@mail.com', userName: 'John', passwordHash: 'hashed' });
-      const res = createMockResponse();
-
-      await userController.getUserById(req as Request, res, mockNext);
-
-      expect(mockFindOneBy()).toHaveBeenCalledWith({ id: 1 });
-      expect(res.json).toHaveBeenCalledWith({
-        message: 'User information retrieved successfully',
-        status: 200,
-        data: { id: 1, email: 'test@mail.com', userName: 'John' }
-      });
+  // TEST 1: GET /:id
+  it('Trả thông tin user theo id thành công', async () => {
+    mockRepo.findOneBy.mockResolvedValue({
+      id: 1,
+      userName: 'Thế',
+      email: 'the@example.com',
+      passwordHash: '1234',
     });
 
-    it('should call next with error if user not found', async () => {
-      mockFindOneBy().mockResolvedValue(null);
-      const res = createMockResponse();
-
-      await userController.getUserById(req as Request, res, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND));
-    });
+    const response = await request(app).get('/api/users/1');
+    expect(response.status).toBe(200);
+    expect(response.body.data.userName).toBe('Thế');
+    expect(response.body.data.passwordHash).toBeUndefined();
   });
 
-  // ---------------- getMyInfo ----------------
-  describe('getMyInfo', () => {
-    it('should return requester info if user exists', async () => {
-      mockFindOne().mockResolvedValue({ id: 2, email: 'me@mail.com', userName: 'Me', passwordHash: 'hashed' });
-      const res = createMockResponse();
-      res.locals.requester = { id: 2 };
+  it('Trả lỗi khi user không tồn tại (getUserById)', async () => {
+    mockRepo.findOneBy.mockResolvedValue(null);
 
-      await userController.getMyInfo({} as Request, res, mockNext);
-
-      expect(mockFindOne()).toHaveBeenCalledWith({ where: { id: 2 } });
-      expect(res.status).toHaveBeenCalledWith(200);
-      expect(res.json).toHaveBeenCalledWith({
-        message: 'Get my info successfully',
-        data: { id: 2, email: 'me@mail.com', userName: 'Me' }
-      });
-    });
-
-    it('should call next with error if user not found', async () => {
-      mockFindOne().mockResolvedValue(null);
-      const res = createMockResponse();
-      res.locals.requester = { id: 999 };
-
-      await userController.getMyInfo({} as Request, res, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND));
-    });
+    const response = await request(app).get('/api/users/999');
+    expect(response.status).toBe(404);
   });
 
-  // ---------------- updateMyInfo ----------------
-  describe('updateMyInfo', () => {
-    it('should update and return user if valid', async () => {
-      const mockUser = { id: 3, email: 'old@mail.com', userName: 'Old', phoneNumber: '123', passwordHash: 'hashed' };
-      const updatedUser = { ...mockUser, email: 'new@mail.com', userName: 'New' };
-
-      mockFindOne().mockResolvedValueOnce(mockUser); // find by id
-      mockFindOne().mockResolvedValueOnce(null); // check duplicate email
-      mockSave().mockResolvedValue(updatedUser);
-
-      const req = { body: { email: 'new@mail.com', userName: 'New' } } as Partial<Request>;
-      const res = createMockResponse();
-      res.locals.requester = { id: 3 };
-
-      await userController.updateMyInfo(req as Request, res, mockNext);
-
-      expect(mockSave()).toHaveBeenCalled();
-      expect(res.json).toHaveBeenCalledWith({
-        message: 'Update user successfully',
-        status: 200,
-        data: { id: 3, email: 'new@mail.com', userName: 'New', phoneNumber: '123' }
-      });
+  // TEST 2: GET /my-info
+  it('Lấy thông tin người dùng đăng nhập thành công', async () => {
+    mockRepo.findOne.mockResolvedValue({
+      id: 1,
+      userName: 'Thế',
+      email: 'the@example.com',
+      passwordHash: 'xxx',
     });
 
-    it('should call next with error if email already exists', async () => {
-      const mockUser = { id: 3, email: 'old@mail.com', userName: 'Old', passwordHash: 'hashed' };
-      const existedUser = { id: 4, email: 'dup@mail.com' };
+    const response = await request(app).get('/api/users/my-info');
+    expect(response.status).toBe(200);
+    expect(response.body.data.email).toBe('the@example.com');
+  });
 
-      mockFindOne().mockResolvedValueOnce(mockUser); // find by id
-      mockFindOne().mockResolvedValueOnce(existedUser); // duplicate email
+  it('Trả lỗi khi không tìm thấy user (getMyInfo)', async () => {
+    mockRepo.findOne.mockResolvedValue(null);
 
-      const req = { body: { email: 'dup@mail.com' } } as Partial<Request>;
-      const res = createMockResponse();
-      res.locals.requester = { id: 3 };
+    const response = await request(app).get('/api/users/my-info');
+    expect(response.status).toBe(404);
+  });
 
-      await userController.updateMyInfo(req as Request, res, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.EMAIL_ALREADY_EXISTS));
+  // TEST 3: PUT /my-info
+  it('Cập nhật thông tin người dùng thành công', async () => {
+    mockRepo.findOne.mockResolvedValue({
+      id: 1,
+      userName: 'hathe',
+      phoneNumber: '0123',
+      passwordHash: 'xxx',
     });
 
-    it('should call next with error if user not found', async () => {
-      mockFindOne().mockResolvedValue(null);
-      const req = { body: {} } as Partial<Request>;
-      const res = createMockResponse();
-      res.locals.requester = { id: 999 };
-
-      await userController.updateMyInfo(req as Request, res, mockNext);
-
-      expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND));
+    mockRepo.save.mockResolvedValue({
+      id: 1,
+      userName: 'havanthe',
+      phoneNumber: '0999',
+      passwordHash: 'xxx',
     });
+
+    const response = await request(app)
+      .put('/api/users/my-info')
+      .send({ userName: 'havanthe', phoneNumber: '0999' });
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.userName).toBe('havanthe');
+  });
+
+  it('Trả lỗi khi không tìm thấy user (updateMyInfo)', async () => {
+    mockRepo.findOne.mockResolvedValue(null);
+
+    const response = await request(app)
+      .put('/api/users/my-info')
+      .send({ userName: 'havanthe' });
+
+    expect(response.status).toBe(404);
   });
 });

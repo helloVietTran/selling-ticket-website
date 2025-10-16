@@ -26,7 +26,7 @@ describe('EventController', () => {
     app.post('/api/events', (req, res, next) => EventController.createEvent(req, res, next));
   });
 
-  it('✅ tạo event thành công', async () => {
+  it('tạo event thành công', async () => {
     (AppDataSource.transaction as jest.Mock).mockImplementation(async (callback) => {
       return { eventId: 1, title: 'Test Event' };
     });
@@ -63,7 +63,7 @@ describe('EventController', () => {
     expect(response.body.data.title).toBe('Test Event');
   });
 
-  it('❌ trả lỗi khi user không tồn tại', async () => {
+  it('trả lỗi khi user không tồn tại', async () => {
     (AppDataSource.transaction as jest.Mock).mockImplementation(async () => {
       throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
     });
