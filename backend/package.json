@@ -52,9 +52,11 @@
     "@types/nodemailer": "^7.0.1",
     "@types/qrcode": "^1.5.5",
     "@types/request": "^2.48.13",
+    "@types/supertest": "^6.0.3",
     "jest": "^30.2.0",
     "nodemon": "^3.1.9",
     "prettier": "^3.6.2",
+    "supertest": "^7.1.4",
     "ts-jest": "^29.4.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2"

@@ -11,7 +11,12 @@ const config: Config = {
 
   testPathIgnorePatterns: ['/node_modules/'],
 
-  moduleNameMapper: {}
+  moduleNameMapper: {},
+  globals: {
+    'ts-jest': {
+      tsconfig: 'tsconfig.json',
+    },
+  },
 };
 
 export default config;
