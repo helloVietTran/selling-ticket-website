@@ -10,27 +10,23 @@ type Destination = {
 const destinations: Destination[] = [
   {
     name: 'Tp. Hồ Chí Minh',
-    img:
-      'https://ticketbox.vn/_next/image?url=https%3A%2F%2Fsalt.tkbcdn.com%2Fts%2Fds%2Ff9%2F65%2F0a%2F820ff0dd8178de627b64574b8a475fee.png&w=1920&q=75',
-    href: 'search.html?location=tp-ho-chi-minh',
+    img: '/assets/hcm.webp',
+    href: '/search?province=79',
   },
   {
     name: 'Hà Nội',
-    img:
-      'https://ticketbox.vn/_next/image?url=https%3A%2F%2Fsalt.tkbcdn.com%2Fts%2Fds%2F8c%2F60%2F7e%2F9cfb9b5c032a63acd87599a23871b2c7.png&w=1920&q=75',
-    href: 'search.html?location=ha-noi',
+    img: '/assets/hn.webp',
+    href: '/search?province=01',
   },
   {
-    name: 'Đà Lạt',
-    img:
-      'https://ticketbox.vn/_next/image?url=https%3A%2F%2Fsalt.tkbcdn.com%2Fts%2Fds%2F87%2Fa5%2Fca%2Fc85260e784845d634bb8a4a8070238ab.png&w=1920&q=75',
-    href: 'search.html?location=da-lat',
+    name: 'Đà Nẵng',
+    img: '/assets/dn.webp',
+    href: '/search?province=48',
   },
   {
     name: 'Vị trí khác',
-    img:
-      'https://ticketbox.vn/_next/image?url=https%3A%2F%2Fsalt.tkbcdn.com%2Fts%2Fds%2F24%2F27%2F08%2F683a9d51b6011b6081815cf2409918f1.png&w=1920&q=75',
-    href: 'search.html?location=vi-tri-khac',
+    img: '/assets/ot.webp',
+    href: '/search?province=all',
   },
 ];
 
@@ -64,7 +60,7 @@ const DestinationList: React.FC<DestinationListProps> = ({
 }) => {
   return (
     <div className={wrapperClassName}>
-      <h2 className="text-white text-base font-normal mb-4">Điểm đến thú vị</h2>
+      <h2 className="text-gray-400 text-base font-semibold mb-4">Điểm đến thú vị</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {destinations.map((d, i) => (
           <DestinationCard key={i} {...d} />

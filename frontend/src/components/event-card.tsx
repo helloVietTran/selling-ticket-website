@@ -45,6 +45,11 @@ const EventCard: React.FC<EventCardProps> = ({
             Đang diễn ra
           </span>
         )}
+        {status == 'ENDED' && (
+          <span className="absolute top-0 right-0 bg-gray-500 text-white text-xs font-semibold px-2 py-1 rounded-tr-lg rounded-bl-lg">
+            Đã kết thúc
+          </span>
+        )}
       </div>
 
       <div className="py-3">

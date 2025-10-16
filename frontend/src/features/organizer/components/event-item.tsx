@@ -31,7 +31,6 @@ import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 
 import QrScanner from './qr-scanner';
 import { deleteEvent } from '@/api/eventApi';
-import { useApi } from '@/api/hooks/useApi';
 import { EventStatus, LOCAL_STORAGE_KEYS } from '@/constant';
 import { Link } from 'react-router-dom';
 import type { CheckinPayload } from '@/types';

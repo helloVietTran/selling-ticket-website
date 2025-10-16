@@ -25,11 +25,11 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
 
   const { data, exec } = useApi(getEvents);
 
-  const startTime = searchParams.get("startDate") || undefined;
-  const endTime = searchParams.get("endDate") || undefined;
-  const province = searchParams.get("province") || undefined;
-  const categories = searchParams.get("categories") || undefined;
-  const keyword = searchParams.get("keyword") || undefined;
+  const startTime = searchParams.get('startDate') || undefined;
+  const endTime = searchParams.get('endDate') || undefined;
+  const province = searchParams.get('province') || undefined;
+  const categories = searchParams.get('categories') || undefined;
+  const keyword = searchParams.get('keyword') || undefined;
 
   useEffect(() => {
     const params: GetEventsParams = {};
@@ -69,10 +69,24 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
         )}
       </div>
 
-      {/* 🧩 Nếu không có sự kiện nào */}
       {events.length === 0 ? (
         <div className="py-10 text-center text-gray-400">
           Không có sự kiện nào phù hợp với yêu cầu.
+        </div>
+      ) : isSearchPage ? (
+    
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10">
+          {events.map((event: Event) => (
+            <EventCard
+              key={event.eventId}
+              title={event.title}
+              startTime={event.startTime}
+              img={event.eventImage}
+              status={event.status}
+              minPrice={event.ticketTypes?.[0]?.price}
+              eventId={event.eventId}
+            />
+          ))}
         </div>
       ) : (
         <div className="pb-6 overflow-x-hidden">
