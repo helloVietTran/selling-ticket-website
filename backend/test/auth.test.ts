@@ -127,11 +127,7 @@ describe('AuthController (updated)', () => {
       await authController.login(req, res, mockNext);
 
       expect(mockCompare).toHaveBeenCalledWith('pw', 'hashed_pw');
-      expect(mockSign).toHaveBeenCalledWith(
-        { id: 1, roles: [Role.User] },
-        'TEST_SECRET',
-        { expiresIn: '90m' }
-      );
+      expect(mockSign).toHaveBeenCalledWith({ id: 1, roles: [Role.User] }, 'TEST_SECRET', { expiresIn: '90m' });
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: 'Đăng nhập thành công',
