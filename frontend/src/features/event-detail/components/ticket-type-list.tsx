@@ -3,13 +3,15 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 import type { TicketType } from '@/types';
+import { Link } from 'react-router-dom';
 
 type TicketTypeListProps = {
   ticketTypes: TicketType[];
+  eventId: string | number;
 };
 
 
-export default function TicketTypeList({ ticketTypes }: TicketTypeListProps) {
+export default function TicketTypeList({ ticketTypes, eventId }: TicketTypeListProps) {
   const [openId, setOpenId] = useState<number | null>(null);
   const now = new Date();
 
@@ -23,41 +25,49 @@ export default function TicketTypeList({ ticketTypes }: TicketTypeListProps) {
 
     if (ticketType.soldTicket >= ticketType.totalQuantity) {
       return (
-        <Button
-          disabled
-          className="bg-red-500 text-white font-semibold cursor-not-allowed"
-        >
-          Hết vé
-        </Button>
+        <Link to={`/events/${eventId}/select-ticket`}>
+          <Button
+            disabled
+            className="bg-red-500 text-white font-semibold cursor-not-allowed"
+          >
+            Hết vé
+          </Button>
+        </Link>
       );
     }
 
     if (now < startDate) {
       return (
-        <Button
-          disabled
-          className="bg-gray-400 text-black font-semibold cursor-not-allowed"
-        >
-          Chưa mở bán
-        </Button>
+        <Link to={`/events/${eventId}/select-ticket`}>
+          <Button
+            disabled
+            className="bg-gray-400 text-black font-semibold cursor-not-allowed"
+          >
+            Chưa mở bán
+          </Button>
+        </Link>
       );
     }
 
     if (now > endDate) {
       return (
-        <Button
-          disabled
-          className="bg-gray-400 text-black font-semibold cursor-not-allowed"
-        >
-          Đã đóng bán
-        </Button>
+        <Link to={`/events/${eventId}/select-ticket`}>
+          <Button
+            disabled
+            className="bg-gray-400 text-black font-semibold cursor-not-allowed"
+          >
+            Đã đóng bán
+          </Button>
+        </Link>
       );
     }
 
     return (
-      <Button className="bg-emerald-500 hover:bg-emerald-600 font-semibold text-white">
-        Mua vé ngay
-      </Button>
+      <Link to={`/events/${eventId}/select-ticket`}>
+        <Button className="bg-emerald-500 hover:bg-emerald-600 font-semibold text-white">
+          Mua vé ngay
+        </Button>
+      </Link>
     );
   };
 

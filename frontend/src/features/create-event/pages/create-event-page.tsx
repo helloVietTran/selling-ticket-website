@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { toast } from "sonner";
 
 import InfoForm from "@/features/create-event/components/info-form";
 import TimeAndTicketForm from "@/features/create-event/components/time-ticket-type-form";
@@ -9,6 +10,9 @@ import { type CreateEventFormData } from "@/features/create-event/schemas";
 import CreateProcessBar from "@/features/create-event/components/create-process-bar";
 import { useApi } from "@/api/hooks/useApi";
 import { createFullEvent } from "@/api/eventApi";
+import TOAST_MESSAGES from "@/constant/toast";
+import type { CreateEventPayload } from "@/types";
+import { useNavigate } from "react-router-dom";
 
 const steps = [
   { id: "eventInfo", label: "Thông tin sự kiện" }, // STEP 1
@@ -21,13 +25,14 @@ export default function CreateEventPage() {
   const [currentStepId, setCurrentStepId] = useState(steps[0].id);
   const [formData, setFormData] = useState<CreateEventFormData>({});
 
-  const { exec, error, data } = useApi(createFullEvent);
+  const navigate = useNavigate();
+  const { exec, error, isError, isSuccess } = useApi(createFullEvent);
 
   const handleNextFromStep = <T extends keyof CreateEventFormData>(
     stepId: T,
     data: CreateEventFormData[T]
   ) => {
-
+    console.log(data)
     const updatedData = { ...formData, [stepId]: data };
     setFormData(updatedData);
 
@@ -41,51 +46,54 @@ export default function CreateEventPage() {
   };
 
   const handleFinish = async (finalData: CreateEventFormData) => {
-    // format to easy handle
-    const creatEventData = {
-      organizer: finalData.eventInfo?.organizer,
-      venue: finalData.eventInfo?.venue,
+    // fallback to empty string to avoid typesc checking error 
+    const createEventData: CreateEventPayload = {
+      organizer: finalData.eventInfo?.organizer ?? { organizerName: "", organizerInfo: "" },
+      venue: finalData.eventInfo?.venue ?? { province: "", district: "", ward: "", street: "" },
       event: {
-        ...finalData.eventInfo,
-        startTime: finalData.timeAndTicketTypeInfo?.startTime,
-        endTime: finalData.timeAndTicketTypeInfo?.endTime,
+        ...finalData.eventInfo!,
+        startTime: finalData.timeAndTicketTypeInfo?.startTime!,
+        endTime: finalData.timeAndTicketTypeInfo?.endTime!,
       },
-      tickeTypes: finalData.timeAndTicketTypeInfo?.ticketTypes,
+      ticketTypes: finalData.timeAndTicketTypeInfo?.ticketTypes || [],
       setting: {
-        messageToReceiver: finalData.settingInfo?.messageToReceiver
+        messageToReceiver: finalData.settingInfo?.messageToReceiver,
       },
-      paymentInfo: finalData.paymentInfo
+
+      paymentInfo: finalData.paymentInfo!,
     };
+    console.log("Final data to submit:", createEventData);
+    await exec(createEventData);
+  };
 
-    console.log(creatEventData);
-    await exec(creatEventData);
+  const { CREATE_EVENT } = TOAST_MESSAGES;
 
-    if (error) {
-      alert("Gọi lỗi")
-      console.log(error)
-
-    } else {
-      alert("ok")
+  useEffect(() => {
+    if (isError) {
+      console.log("Error creating event:", error);
+      toast.error(CREATE_EVENT.error.title, {
+        description: CREATE_EVENT.error.description,
+      });
     }
 
+    if (isSuccess) {
+      navigate('/organizer/events');
+      toast.success(CREATE_EVENT.success.title, {
+        description: CREATE_EVENT.success.description,
+      });
+    }
 
-  };
+  }, [isSuccess, isError, error]);
 
   return (
     <Tabs value={currentStepId} onValueChange={setCurrentStepId}>
       <div
-        className="
-          bg-black/30 backdrop-blur-md border-b border-[#38383D]
-          fixed top-[72px] z-49 pt-6
-          left-0 right-0
-          min-[1150px]:left-[288px] 
-          min-[1150px]:w-[calc(100%-288px)] w-full
-        "
+        className='bg-black/30 backdrop-blur-md border-b border-[#38383D] fixed z-49 px-16 pt-4 left-0 right-0 top-16'
       >
         <CreateProcessBar steps={steps} currentStepId={currentStepId} />
       </div>
 
-      <div className="pt-16">
+      <div className="pt-30">
         <TabsContent value="eventInfo">
           <InfoForm
             initial={formData.eventInfo}

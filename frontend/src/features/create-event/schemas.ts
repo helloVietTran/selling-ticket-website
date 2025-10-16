@@ -23,16 +23,7 @@ const venueSchema = z.object({
 
 export const infoSchema = z.object({
   title: z.string().min(5, 'Tiêu đề ít nhất 5 ký tự'),
-  eventImage: z
-    .any()
-    .refine(
-      file => file?.size <= MAX_FILE_SIZE,
-      `Chưa tải lên ảnh hoặc ảnh quá 5 MB`
-    )
-    .refine(
-      file => ACCEPTED_IMAGE_TYPES.includes(file?.type),
-      'Chỉ chấp nhận định dạng .jpg, .jpeg, .png and .webp'
-    ),
+  eventImage: z.string().nonempty('Chưa tải lên ảnh sự kiện'),
 
   category: z.string().nonempty('Vui lòng nhập thể loại'),
   eventInfo: z.string().nonempty('Vui lòng nhập thông tin sự kiện'),

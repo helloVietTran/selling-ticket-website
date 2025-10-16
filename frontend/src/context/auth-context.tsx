@@ -1,11 +1,12 @@
-
-import React, { createContext, useState, useContext, type ReactNode } from "react";
+import React, { createContext, useState, useContext, type ReactNode, useEffect } from "react";
 import type { User } from "@/types";
+import { LOCAL_STORAGE_KEYS } from "@/constant";
+import { logout as logoutApi, verifyToken } from "@/api/authApi"
 
 interface AuthContextType {
   isAuthenticated: boolean;
   user: User | null;
-  login: (userData: User) => void;
+  login: (userData: User, token: string) => void;
   logout: () => void;
 }
 
@@ -19,14 +20,50 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
 
-  const login = (userData: User) => {
-    setIsAuthenticated(true);
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN);
+        if (!token) return;
+
+        await verifyToken({ accessToken: token });
+
+        // nếu mở rộng trong tương lai
+        // if (res?.data?.user) {
+        //   setUser(res.data.user);
+        // }
+
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error("Token verification failed:", error);
+        localStorage.removeItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN);
+        setUser(null);
+        setIsAuthenticated(false);
+      }
+    };
+
+    checkToken();
+  }, []);
+
+
+  const login = (userData: User, token: string) => {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN, token);
     setUser(userData);
+    setIsAuthenticated(true);
   };
 
-  const logout = () => {
-    setIsAuthenticated(false);
-    setUser(null);
+  const logout = async () => {
+    try {
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN);
+      if (!token) return;
+      await logoutApi({ accessToken: token })
+
+      setUser(null);
+      setIsAuthenticated(false);
+      localStorage.removeItem(LOCAL_STORAGE_KEYS.AUTH_TOKEN);
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (

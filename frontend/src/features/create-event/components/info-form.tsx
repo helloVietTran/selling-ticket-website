@@ -24,6 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import RichTextEditor from "./rich-text-editor";
+import { uploadImage } from "@/api/resourceApi";
 
 export default function InfoForm({
   initial,
@@ -85,6 +86,37 @@ export default function InfoForm({
     };
   }, [preview]);
 
+  const handleUploadImage = async (e: React.ChangeEvent<HTMLInputElement>, field: any): Promise<void> => {
+    const file = e.target.files?.[0] ?? undefined;
+
+    if (preview && typeof field.value !== 'string') URL.revokeObjectURL(preview);
+
+    if (file) {
+      const url = URL.createObjectURL(file);
+      setPreview(url);
+    }
+
+    if (file) {
+      try {
+        const formData = new FormData();
+        formData.append("image", file);
+
+        const res = await uploadImage(formData);
+
+        if (res.data?.url) {
+          field.onChange(res.data.url);
+          console.log("Uploaded image URL:", res.data.url);
+        }
+      } catch (error) {
+        console.error("Upload error:", error);
+      }
+    } else {
+      setPreview(null);
+      field.onChange("");
+    }
+  };
+
+
   return (
     <Form {...form}>
       <form
@@ -122,20 +154,7 @@ export default function InfoForm({
                         type="file"
                         accept="image/*"
                         className="hidden"
-                        onChange={(e) => {
-                          const file = e.target.files?.[0] ?? undefined;
-
-                          field.onChange(file as any);
-                          if (preview) {
-                            URL.revokeObjectURL(preview);
-                          }
-                          if (file) {
-                            const url = URL.createObjectURL(file);
-                            setPreview(url);
-                          } else {
-                            setPreview(null);
-                          }
-                        }}
+                        onChange={(e) => handleUploadImage(e, field)}
                       />
                     </label>
                   </div>

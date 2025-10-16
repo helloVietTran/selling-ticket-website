@@ -1,6 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany, OneToOne, JoinColumn } from 'typeorm';
 import { Role } from '../types/enum';
-import { Ticket } from './Ticket.model';
 import { Booking } from './Booking.model';
 import { Organizer } from './Organizer.model';
 
@@ -26,9 +25,6 @@ export class User {
     enum: Role
   })
   roles!: Role;
-
-  @OneToMany(() => Ticket, (ticket) => ticket.owner)
-  tickets!: Ticket[];
 
   @OneToMany(() => Booking, (booking) => booking.attendee)
   bookings!: Booking[];

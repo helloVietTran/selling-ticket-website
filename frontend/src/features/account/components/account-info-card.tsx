@@ -105,7 +105,7 @@ export default function AccountInfoCard() {
 
       fetchMyInfo();
     } else {
-alert('Cập nhật thất bại. Vui lòng thử lại.');
+      alert('Cập nhật thất bại. Vui lòng thử lại.');
       console.error('Update failed:', result.error || updateError);
     }
   }
@@ -186,7 +186,7 @@ alert('Cập nhật thất bại. Vui lòng thử lại.');
                       <Input
                         {...field}
                         placeholder="Nhập số điện thoại"
-className="field-input"
+                        className="field-input"
                       />
                     </FormControl>
                     <FormMessage />

@@ -2,11 +2,12 @@ import { Calendar, MapPin } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import VerticalDashed from './vertical-dashed';
+import { Link } from 'react-router-dom';
 
 type EventTicketCardProps = {
+  eventId: number | string;
   title: string;
   date: string;
-  time: string;
   province: string;
   address: string;
   price: number;
@@ -14,9 +15,9 @@ type EventTicketCardProps = {
 };
 
 const EventTicketCard: React.FC<EventTicketCardProps> = ({
+  eventId,
   title,
   date,
-  time,
   province,
   address,
   price,
@@ -63,9 +64,7 @@ const EventTicketCard: React.FC<EventTicketCardProps> = ({
 
             <div className="flex items-center gap-2 text-emerald-400 font-medium">
               <Calendar className="w-5 h-5" />
-              <span>
-                {time}, {date}
-              </span>
+              <span>{date}</span>
             </div>
 
             <div className="flex items-start gap-2 text-gray-300 mt-2">
@@ -81,9 +80,11 @@ const EventTicketCard: React.FC<EventTicketCardProps> = ({
             <p className="text-lg font-semibold">
               Giá từ <span className="text-emerald-400">{price}</span>
             </p>
-            <Button className="mt-3 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold">
-              Mua vé ngay
-            </Button>
+            <Link to={`/events/${eventId}/select-ticket`}>
+              <Button className="mt-3 w-full bg-emerald-500 hover:bg-emerald-600 text-white font-semibold">
+                Mua vé ngay
+              </Button>
+            </Link>
           </div>
 
           <span className="hidden lg:block circle-1"></span>

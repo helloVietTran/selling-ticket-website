@@ -6,10 +6,10 @@ export interface DeleteEventParams {
 }
 
 export interface EventQueries {
-  startTime: string; // req.query nhận string
+  startTime: string;
   endTime: string;
   category: Category;
-  district: string;
+  province: string;
   keyword: string;
 
   page?: string;

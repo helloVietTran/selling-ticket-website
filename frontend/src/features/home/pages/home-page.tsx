@@ -2,6 +2,7 @@ import EventList from '@/components/event-list';
 import Footer from '@/components/footer';
 import Navigation from '@/components/navigation';
 import EventSlider from '@/components/event-slider';
+import { EventCategory } from '@/constant';
 
 export default function HomePage() {
   return (
@@ -10,11 +11,11 @@ export default function HomePage() {
       <div className="bg-main-content">
         <div className="main-container">
           <EventSlider />
-          <EventList category="Âm nhạc" />
-          <EventList wrapperClassName="mt-4" category="Nghệ thuật" />
 
-          <EventList wrapperClassName="mt-4" category="Thể thao" />
-          <EventList wrapperClassName="mt-4" category="Khác" />
+          <EventList category={EventCategory.ART} />
+          <EventList category={EventCategory.MUSIC} />
+          <EventList category={EventCategory.SPORT} />
+          <EventList category={EventCategory.OTHER} />
         </div>
       </div>
       <Footer />

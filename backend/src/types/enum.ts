@@ -7,23 +7,21 @@ export enum EventStatus {
   Draft = 'DRAFT',
   Published = 'PUBLISHED',
   Ongoing = 'ONGOING',
-  Cancelled = 'CANCELLED',
+  Canceled = 'CANCELED',
   Ended = 'ENDED'
 }
 
 export enum BookingStatus {
   Paid = 'PAID',
-  Cancelled = 'CANCELLED',
+  Canceled = 'CANCELED',
   Waiting = 'Wait',
   Expired = 'EXPIRED'
 }
 
 export enum TicketState {
-  Sold = 'SOLD',
   Expired = 'EXPIRED',
-  Cancelled = 'CANCELLED',
-  Available = 'AVAILABLE',
-  Held = 'HELD'
+  Canceled = 'CANCELED',
+  Available = 'AVAILABLE'
 }
 
 export enum Category {

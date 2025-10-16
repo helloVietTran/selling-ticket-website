@@ -26,5 +26,16 @@ export const config = {
     email: process.env.ADMIN_EMAIL!,
     password: process.env.ADMIN_PASSWORD!
   },
-  url_upload:process.env.URL_UPLOAD
+  domain: process.env.DOMAIN,
+  vnp: {
+    vnp_TmnCode: process.env.vnp_TmnCode,
+    vnp_HashSecret: process.env.vnp_HashSecret,
+    payment_api: 'https://sandbox.vnpayment.vn/paymentv2/vpcpay.html',
+    query_transaction_api: 'https://sandbox.vnpayment.vn/merchant_webapi/api/transaction'
+  },
+  smtp: {
+    user: process.env.SMTP_USER,
+
+    pass: process.env.SMTP_PASS
+  }
 };

@@ -1,102 +1,145 @@
-import { Request, Response } from 'express';
-import { AppDataSource } from '../config/data-source';
-import { Booking } from '../models/Booking.model';
-import { Ticket } from '../models/Ticket.model';
-import { QrCode } from '../models/QrCode.model';
-import { v4 as uuidv4 } from 'uuid';
-import QRCode from 'qrcode';
+import { NextFunction, Request, Response } from 'express';
 import { Repository } from 'typeorm';
-import ApiResponse from '../utils/ApiResponse';
+
+import { AppDataSource } from '../config/data-source';
+import { Ticket } from '../models/Ticket.model';
+import { TicketType } from '../models/TicketType.model';
+import { BaseResponse, StatsTicket, UserOutput } from '../types/response.type';
+import { CheckinInput } from '../validators/ticket.validate';
+import { AppError } from '../config/exception';
+import { ErrorMap } from '../config/ErrorMap';
+import { Event } from '../models/Event.model';
+import { EventStatus } from '../types/enum';
+import { User } from '../models/User.model';
 
 class TicketController {
-  private bookingRepo: Repository<Booking> = AppDataSource.getRepository(Booking);
   private ticketRepo: Repository<Ticket> = AppDataSource.getRepository(Ticket);
-  private qrRepo: Repository<QrCode> = AppDataSource.getRepository(QrCode);
+  private ticketTypeRepo: Repository<TicketType> = AppDataSource.getRepository(TicketType);
+  private eventRepo: Repository<Event> = AppDataSource.getRepository(Event);
+  private userRepo: Repository<User> = AppDataSource.getRepository(User);
 
-  generateTickets = async (req: Request, res: Response) => {
-    const queryRunner = AppDataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
-
+  getMyTickets = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { bookingId } = req.body;
+      const requester = res.locals.requester;
 
-      const booking = await queryRunner.manager.findOne(Booking, {
-        where: { bookingId },
-        relations: ['attendee', 'bookingItems', 'bookingItems.ticketType']
+      const tickets = await this.ticketRepo.find({
+        where: {
+          ownerId: requester.id
+        },
+        relations: ['ticketType', 'ticketType.event']
       });
 
-      if (!booking) {
-        return res.status(404).json(
-          ApiResponse.error({
-            code: 'BOOKING_NOT_FOUND',
-            message: 'Booking not found',
-            statusCode: 404
-          })
-        );
-      }
+      const responseData = tickets.map((t) => ({
+        ticketId: t.ticketId,
+        ticketType: t.ticketType.ticketTypeName,
+        checkedIn: t.checkedIn,
+        seatNumber: t.seatNumber,
+        eventName: t.ticketType.event.title,
+        eventStartTime: t.ticketType.event.startTime,
+        eventEndTime: t.ticketType.event.endTime,
+        ticketStatus: t.ticketStatus
+      }));
 
-      const ticketsResponse: any[] = [];
+      return res.json({
+        success: true,
+        data: responseData
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
 
-      for (const item of booking.bookingItems) {
-        for (let i = 0; i < item.quantity; i++) {
-          // Tạo ticket
-          const ticket = queryRunner.manager.create(Ticket, {
-            ticketType: item.ticketType,
-            owner: booking.attendee,
-            checkedIn: false
-          });
-          await queryRunner.manager.save(ticket);
+  statsTickets = async (req: Request, res: Response<BaseResponse<StatsTicket>>, next: NextFunction) => {
+    try {
+      const eventId = parseInt(req.params.eventId);
 
-          // Tạo QR Code
-          const randomCode = uuidv4();
-          const issuedAt = new Date();
-          const expiresAt = undefined;
+      const totalSold = await this.ticketRepo.count({
+        where: { eventId }
+      });
 
-          const qrEntity = queryRunner.manager.create(QrCode, {
-            ticket,
-            issuedAt,
-            expiresAt,
-            randomCode
-          });
-          await queryRunner.manager.save(qrEntity);
+      const totalCheckedIn = await this.ticketRepo.count({
+        where: { eventId, checkedIn: true }
+      });
 
-          // Generate QR Image
-          const payload = { issuedAt, expiresAt, randomCode };
-          const qrImage = await QRCode.toDataURL(JSON.stringify(payload));
+      const ticketTypes = await this.ticketTypeRepo.find({
+        where: { event: { eventId } },
+        relations: ['event']
+      });
 
-          // Tạo object trả về API
-          ticketsResponse.push({
-            ticketId: ticket.ticketId,
-            bookingId: booking.bookingId,
-            ticketType: item.ticketType.ticketTypeName,
-            attendeeId: booking.attendee?.id,
-            checkedIn: ticket.checkedIn,
-            qrCode: {
-              issuedAt,
-              expiresAt,
-              randomCode,
-              image: qrImage
-            }
-          });
+      const predictTicketSold = ticketTypes.reduce((sum, t) => sum + (t.totalQuantity || 0), 0);
+
+      const percentage = predictTicketSold > 0 ? ((totalSold / predictTicketSold) * 100).toFixed(2) : '0.00';
+
+      return res.status(200).json({
+        message: 'Stats successfully',
+        data: {
+          eventId,
+          totalSold,
+          totalCheckedIn,
+          predictTicketSold,
+          percentage
         }
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  checkin = async (req: Request<{}, {}, CheckinInput>, res: Response<BaseResponse<UserOutput>>, next: NextFunction) => {
+    try {
+      const { eventId, ticketId, userId, code } = req.body;
+
+      // Lấy vé từ DB
+      const ticket = await this.ticketRepo.findOne({
+        where: { eventId, ticketId, ownerId: userId },
+        relations: ['qrCode']
+      });
+
+      const event = await this.eventRepo.findOne({
+        where: { eventId }
+      });
+
+      if (!event || event.status != EventStatus.Ongoing) {
+        throw AppError.fromErrorCode(ErrorMap.EVENT_NOT_FOUND);
       }
 
-      await queryRunner.commitTransaction();
+      if (!ticket) {
+        throw AppError.fromErrorCode(ErrorMap.TICKET_NOT_FOUND);
+      }
 
-      return res.json(ApiResponse.success(ticketsResponse, 'Tickets generated successfully'));
-    } catch (error: any) {
-      await queryRunner.rollbackTransaction();
-      return res.status(500).json(
-        ApiResponse.error({
-          code: 'ERROR_GENERATING_TICKETS',
-          message: error.message || 'Error generating tickets',
-          statusCode: 500
-        })
-      );
-    } finally {
-      await queryRunner.release();
+      const user = await this.userRepo.findOne({
+        where: { id: userId }
+      });
+
+      if (!user) {
+        throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
+      }
+
+      // Check QR
+      if (ticket.qrCode?.randomCode !== code) {
+        throw AppError.fromErrorCode(ErrorMap.INVALID_QR_CODE);
+      }
+
+      // vé đã dùng chưa
+      if (ticket.checkedIn) {
+        throw AppError.fromErrorCode(ErrorMap.TICKET_ALREADY_CHECKED_IN);
+      }
+
+      // Cập nhật trạng thái check-in
+      ticket.checkedIn = true;
+      await this.ticketRepo.save(ticket);
+
+      return res.json({
+        message: 'Check-in thành công',
+        data: {
+          id: user.id,
+          email: user.email,
+          userName: user.userName,
+          roles: user.roles
+        }
+      });
+    } catch (error) {
+      next(error);
     }
   };
 }

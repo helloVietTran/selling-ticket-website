@@ -26,6 +26,9 @@ export class Event {
   @Column({ type: 'text' })
   eventInfo!: string;
 
+  @Column()
+  eventImage!: string;
+
   @OneToOne(() => Venue, (v) => v.event, { nullable: false, cascade: true, onDelete: 'CASCADE' })
   @JoinColumn({ name: 'venueId', referencedColumnName: 'venueId' })
   venue!: Venue;

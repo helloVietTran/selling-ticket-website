@@ -3,24 +3,24 @@ import { Button } from '@/components/ui/button';
 import { ChevronRight } from 'lucide-react';
 
 interface TicketType {
-  ticketName: string;
-  ticketPrice: number;
+  ticketTypeName: string;
+  price: number;
   quantity: number;
 }
 
 interface BookingInfoProps {
-  tickets: TicketType[];
+  ticketTypes: TicketType[];
   onChangeTicket?: () => void;
   onContinue?: () => void;
 }
 
 export default function BookingInfo({
-  tickets,
+  ticketTypes,
   onChangeTicket,
   onContinue,
 }: BookingInfoProps) {
-  const total = tickets.reduce((sum, t) => sum + t.ticketPrice * t.quantity, 0);
-  const totalQuantity = tickets.reduce((sum, t) => sum + t.quantity, 0);
+  const total = ticketTypes.reduce((sum, t) => sum + t.price * t.quantity, 0);
+  const totalQuantity = ticketTypes.reduce((sum, t) => sum + t.quantity, 0);
 
   return (
     <Card className="rounded-2xl shadow-md border border-gray-200 max-w-xl mx-auto p-0">
@@ -42,20 +42,21 @@ export default function BookingInfo({
             <span>Số lượng</span>
           </div>
 
-          {tickets.map((ticket, idx) => (
+          {ticketTypes.map((ticketType, idx) => (
             <div
               key={idx}
               className="mt-3 flex justify-between text-sm text-gray-700">
               <div className="max-w-[300px] space-y-1">
-                <p className="truncate">{ticket.ticketName}</p>
+                <p className="truncate">{ticketType.ticketTypeName}</p>
                 <p className="text-gray-500">
-                  {ticket.ticketPrice.toLocaleString()} đ
+                  {ticketType.price.toLocaleString()} VND
                 </p>
               </div>
               <div className="text-right space-y-1">
-                <p>{String(ticket.quantity).padStart(2, '0')}</p>
+                <p>{String(ticketType.quantity).padStart(2, '0')}</p>
                 <p className="text-gray-500">
-                  {(ticket.ticketPrice * ticket.quantity).toLocaleString()} đ
+                  {(ticketType.price * ticketType.quantity).toLocaleString()}{' '}
+                  VND
                 </p>
               </div>
             </div>
@@ -64,7 +65,7 @@ export default function BookingInfo({
 
         <div className="mt-3 flex justify-between items-center font-semibold">
           <span className="text-gray-700">Tạm tính {totalQuantity} vé</span>
-          <span className="text-green-600">{total.toLocaleString()} đ</span>
+          <span className="text-green-600">{total.toLocaleString()} VND</span>
         </div>
 
         <Button

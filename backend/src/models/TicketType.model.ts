@@ -3,7 +3,6 @@ import { Event } from './Event.model';
 import { Ticket } from './Ticket.model';
 import { AppError } from '../config/exception';
 import { ErrorMap } from '../config/ErrorMap';
-import { BookingItem } from './BookingItem.model';
 
 @Entity('ticket_type')
 export class TicketType {
@@ -44,7 +43,7 @@ export class TicketType {
   @OneToMany(() => Ticket, (t) => t.ticketType, { cascade: true })
   tickets!: Ticket[];
 
-  validate = async (ticketType: any, item: { ticketTypeId: string; quantity: number }, now: Date): Promise<void> => {
+  validate = (ticketType: any, item: { ticketTypeId: string; quantity: number }, now: Date) => {
     if (!ticketType) {
       throw AppError.fromErrorCode(ErrorMap.TICKET_TYPE_NOT_FOUND);
     }

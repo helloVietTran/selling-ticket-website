@@ -5,6 +5,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { useAuth } from '@/context/auth-context';
 import { User, Ticket, Calendar, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -17,6 +18,7 @@ export default function AvatarDropdown({
   side = 'bottom',
   align = 'end',
 }: AvatarDropdownProps) {
+  const { logout } = useAuth();
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild className="bg-red-400">
@@ -58,7 +60,9 @@ export default function AvatarDropdown({
 
         <DropdownMenuSeparator />
 
-        <DropdownMenuItem className="flex items-center gap-2 text-red-600 cursor-pointer">
+        <DropdownMenuItem
+          className="flex items-center gap-2 text-red-600 cursor-pointer"
+          onClick={() => logout()}>
           <LogOut className="w-4 h-4" />
           Đăng xuất
         </DropdownMenuItem>

@@ -7,37 +7,62 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { DialogClose } from '@radix-ui/react-dialog';
+import { differenceInSeconds, isBefore, parseISO } from 'date-fns';
+import { useNavigate } from 'react-router-dom';
 
 interface EventHeaderProps {
+  eventId: string | number;
   title: string;
   datetime: string;
   location: string;
-  initialMinutes?: number;
+  expiresAt: string | Date;
 }
 
 export default function EventBanner({
+  eventId,
   title,
   datetime,
   location,
-  initialMinutes = 5,
+  expiresAt,
 }: EventHeaderProps) {
-  const [timeLeft, setTimeLeft] = useState(initialMinutes * 60);
+  const [timeLeft, setTimeLeft] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
+  const navigate = useNavigate();
   useEffect(() => {
-    if (timeLeft <= 0) {
-      setShowModal(true);
-      return;
-    }
-    const timer = setInterval(() => {
-      setTimeLeft(prev => (prev > 0 ? prev - 1 : 0));
-    }, 1000);
+    const expiry =
+      expiresAt instanceof Date
+        ? expiresAt
+        : parseISO(String(expiresAt).replace(' ', 'T'));
+
+    const updateTimeLeft = () => {
+      const now = new Date();
+
+      const diff = differenceInSeconds(expiry, now);
+      const expired = isBefore(expiry, now);
+
+      if (expired) {
+        setTimeLeft(0);
+        setShowModal(true);
+        return;
+      }
+
+      setTimeLeft(diff);
+    };
+
+    updateTimeLeft();
+    const timer = setInterval(updateTimeLeft, 1000);
+
     return () => clearInterval(timer);
-  }, [timeLeft]);
+  }, [expiresAt]);
 
   const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
   const seconds = String(timeLeft % 60).padStart(2, '0');
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    navigate(`/events/${eventId}`);
+  };
 
   return (
     <>
@@ -104,10 +129,7 @@ export default function EventBanner({
 
           <Button
             className="w-full bg-green-500 hover:bg-green-600 text-white text-lg py-5 rounded-full"
-            onClick={() => {
-              setTimeLeft(initialMinutes * 60);
-              setShowModal(false);
-            }}>
+            onClick={() => handleCloseModal()}>
             Đặt vé mới
           </Button>
         </DialogContent>

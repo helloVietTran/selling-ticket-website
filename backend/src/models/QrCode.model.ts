@@ -1,13 +1,10 @@
-import { Entity, PrimaryColumn, Column, OneToOne, JoinColumn } from 'typeorm';
+import { Entity, Column, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Ticket } from './Ticket.model';
 
 @Entity('qrcode')
 export class QrCode {
-  @PrimaryColumn()
-  ticketId!: number;
-
-  @OneToOne(() => Ticket, (t) => t.qrCode)
-  ticket!: Ticket;
+  @PrimaryGeneratedColumn()
+  qrCodeId!: number;
 
   @Column({ type: 'timestamp', nullable: true })
   issuedAt?: Date;
@@ -17,4 +14,7 @@ export class QrCode {
 
   @Column({ nullable: true })
   randomCode?: string;
+
+  @OneToOne(() => Ticket, (t) => t.qrCode, { onDelete: 'CASCADE' })
+  ticket!: Ticket;
 }

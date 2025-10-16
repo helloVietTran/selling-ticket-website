@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
+import { getProvinces, getDistricts, getWards } from 'sub-vn';
 
 import { useApi } from '@/api/hooks/useApi';
 import { getEventById } from '@/api/eventApi';
@@ -13,28 +14,28 @@ import TicketTypeList from '@/features/event-detail/components/ticket-type-list'
 import OrganizerCard from '@/features/event-detail/components/organizer-card';
 
 const EventDetailPage = () => {
-  const { id } = useParams();
+  const { eventId } = useParams();
   const navigate = useNavigate();
-
-  const { data, exec, isPending, isError } = useApi(getEventById);
-
-  useEffect(() => {
-    if (id) exec(id);
-  }, [id, exec]);
+  const { data, exec, isPending } = useApi(getEventById);
 
   useEffect(() => {
-    if (isError || !data?.data) {
-      navigate('/not-found', { replace: true });
-    }
-  }, [isError, data, navigate]);
+    if (eventId) exec(eventId);
+  }, [eventId]);
+
+  const provinces = getProvinces();
+  const districts = getDistricts();
+  const wards = getWards();
+
+  const event = data?.data;
 
   if (isPending) {
     return <p className="text-center py-10">Đang tải chi tiết sự kiện...</p>;
   }
 
-  const event = data?.data;
-
-  if (!event) return null;
+  if (!event) {
+    navigate('/not-found');
+    return;
+  }
 
   return (
     <>
@@ -46,16 +47,18 @@ const EventDetailPage = () => {
             'linear-gradient(rgb(39, 39, 42) 48.04%, rgb(0, 0, 0) 100%)',
         }}>
         <EventTicketCard
+          eventId={event.eventId}
           title={event.title}
-          date={format(event.startTime, 'dd/MM/yyyy', { locale: vi })}
-          time={format(event.startTime, 'HH:mm', { locale: vi })}
-          province={event.venue.province}
+          date={format(event.startTime, 'HH:mm dd/MM/yyyy', { locale: vi })}
+          province={
+            provinces.find((p: any) => p.code === event.venue.province)?.name
+          }
           address={
-            event.venue.street +
-            ', ' +
-            event.venue.ward +
-            ', ' +
-            event.venue.district
+            `${event.venue.street}, ` +
+            `${wards.find((w: any) => w.code === event.venue.ward)?.name}, ` +
+            `${
+              districts.find((d: any) => d.code === event.venue.district)?.name
+            }, `
           }
           price={event.minPriceTicketType}
           image={event.eventImage}
@@ -64,7 +67,10 @@ const EventDetailPage = () => {
 
       <div className="px-4 py-6 space-y-6 bg-[#f6f7fc]">
         <EventDescription htmlContent={event.eventInfo} />
-        <TicketTypeList ticketTypes={event.ticketTypes} />
+        <TicketTypeList
+          ticketTypes={event.ticketTypes}
+          eventId={event.eventId}
+        />
 
         <OrganizerCard
           name={event.organizer.organizerName}

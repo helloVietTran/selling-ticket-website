@@ -43,7 +43,8 @@ const eventSchema = z
     category: z.string().min(1, 'Vui lòng nhập thể loại'),
     eventInfo: z.string().min(1, 'Vui lòng nhập thông tin sự kiện'),
     startTime: z.string().min(1, 'Chọn ngày bắt đầu'),
-    endTime: z.string().min(1, 'Chọn ngày kết thúc')
+    endTime: z.string().min(1, 'Chọn ngày kết thúc'),
+    eventImage: z.string().nonoptional('Vui lòng chọn ảnh')
   })
   .superRefine((data, ctx) => {
     const start = parseISO(data.startTime);
@@ -67,9 +68,9 @@ const paymentSchema = z.object({
   accountNumber: z.string().min(1, 'Vui lòng nhập số tài khoản').max(100),
   bankName: z.string().min(1, 'Vui lòng nhập tên ngân hàng').max(100),
   branch: z.string().min(1, 'Vui lòng nhập chi nhánh').max(100),
-  organizerId: z.string().min(1,'Vui lòng nhập mã ban tổ chức').optional(),
-  organizationName: z.string().min(1,'Vui lòng nhập tên ban tổ chức').optional(),
-  organizerInfo: z.string().min(1,'Vui lòng nhập thông tin ban tổ chức').optional()
+  organizerId: z.string().min(1, 'Vui lòng nhập mã ban tổ chức').optional(),
+  organizationName: z.string().min(1, 'Vui lòng nhập tên ban tổ chức').optional(),
+  organizerInfo: z.string().min(1, 'Vui lòng nhập thông tin ban tổ chức').optional()
 });
 
 export const createEventSchema = z.object({

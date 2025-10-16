@@ -1,10 +1,9 @@
 import { Request, Response, NextFunction } from 'express';
 import { TicketType } from '../models/TicketType.model';
 import { AppDataSource } from '../config/data-source';
-import { Ticket } from '../models/Ticket.model';
+
 import { ErrorMap } from '../config/ErrorMap';
-import { statsData } from '../types';
-import { BaseResponse, statsResponse } from '../types/response.type';
+import { BaseResponse, StatsTicketType } from '../types/response.type';
 import { SelectTicketInput } from '../validators/ticket.validate';
 import { Booking } from '../models/Booking.model';
 import { AppError } from '../config/exception';
@@ -12,6 +11,7 @@ import { Requester } from '../types';
 import { User } from '../models/User.model';
 import { BookingStatus } from '../types/enum';
 import { BookingItem } from '../models/BookingItem.model';
+import { LessThan } from 'typeorm';
 
 class TicketTypeController {
   private ticketTypeRepo = AppDataSource.getRepository(TicketType);
@@ -20,13 +20,25 @@ class TicketTypeController {
     try {
       const { eventId } = req.params;
       if (!eventId) return AppError.fromErrorCode(ErrorMap.EVENT_NOT_EXISTS);
-      const ticketTypes = await this.ticketTypeRepo.findBy({ event: { eventId: Number(eventId) } });
-      return res.status(200).json({ message: 'Lấy danh sách thành công', data: ticketTypes });
+
+      const now = new Date();
+      const ticketTypes = await this.ticketTypeRepo.find({
+        where: {
+          event: { eventId: Number(eventId) },
+          startSellDate: LessThan(now)
+        }
+      });
+
+      return res.status(200).json({
+        message: 'Lấy danh sách thành công',
+        data: ticketTypes
+      });
     } catch (error) {
       next(error);
     }
   };
-  bookingTicket = async (
+
+  bookingTicketType = async (
     req: Request<{}, {}, SelectTicketInput>,
     res: Response<BaseResponse<Booking>>,
     next: NextFunction
@@ -40,10 +52,6 @@ class TicketTypeController {
       const userId = requester.id;
       const { ticketTypes } = req.body;
 
-      if (!ticketTypes || ticketTypes.length === 0) {
-        throw AppError.fromErrorCode(ErrorMap.INVALID_REQUEST);
-      }
-      if (!userId) return 0;
       const user = await queryRunner.manager.findOneBy(User, { id: Number(userId) });
       if (!user) {
         throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
@@ -52,13 +60,16 @@ class TicketTypeController {
       const bookingItems: BookingItem[] = [];
       const now = new Date();
       const ticketTypeEntity = new TicketType();
+
       for (const item of ticketTypes) {
         const ticketType = await queryRunner.manager.findOneBy(TicketType, { ticketTypeId: Number(item.ticketTypeId) });
         if (!ticketType) {
           throw AppError.fromErrorCode(ErrorMap.TICKET_TYPE_NOT_FOUND);
         }
-        await ticketTypeEntity.validate(ticketType, item, now);
+
+        ticketTypeEntity.validate(ticketType, item, now);
         ticketType.soldTicket += item.quantity;
+
         await queryRunner.manager.save(ticketType);
 
         totalAmount += Number(ticketType.price) * item.quantity;
@@ -70,10 +81,12 @@ class TicketTypeController {
       }
 
       const newBooking = new Booking();
+
       newBooking.attendee = user;
       newBooking.bookingItems = bookingItems;
       newBooking.amount = totalAmount;
       newBooking.status = BookingStatus.Waiting;
+      newBooking.eventId = +req.body.eventId;
       newBooking.createdAt = new Date();
       newBooking.expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
@@ -83,6 +96,7 @@ class TicketTypeController {
       savedBooking.bookingItems.forEach((bi) => delete (bi as any).booking);
 
       await queryRunner.commitTransaction();
+
       return res.status(201).json({
         message: 'Booking created successfully. Please proceed to payment.',
         data: savedBooking
@@ -95,37 +109,45 @@ class TicketTypeController {
     }
   };
 
-  statisticalTicketType = async (req: Request, res: Response<statsResponse<any>>, next: NextFunction) => {
+  statsTicketType = async (req: Request, res: Response<BaseResponse<StatsTicketType[]>>, next: NextFunction) => {
     try {
-      const eventId= parseInt(req.params.eventId, 10);
+      const eventId = parseInt(req.params.eventId);
 
-      const existedEvent = await this.ticketTypeRepo.findOne({
-        where: { event:{eventId }},
+      // Lấy tất cả ticket types thuộc event
+      const ticketTypes = await this.ticketTypeRepo.find({
+        where: { event: { eventId } },
         relations: ['event']
       });
-      if (!existedEvent) {
+
+      if (!ticketTypes || ticketTypes.length === 0) {
         throw AppError.fromErrorCode(ErrorMap.TICKET_TYPE_NOT_FOUND);
       }
-      const totalTicket = await this.ticketTypeRepo.sum('totalQuantity', {
-        event: { eventId: existedEvent.event.eventId }
-      });
 
-      const totalSoldTicket = await this.ticketTypeRepo.sum('soldTicket', {
-        event: { eventId: existedEvent.event.eventId }
-      });
+      const totalTicket =
+        (await this.ticketTypeRepo.sum('totalQuantity', {
+          event: { eventId }
+        })) ?? 0;
 
-      const percentage = totalTicket && totalSoldTicket ? (totalSoldTicket / totalTicket) * 100 : 0;
-      const statistical:statsData = {
-        ticketType: existedEvent.ticketTypeName,
-        totalQuantity: existedEvent.totalQuantity,
-        soldTicket: existedEvent.soldTicket,
-        totalTicket: totalTicket,
-        totalsoldTicket: totalSoldTicket,
-        percentage: percentage.toFixed(2)
-      };
-      return res.status(201).json({
-        message: 'statistical featch successfully',
-        data: statistical
+      const totalSoldTicket =
+        (await this.ticketTypeRepo.sum('soldTicket', {
+          event: { eventId }
+        })) ?? 0;
+
+      const overallPercentage = totalTicket && totalSoldTicket ? (totalSoldTicket / totalTicket) * 100 : 0;
+
+      const statsData: StatsTicketType[] = ticketTypes.map((t) => ({
+        ticketTypeName: t.ticketTypeName,
+        totalQuantity: t.totalQuantity,
+        soldTicket: t.soldTicket,
+        totalTicket,
+        totalSoldTicket,
+        percentage: t.totalQuantity > 0 ? ((t.soldTicket / t.totalQuantity) * 100).toFixed(2) : 0,
+        overallPercentage: overallPercentage.toFixed(2)
+      }));
+
+      return res.status(200).json({
+        message: 'Stats successfully',
+        data: statsData
       });
     } catch (error) {
       next(error);

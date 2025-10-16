@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useApiStatus } from './useApiStatus';
-import { ERROR, PENDING, SUCCESS } from '../constants/apiStatus';
+import { ERROR, PENDING, SUCCESS } from '@/constant/apiStatus';
 
 type UseApiConfig<T> = {
   initialData?: T;

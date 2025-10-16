@@ -1,12 +1,14 @@
 import { useEffect, useRef } from 'react';
 import QrScannerLib from 'qr-scanner';
-import { Button } from '@/components/ui/button';
 import { X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+
+import type { CheckinPayload } from '@/types';
 
 type QrScannerProps = {
   open: boolean;
   onClose: () => void;
-  onScan: (data: string) => void;
+  onScan: (data: CheckinPayload) => void;
 };
 
 export default function QrScanner({ open, onClose, onScan }: QrScannerProps) {
@@ -18,8 +20,10 @@ export default function QrScanner({ open, onClose, onScan }: QrScannerProps) {
       scannerRef.current = new QrScannerLib(
         videoRef.current,
         (result: any) => {
-          console.log('QR code scanned:', result);
-          onScan(result);
+          const data = JSON.parse(result.data);         
+
+          onScan(data);
+
           scannerRef.current?.stop();
           onClose();
         },
@@ -39,12 +43,9 @@ export default function QrScanner({ open, onClose, onScan }: QrScannerProps) {
 
   return (
     <>
-      {/* Overlay mờ nhưng không che hết nền */}
       <div className="fixed inset-0 z-50 bg-black opacity-60 backdrop-blur-sm"></div>
-      \
       <div className="fixed inset-0 z-50 flex items-center justify-center pointer-events-none">
         <div className="relative w-full max-w-md p-6 bg-neutral-800 rounded-xl shadow-xl border border-gray-600 pointer-events-auto">
-          {/* Header */}
           <div className="flex justify-between items-center mb-4">
             <h2 className="text-white text-lg font-semibold">Quét QR Code</h2>
             <Button

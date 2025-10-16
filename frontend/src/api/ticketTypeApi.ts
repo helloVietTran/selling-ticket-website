@@ -1,5 +1,5 @@
 import api from "./api";
-import type { BaseResponse, SelectTicketTypePayload, StatsTicketType, TicketType }  from '@/types';
+import type { BaseResponse, Booking, SelectTicketTypePayload, StatsTicketType, TicketType }  from '@/types';
 
 
 async function getTicketTypesByEventId(eventId: string): Promise<BaseResponse<TicketType[]>> {
@@ -8,8 +8,8 @@ async function getTicketTypesByEventId(eventId: string): Promise<BaseResponse<Ti
   return res.data;
 }
 
-async function selectTicket(payload: SelectTicketTypePayload){
-    const res = await api.post("/select-ticket-type", payload)
+async function bookingTicketType(payload: SelectTicketTypePayload): Promise<BaseResponse<Booking>> {
+    const res = await api.post("/ticket-types/booking", payload)
     return res.data;
 }
 
@@ -21,6 +21,6 @@ async function statsTicketType(eventId: string | number): Promise<BaseResponse<S
 
 export {
    getTicketTypesByEventId,
-   selectTicket,
+   bookingTicketType,
    statsTicketType
 }

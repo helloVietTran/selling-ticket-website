@@ -1,25 +1,32 @@
 import api from './api';
-import type { LoginPayLoad, LogoutPayload, RegisterPayload } from '@/types';
-import type { TokenResponse }  from '@/types';
+import type { BaseResponse, LoginPayLoad, TokenPayload, RegisterPayload } from '@/types';
+import type { LoginResponse }  from '@/types';
 
-async function register(payload: RegisterPayload) {
+async function signup(payload: RegisterPayload) {
     const res = await api.post("/auth/register", payload);
     return res.data;
 }
 
-async function login(payload: LoginPayLoad): Promise<TokenResponse> {
+async function signin(payload: LoginPayLoad): Promise<BaseResponse<LoginResponse>> {
     const res = await api.post("/auth/login", payload);
     return res.data;
 }
 
-async function logout(payload: LogoutPayload) {
+async function logout(payload: TokenPayload) {
     const res = await api.post("/auth/logout", payload);
 
     return res.data;
 }
 
+async function verifyToken(payload: TokenPayload): Promise<BaseResponse<{isAuthenticated: boolean}>> {
+    const res = await api.post("/auth/verify-token", payload);
+
+    return res.data;
+}
+
 export {
-    register,
-    login,
-    logout
+    signup,
+    signin,
+    logout,
+    verifyToken
 }

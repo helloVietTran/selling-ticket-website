@@ -1,18 +1,15 @@
-import { RequestHandler, Router } from 'express';
-
+import { Router } from 'express';
 import { validate } from '../middlewares/validate.middleware';
 import { auth } from '../middlewares/auth.middleware';
-
 import { createEventSchema } from '../validators/event.validate';
-
 import eventController from '../controllers/event.controller';
 
 const router = Router();
 
 router.post('/', auth, validate(createEventSchema), eventController.createEvent.bind(eventController));
 router.get('/filter', eventController.filterEvents);
-
-router.get('/organizer/:organizerId', auth, eventController.getEventsByOrganizer);
+router.get('/:eventId', eventController.getEventById);
+router.get('/organizer/:organizerId', auth, eventController.getMyEventsByOrganizerId);
 router.delete('/:eventId/organizer/:organizerId', auth, eventController.deleteEvent);
 
 export default router;

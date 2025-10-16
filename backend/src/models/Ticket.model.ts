@@ -1,8 +1,7 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { QrCode } from './QrCode.model';
 import { TicketState } from '../types/enum';
 import { TicketType } from './TicketType.model';
-import { User } from './User.model';
 
 @Entity('ticket')
 export class Ticket {
@@ -18,13 +17,19 @@ export class Ticket {
   @Column({ nullable: true })
   seatNumber?: number;
 
+  @Column({ type: 'int' })
+  ownerId!: number;
+
+  @Column({ type: 'int' })
+  eventId!: number;
+
+  @CreateDateColumn({ type: 'timestamp' })
+  createdAt!: Date;
+
   @ManyToOne(() => TicketType, (tt) => tt.tickets, { nullable: false, onDelete: 'CASCADE' })
   ticketType!: TicketType;
 
-  @ManyToOne(() => User, (u) => u.tickets, { nullable: false })
-  owner?: User;
-
   @OneToOne(() => QrCode, (q) => q.ticket, { cascade: true, onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'ticketId' })
+  @JoinColumn({ name: 'qrCodeId' })
   qrCode?: QrCode;
 }

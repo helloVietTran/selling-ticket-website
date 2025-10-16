@@ -8,13 +8,13 @@ import { Venue } from '../models/Venue.model';
 import { TicketType } from '../models/TicketType.model';
 import { Booking } from '../models/Booking.model';
 import { BookingItem } from '../models/BookingItem.model';
-import { Payment } from '../models/Payment.model';
 import { Event } from '../models/Event.model';
 import { Organizer } from '../models/Organizer.model';
 import { DisabledToken } from '../models/DisabledToken.model';
 import { Category } from '../models/Category.model';
 import { EmailSetting } from '../models/EmailSetting.model';
-import { Upload } from '../models/Upload.model';
+import { Image } from '../models/Image.model';
+import { TransactionHistory } from '../models/TransactionHistory.model';
 
 export const AppDataSource = new DataSource({
   type: 'mysql',
@@ -24,7 +24,7 @@ export const AppDataSource = new DataSource({
   password: 'root',
   database: 'event_ticket_db',
   synchronize: true, // dev only
-  logging: ['error', 'info', 'query'],
+  logging: ['error'],
   entities: [
     User,
     QrCode,
@@ -34,12 +34,12 @@ export const AppDataSource = new DataSource({
     TicketType,
     Booking,
     BookingItem,
-    Payment,
     Organizer,
     DisabledToken,
     Category,
     EmailSetting,
-    Upload
+    Image,
+    TransactionHistory
   ],
   migrations: [],
   subscribers: []

@@ -1,52 +1,62 @@
-import { Calendar } from 'lucide-react';
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { Calendar } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { EventStatus } from '@/constant';
+import { formatDateTime } from '@/lib/formatDateTime';
 
 type EventCardProps = {
   eventId: number;
   title: string;
   minPrice: number;
-  date: string;
-  img: string;
-  status: string;
-
+  startTime: string;
+  img?: string;
+  status?: string;
 };
 
 const EventCard: React.FC<EventCardProps> = ({
+  eventId,
   title,
   minPrice,
-  date,
+  startTime,
   img,
   status,
-  eventId
-
 }) => {
+  const fallbackInitial = title ? title.charAt(0).toUpperCase() : '?';
+
   return (
     <Link
       to={`/events/${eventId}`}
       className="rounded-lg overflow-hidden hover:-translate-y-1 transition-transform duration-300 cursor-pointer text-white no-underline">
       <div className="relative">
-        <img
-          src={img}
-          alt={title}
-          className="w-full h-44 object-cover rounded-lg"
-        />
-        {status && (
+        <Avatar className="w-full h-50 rounded-xl">
+          <AvatarImage
+            src={img}
+            alt={title}
+            className="object-cover w-full h-full"
+          />
+          <AvatarFallback className="bg-gray-600 text-white text-2xl font-bold rounded-xl">
+            {fallbackInitial}
+          </AvatarFallback>
+        </Avatar>
+
+        {status == EventStatus.ONGOING && (
           <span className="absolute top-0 right-0 bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded-tr-lg rounded-bl-lg">
-            {status}
+            Đang diễn ra
           </span>
         )}
       </div>
+
       <div className="py-3">
         <div className="font-bold text-sm mb-2 min-h-10">{title}</div>
         <div className="text-green-500 font-semibold mb-2 text-sm">
-          Chỉ từ {minPrice}
+          Chỉ từ {minPrice} VNĐ
         </div>
         <div className="flex items-center text-sm text-gray-300">
           <span className="mr-2">
             <Calendar className="size-5" />
           </span>
-          {date}
+          {formatDateTime(startTime)}
         </div>
       </div>
     </Link>
