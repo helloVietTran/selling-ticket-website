@@ -19,13 +19,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-// cron job
+// clear exprired booking
 startCronTicketBooking();
 
 // send ticket mail job
-// cron.schedule('*/3 * * * *', async () => {
-//   await emailController.sendAllTicketsMail();
-// });
+cron.schedule('*/3 * * * *', async () => {
+  await emailController.sendAllTicketsMail();
+});
 
 // routes
 route(app);

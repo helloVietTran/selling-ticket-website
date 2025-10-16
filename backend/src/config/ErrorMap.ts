@@ -102,5 +102,5 @@ export const ErrorMap = {
     code: 'CANNOT_DELETE_NON_DRAFT_EVENT',
     statusCode: 400,
     message: 'Cannot delete non draft event'
-  } as IErrorCode,
+  } as IErrorCode
 };
