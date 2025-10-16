@@ -149,7 +149,6 @@ class EventController {
       }
 
       if (event.status !== 'DRAFT') {
-        // bạn có thể dùng ErrorMap riêng nếu có
         throw AppError.fromErrorCode(ErrorMap.CANNOT_DELETE_NON_DRAFT_EVENT);
       }
 
@@ -173,7 +172,7 @@ class EventController {
       const pageNumber = parseInt(page || '1', 10);
       const pageSize = parseInt(limit || '10', 10);
 
-      const allowedStatuses = [EventStatus.Published, EventStatus.Ongoing];
+      const allowedStatuses = [EventStatus.Published, EventStatus.Ongoing, EventStatus.Ended];
 
       const query = this.eventRepository
         .createQueryBuilder('event')

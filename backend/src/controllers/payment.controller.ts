@@ -91,7 +91,7 @@ class PaymentController {
         createdAt: new Date(),
         bookingId: booking.bookingId,
         userId: +requester.id,
-        eventId: +requester.id
+        eventId: req.body.eventId
       });
       await queryRunner.manager.save(payment);
 

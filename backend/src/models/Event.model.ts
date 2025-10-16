@@ -23,7 +23,7 @@ export class Event {
   @Column({ type: 'enum', enum: EventStatus, default: EventStatus.Draft })
   status!: EventStatus;
 
-  @Column({ type: 'text' })
+  @Column({ type: 'longtext' })
   eventInfo!: string;
 
   @Column()
