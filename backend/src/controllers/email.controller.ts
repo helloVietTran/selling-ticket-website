@@ -83,7 +83,7 @@ class EmailController {
 
     const mailOptions = {
       from: 'Ban tổ chức nhóm 1',
-      to: 'numberzero0909@gmail.com',
+      to: 'nguyentieubao96@gmail.com',
       subject: `Vé của bạn cho ${ticketData.eventName}`,
       html,
       attachments: [{ filename: 'qr.png', content: qrBuffer, cid: 'qr1' }]
