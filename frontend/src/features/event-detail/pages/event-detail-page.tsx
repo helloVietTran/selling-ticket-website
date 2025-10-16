@@ -1,7 +1,5 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { format } from 'date-fns';
-import { vi } from 'date-fns/locale';
 import { getProvinces, getDistricts, getWards } from 'sub-vn';
 
 import { useApi } from '@/api/hooks/useApi';
@@ -49,7 +47,8 @@ const EventDetailPage = () => {
         <EventTicketCard
           eventId={event.eventId}
           title={event.title}
-          date={format(event.startTime, 'HH:mm dd/MM/yyyy', { locale: vi })}
+          startTime={event.startTime}
+          endTime={event.endTime}
           province={
             provinces.find((p: any) => p.code === event.venue.province)?.name
           }
@@ -60,7 +59,7 @@ const EventDetailPage = () => {
               districts.find((d: any) => d.code === event.venue.district)?.name
             }, `
           }
-          price={event.minPriceTicketType}
+          price={Math.min(...event.ticketTypes.map((t: any) => t.price))}
           image={event.eventImage}
         />
       </div>

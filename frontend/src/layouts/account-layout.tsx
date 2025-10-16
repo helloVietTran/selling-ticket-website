@@ -56,7 +56,7 @@ export default function AccountLayout() {
 
             <div className="flex items-center gap-4 mb-6">
               <Avatar className="w-12 h-12">
-                <AvatarImage src={data?.data?.avatar} alt="Việt Trần Danh" />
+                <AvatarImage src="/assets/mock_avatar.png" alt="mock_user" />
                 <AvatarFallback className="bg-gray-600 text-gray-300">
                   {data?.data?.userName.charAt(0).toUpperCase()}
                 </AvatarFallback>
