@@ -148,6 +148,11 @@ class EventController {
         throw AppError.fromErrorCode(ErrorMap.ORGANIZER_MISMATCH);
       }
 
+      if (event.status !== 'DRAFT') {
+        // bạn có thể dùng ErrorMap riêng nếu có
+        throw AppError.fromErrorCode(ErrorMap.CANNOT_DELETE_NON_DRAFT_EVENT);
+      }
+
       await eventRepo.remove(event);
       return res.status(200).json({
         message: 'Delete your event successfully'
