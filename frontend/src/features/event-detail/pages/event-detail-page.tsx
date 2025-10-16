@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import { vi } from 'date-fns/locale';
 import { getProvinces, getDistricts, getWards } from 'sub-vn';
@@ -15,6 +15,7 @@ import OrganizerCard from '@/features/event-detail/components/organizer-card';
 
 const EventDetailPage = () => {
   const { eventId } = useParams();
+  const navigate = useNavigate();
   const { data, exec, isPending } = useApi(getEventById);
 
   useEffect(() => {
@@ -31,7 +32,10 @@ const EventDetailPage = () => {
     return <p className="text-center py-10">Đang tải chi tiết sự kiện...</p>;
   }
 
-  if (!event) return null;
+  if (!event) {
+    navigate('/not-found');
+    return;
+  }
 
   return (
     <>

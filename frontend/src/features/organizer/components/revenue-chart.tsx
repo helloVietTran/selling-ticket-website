@@ -64,7 +64,6 @@ export default function RevenueChart() {
     }
   }, [eventId]);
 
-  //  Map dữ liệu từ API về đúng định dạng biểu đồ
   const chartData: ChartData[] = useMemo(() => {
     if (!weeklyRevenueData?.data?.dailyRevenue) return [];
 
@@ -80,6 +79,17 @@ export default function RevenueChart() {
 
   const totalRevenue = weeklyRevenueData?.data?.totalRevenue ?? 0;
   const totalTickets = weeklyRevenueData?.data?.totalTicketsSold ?? 0;
+
+  const maxRevenue = useMemo(() => {
+    if (chartData.length === 0) return 0;
+    return Math.max(...chartData.map(item => item.revenue));
+  }, [chartData]);
+
+  const formatRevenue = (value: number) => {
+    if (maxRevenue < 1_000_000) return `${(value / 1_000).toFixed(0)}K`;
+    if (maxRevenue < 1_000_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+    return `${(value / 1_000_000_000).toFixed(1)}B`;
+  };
 
   return (
     <Card className="w-full bg-transparent border-none text-white">
@@ -123,7 +133,8 @@ export default function RevenueChart() {
               yAxisId="right"
               orientation="right"
               stroke="#9333ea"
-              tickFormatter={value => `${(value / 1000000).toFixed(0)}M`}
+              tickFormatter={formatRevenue}
+              domain={[0, maxRevenue * 1.1]} // tự scale đẹp mắt
             />
 
             <Tooltip

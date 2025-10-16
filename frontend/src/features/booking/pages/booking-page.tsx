@@ -26,14 +26,10 @@ const BookingPage = () => {
   }, [eventId]);
 
 
-  const event = eventData?.data;
-  const booking = myBookingData?.data;
-  if (!event || !booking) return <div>Loading...</div>;
-
   const handleDeleteBooking = async (bookingId: string | number) => {
     try {
       await deleteMyBooking(bookingId);
-      navigate(`/events/${event.eventId}/select-ticket`)
+      navigate(`/events/${eventId}/select-ticket`)
     } catch (error) {
       console.log(error)
     }
@@ -53,6 +49,14 @@ const BookingPage = () => {
       console.log(error)
     }
   }
+
+  const event = eventData?.data;
+  const booking = myBookingData?.data;
+  if (!event || !booking) {
+    navigate('/not-found');
+    return;
+  };
+
 
   return (
     <div className="bg-main-content min-h-[90vh] !p-0 space-y-4 !pb-4">

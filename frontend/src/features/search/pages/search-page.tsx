@@ -6,7 +6,7 @@ const SearchPage = () => {
   return (
     <>
       <div className="bg-main-content py-4">
-        <div className="main-container">
+        <div className="main-container min-h-[400px]">
           <FilterBar />
           <EventList />
         </div>
