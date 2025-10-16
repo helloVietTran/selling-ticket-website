@@ -10,6 +10,7 @@ import EventTicketCard from '@/features/event-detail/components/event-ticket-car
 import EventDescription from '@/features/event-detail/components/event-description';
 import TicketTypeList from '@/features/event-detail/components/ticket-type-list';
 import OrganizerCard from '@/features/event-detail/components/organizer-card';
+import { Loader2 } from 'lucide-react';
 
 const EventDetailPage = () => {
   const { eventId } = useParams();
@@ -27,7 +28,12 @@ const EventDetailPage = () => {
   const event = data?.data;
 
   if (isPending) {
-    return <p className="text-center py-10">Đang tải chi tiết sự kiện...</p>;
+    return (
+      <div className="flex flex-col items-center justify-center py-10 text-center text-muted-foreground">
+        <Loader2 className="h-8 w-8 animate-spin mb-2" />
+        <p>Đang tải chi tiết sự kiện...</p>
+      </div>
+    );
   }
 
   if (!event) {
@@ -55,8 +61,7 @@ const EventDetailPage = () => {
           address={
             `${event.venue.street}, ` +
             `${wards.find((w: any) => w.code === event.venue.ward)?.name}, ` +
-            `${
-              districts.find((d: any) => d.code === event.venue.district)?.name
+            `${districts.find((d: any) => d.code === event.venue.district)?.name
             }, `
           }
           price={Math.min(...event.ticketTypes.map((t: any) => t.price))}
