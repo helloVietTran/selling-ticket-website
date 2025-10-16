@@ -60,7 +60,7 @@ class UserController {
     next: NextFunction
   ) => {
     try {
-      const { email, userName, phoneNumber } = req.body;
+      const { userName, phoneNumber } = req.body;
       const requester = res.locals.requester as Requester;
       const userRepo = AppDataSource.getRepository(User);
 
@@ -70,14 +70,6 @@ class UserController {
 
       if (!user) {
         throw AppError.fromErrorCode(ErrorMap.USER_NOT_FOUND);
-      }
-
-      if (email && email !== user.email) {
-        const existedUser = await userRepo.findOne({ where: { email } });
-        if (existedUser) {
-          throw AppError.fromErrorCode(ErrorMap.EMAIL_ALREADY_EXISTS);
-        }
-        user.email = email;
       }
 
       if (userName) user.userName = userName;

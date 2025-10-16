@@ -35,7 +35,7 @@ const CreateTicketTypeModal: React.FC<CreateTicketTypeModalProps> = ({ open, set
             quantity: "1",
             description: "",
             maxPerUser: "1",
-            minPerUser: "1",
+            minPerUser: "0",
         },
     });
 
