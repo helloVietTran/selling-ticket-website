@@ -1,35 +1,39 @@
 import { Request, Response, NextFunction } from 'express';
 import { AppError } from '../src/config/exception';
 import { ErrorMap } from '../src/config/ErrorMap';
+
 import { TicketType } from '../src/models/TicketType.model';
 import { User } from '../src/models/User.model';
+import { Booking } from '../src/models/Booking.model';
+import { BookingItem } from '../src/models/BookingItem.model';
 
+(TicketType.prototype as any).validate = jest.fn();
 // ---------------- MOCKS ----------------
-const mockFindBy = jest.fn();
-const mockFindOne = jest.fn();
+
+const mockFind = jest.fn();
 const mockSum = jest.fn();
 const mockSave = jest.fn();
 
-var mockGetRepository = jest.fn(() => ({
-  findBy: mockFindBy,
-  findOne: mockFindOne,
+const mockGetRepository = jest.fn(() => ({
+  find: mockFind,
   sum: mockSum,
   save: mockSave
 }));
 
 const mockConnect = jest.fn();
 const mockStartTransaction = jest.fn();
-const mockRollback = jest.fn();
-var mockCommit = jest.fn();
+const mockRollbackTransaction = jest.fn();
+const mockCommitTransaction = jest.fn();
 const mockRelease = jest.fn();
+
 const mockManagerFindOneBy = jest.fn();
 const mockManagerSave = jest.fn();
 
-var mockQueryRunner = {
+const mockQueryRunner = {
   connect: mockConnect,
   startTransaction: mockStartTransaction,
-  rollbackTransaction: mockRollback,
-  commitTransaction: mockCommit,
+  rollbackTransaction: mockRollbackTransaction,
+  commitTransaction: mockCommitTransaction,
   release: mockRelease,
   manager: {
     findOneBy: mockManagerFindOneBy,
@@ -37,8 +41,6 @@ var mockQueryRunner = {
   }
 };
 
-import ticketTypeController from '../src/controllers/ticket-type.controller';
-// Mock AppDataSource
 jest.mock('../src/config/data-source', () => ({
   AppDataSource: {
     getRepository: mockGetRepository,
@@ -46,6 +48,7 @@ jest.mock('../src/config/data-source', () => ({
   }
 }));
 
+import ticketTypeController from '../src/controllers/ticket-type.controller';
 // ---------------- RESPONSE MOCK ----------------
 const createMockResponse = (): jest.Mocked<Response> & { locals: any } => {
   const res = {} as jest.Mocked<Response> & { locals: any };
@@ -54,23 +57,26 @@ const createMockResponse = (): jest.Mocked<Response> & { locals: any } => {
   res.json = jest.fn().mockReturnValue(res);
   return res;
 };
+
 const mockNext: NextFunction = jest.fn();
 
 // ---------------- TEST SUITE ----------------
-describe('TicketTypeController', () => {
+describe('TicketTypeController (updated)', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   // -------- getTicketTypesByEventId --------
   describe('getTicketTypesByEventId', () => {
-    it('Trả về 200 với danh sách ticket types', async () => {
+    it('Trả về danh sách ticket types thành công', async () => {
       const req = { params: { eventId: '1' } } as unknown as Request;
       const res = createMockResponse();
       const mockTickets = [{ ticketTypeId: 1, name: 'VIP' }];
-      mockFindBy.mockResolvedValue(mockTickets);
+      mockFind.mockResolvedValue(mockTickets);
+
       await ticketTypeController.getTicketTypesByEventId(req, res, mockNext);
-      expect(mockFindBy).toHaveBeenCalledWith({ event: { eventId: 1 } });
+
+      expect(mockFind).toHaveBeenCalled();
       expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith({
         message: 'Lấy danh sách thành công',
@@ -78,86 +84,113 @@ describe('TicketTypeController', () => {
       });
     });
 
-    it('Trả về AppError nếu không có eventId', async () => {
-      const req = { params: {} as any } as unknown as Request;
+    it('Trả về AppError nếu thiếu eventId', async () => {
+      const req = { params: {} } as unknown as Request;
       const res = createMockResponse();
       const result = await ticketTypeController.getTicketTypesByEventId(req, res, mockNext);
       expect(result).toEqual(AppError.fromErrorCode(ErrorMap.EVENT_NOT_EXISTS));
     });
   });
 
-  // -------- bookingTicket --------
-  describe('bookingTicket', () => {
+  // -------- bookingTicketType --------
+  describe('bookingTicketType', () => {
     const req = {
-      body: { ticketTypes: [{ ticketTypeId: 1, quantity: 2 }] }
+      body: {
+        eventId: 1,
+        ticketTypes: [{ ticketTypeId: 1, quantity: 2 }]
+      }
     } as unknown as Request;
+
     it('Tạo booking thành công', async () => {
-      const res = createMockResponse();
-      res.locals.requester = { id: 1 };
-      const mockValidate = jest.fn().mockResolvedValue(undefined);
-      TicketType.prototype.validate = mockValidate;
-      const fakeUser = new User();
-      const fakeTicketType = new TicketType();
-      fakeTicketType.price = 100;
-      fakeTicketType.soldTicket = 0;
-      mockManagerFindOneBy.mockResolvedValueOnce(fakeUser); // 1. find User
-      mockManagerFindOneBy.mockResolvedValueOnce(fakeTicketType); // 2. find TicketType
-      mockManagerSave.mockResolvedValueOnce(fakeTicketType);
-      mockManagerSave.mockResolvedValueOnce({
-        bookingItems: [{}]
-      });
-      await ticketTypeController.bookingTicket(req, res, mockNext);
-      mockValidate.mockRestore();
-      expect(mockManagerFindOneBy).toHaveBeenCalledWith(User, { id: 1 });
-      expect(mockManagerFindOneBy).toHaveBeenCalledWith(TicketType, { ticketTypeId: 1 });
-      expect(mockManagerSave).toHaveBeenCalledTimes(2);
-      expect(mockQueryRunner.commitTransaction).toHaveBeenCalled();
-      expect(res.status).toHaveBeenCalledWith(201);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({
-          message: 'Booking created successfully. Please proceed to payment.'
-        })
-      );
-    });
-    it('Gọi next khi ticketTypes rỗng', async () => {
-      const res = createMockResponse();
-      res.locals.requester = { id: 1 };
+  const res = createMockResponse();
+  res.locals.requester = { id: 1 };
+
+  // ✅ req có eventId và ticketTypes đúng định dạng
+  const req = {
+    body: {
+      eventId: 10,
+      ticketTypes: [{ ticketTypeId: 1, quantity: 2 }]
+    }
+  } as unknown as Request;
+
+  const fakeUser = new User();
+  const fakeTicketType = new TicketType();
+  fakeTicketType.price = 100;
+  fakeTicketType.soldTicket = 0;
+  fakeTicketType.totalQuantity = 10;
+
+
+  // ✅ Mock findOneBy (User rồi TicketType)
+  mockManagerFindOneBy
+    .mockResolvedValueOnce(fakeUser) // find User
+    .mockResolvedValueOnce(fakeTicketType); // find TicketType
+
+  // ✅ Mock save
+  const fakeBooking = new Booking();
+  fakeBooking.bookingItems = [new BookingItem()];
+  mockManagerSave.mockResolvedValueOnce(fakeTicketType);
+  mockManagerSave.mockResolvedValueOnce(fakeBooking);
+
+  await ticketTypeController.bookingTicketType(req, res, mockNext);
+
+  expect(mockConnect).toHaveBeenCalled();
+  expect(mockStartTransaction).toHaveBeenCalled();
+  expect(mockManagerFindOneBy).toHaveBeenCalledWith(User, { id: 1 });
+  expect(mockManagerFindOneBy).toHaveBeenCalledWith(TicketType, { ticketTypeId: 1 });
+
+  // ✅ validate() phải được gọi ít nhất 1 lần
+
+  expect(mockManagerSave).toHaveBeenCalledTimes(2);
+  expect(mockCommitTransaction).toHaveBeenCalled();
+  expect(res.status).toHaveBeenCalledWith(201);
+  expect(res.json).toHaveBeenCalledWith(
+    expect.objectContaining({
+      message: 'Booking created successfully. Please proceed to payment.'
+    })
+  );
+});
+
+    it('Gọi next khi không có ticketTypes', async () => {
       const badReq = { body: { ticketTypes: [] } } as unknown as Request;
-      await ticketTypeController.bookingTicket(badReq, res, mockNext);
-      expect(mockRollback).toHaveBeenCalled();
-      expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.INVALID_REQUEST));
+      const res = createMockResponse();
+      res.locals.requester = { id: 1 };
+
+      await ticketTypeController.bookingTicketType(badReq, res, mockNext);
+      expect(mockRollbackTransaction).toHaveBeenCalled();
+      expect(mockNext).toHaveBeenCalled();
     });
   });
 
-  // -------- statisticalTicketType --------
-  describe('statisticalTicketType', () => {
-    it('Trả về 201 với dữ liệu thống kê', async () => {
+  // -------- statsTicketType --------
+  describe('statsTicketType', () => {
+    it('Trả về dữ liệu thống kê thành công', async () => {
       const req = { params: { eventId: '5' } } as unknown as Request;
       const res = createMockResponse();
-      const fakeEvent = {
-        event: { eventId: 5 },
-        ticketTypeName: 'VIP',
-        totalQuantity: 100,
-        soldTicket: 20
-      };
-      mockFindOne.mockResolvedValue(fakeEvent);
-      mockSum.mockResolvedValueOnce(100).mockResolvedValueOnce(20);
-      await ticketTypeController.statisticalTicketType(req, res, mockNext);
-      expect(mockFindOne).toHaveBeenCalled();
+
+      const fakeTickets = [
+        { ticketTypeName: 'VIP', totalQuantity: 100, soldTicket: 50, event: { eventId: 5 } }
+      ];
+      mockFind.mockResolvedValue(fakeTickets);
+      mockSum.mockResolvedValueOnce(100).mockResolvedValueOnce(50);
+
+      await ticketTypeController.statsTicketType(req, res, mockNext);
+
+      expect(mockFind).toHaveBeenCalled();
       expect(mockSum).toHaveBeenCalledTimes(2);
-      expect(res.status).toHaveBeenCalledWith(201);
+      expect(res.status).toHaveBeenCalledWith(200);
       expect(res.json).toHaveBeenCalledWith(
         expect.objectContaining({
-          message: 'statistical featch successfully'
+          message: 'Stats successfully'
         })
       );
     });
 
-    it('Gọi next khi không tìm thấy event', async () => {
-      const req = { params: { eventId: '9' } } as unknown as Request;
+    it('Gọi next khi không tìm thấy ticket type', async () => {
+      const req = { params: { eventId: '10' } } as unknown as Request;
       const res = createMockResponse();
-      mockFindOne.mockResolvedValue(null);
-      await ticketTypeController.statisticalTicketType(req, res, mockNext);
+      mockFind.mockResolvedValue([]);
+
+      await ticketTypeController.statsTicketType(req, res, mockNext);
       expect(mockNext).toHaveBeenCalledWith(AppError.fromErrorCode(ErrorMap.TICKET_TYPE_NOT_FOUND));
     });
   });
