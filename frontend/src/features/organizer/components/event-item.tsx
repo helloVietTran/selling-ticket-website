@@ -59,16 +59,15 @@ export default function EventItem({
   const [scannerOpen, setScannerOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
 
-  const { exec: deleteEventExec } = useApi(deleteEvent);
 
   const handleDelete = async () => {
     const organizerId = localStorage.getItem(LOCAL_STORAGE_KEYS.ORGANIZER_ID);
     if (!organizerId) return;
     try {
-      await deleteEventExec(eventId, organizerId);
+      await deleteEvent(eventId, organizerId);
       toast.success('Xóa sự kiện thành công');
     } catch (err) {
-      toast.error('Xóa sự kiện thất bại! Vui lòng thử lại sau');
+      toast.error('Không thể xóa sự kiện đã phát hành. Vui lòng liên hệ admin');
       console.error(err);
     } finally {
       setConfirmOpen(false);

@@ -97,5 +97,10 @@ export const ErrorMap = {
     code: 'TICKET_ALREADY_CHECKED_IN',
     statusCode: 400,
     message: 'Ticket is used'
+  } as IErrorCode,
+  CANNOT_DELETE_NON_DRAFT_EVENT: {
+    code: 'CANNOT_DELETE_NON_DRAFT_EVENT',
+    statusCode: 400,
+    message: 'Cannot delete non draft event'
   } as IErrorCode
 };
