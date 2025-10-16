@@ -16,7 +16,7 @@ const Header = () => {
   const { openLogin, openRegister } = useAuthModal();
 
   const handleSearch = () => {
-    navigate(`/search?q=${query}`);
+    navigate(`/search?keyword=${query}`);
   };
 
   return (
