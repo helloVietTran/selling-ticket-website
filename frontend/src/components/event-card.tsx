@@ -4,6 +4,7 @@ import { Calendar } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { EventStatus } from '@/constant';
 import { formatDateTime } from '@/lib/formatDateTime';
+import { formatVND } from '@/lib/formatVND';
 
 type EventCardProps = {
   eventId: number;
@@ -55,7 +56,7 @@ const EventCard: React.FC<EventCardProps> = ({
       <div className="py-3">
         <div className="font-bold text-sm mb-2 min-h-10">{title}</div>
         <div className="text-green-500 font-semibold mb-2 text-sm">
-          Chỉ từ {minPrice} VNĐ
+          Chỉ từ {formatVND(minPrice)}
         </div>
         <div className="flex items-center text-sm text-gray-300">
           <span className="mr-2">

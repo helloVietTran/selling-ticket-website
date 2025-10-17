@@ -11,12 +11,12 @@ import { config } from '../src/config/config';
 jest.mock('../src/config/data-source', () => {
   const mockRepo = {
     create: jest.fn(),
-    save: jest.fn(),
+    save: jest.fn()
   };
   return {
     AppDataSource: {
-      getRepository: jest.fn(() => mockRepo),
-    },
+      getRepository: jest.fn(() => mockRepo)
+    }
   };
 });
 
@@ -25,13 +25,13 @@ jest.mock('sharp', () =>
   jest.fn(() => ({
     resize: jest.fn().mockReturnThis(),
     jpeg: jest.fn().mockReturnThis(),
-    toFile: jest.fn().mockResolvedValue(true),
+    toFile: jest.fn().mockResolvedValue(true)
   }))
 );
 
 // Mock config
 jest.mock('../src/config/config', () => ({
-  config: { domain: 'http://localhost:3000' },
+  config: { domain: 'http://localhost:3000' }
 }));
 
 // Mock fs
@@ -52,7 +52,7 @@ describe('ResourceController.uploadImage', () => {
     app.post('/api/upload', (req: Request, res: Response, next: NextFunction) => {
       req.file = {
         buffer: Buffer.from('fake image content'),
-        originalname: 'test.jpg',
+        originalname: 'test.jpg'
       } as any;
       ResourceController.uploadImage(req, res, next);
     });
@@ -75,11 +75,11 @@ describe('ResourceController.uploadImage', () => {
   it('Upload ảnh thành công', async () => {
     mockRepo.create.mockReturnValue({
       id: '123',
-      url: 'http://localhost:3000/uploads/123.jpg',
+      url: 'http://localhost:3000/uploads/123.jpg'
     });
     mockRepo.save.mockResolvedValue({
       id: '123',
-      url: 'http://localhost:3000/uploads/123.jpg',
+      url: 'http://localhost:3000/uploads/123.jpg'
     });
 
     const response = await request(app).post('/api/upload');

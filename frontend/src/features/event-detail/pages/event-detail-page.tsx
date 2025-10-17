@@ -61,7 +61,8 @@ const EventDetailPage = () => {
           address={
             `${event.venue.street}, ` +
             `${wards.find((w: any) => w.code === event.venue.ward)?.name}, ` +
-            `${districts.find((d: any) => d.code === event.venue.district)?.name
+            `${
+              districts.find((d: any) => d.code === event.venue.district)?.name
             }, `
           }
           price={Math.min(...event.ticketTypes.map((t: any) => t.price))}

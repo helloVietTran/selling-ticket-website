@@ -26,7 +26,7 @@ const destinations: Destination[] = [
   {
     name: 'Vị trí khác',
     img: '/assets/ot.webp',
-    href: '/search?province=all',
+    href: '/search',
   },
 ];
 
@@ -60,7 +60,9 @@ const DestinationList: React.FC<DestinationListProps> = ({
 }) => {
   return (
     <div className={wrapperClassName}>
-      <h2 className="text-gray-400 text-base font-semibold mb-4">Điểm đến thú vị</h2>
+      <h2 className="text-gray-400 text-base font-semibold mb-4">
+        Điểm đến thú vị
+      </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {destinations.map((d, i) => (
           <DestinationCard key={i} {...d} />

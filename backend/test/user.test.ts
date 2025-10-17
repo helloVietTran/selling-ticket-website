@@ -4,24 +4,24 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 const mockRepo = {
   findOne: jest.fn(),
   findOneBy: jest.fn(),
-  save: jest.fn(),
+  save: jest.fn()
 };
 
 jest.mock('../src/config/data-source', () => ({
   AppDataSource: {
-    getRepository: jest.fn(() => mockRepo),
-  },
+    getRepository: jest.fn(() => mockRepo)
+  }
 }));
 
 jest.mock('../src/middlewares/auth.middleware', () => ({
   auth: (req: Request, res: Response, next: NextFunction) => {
     res.locals.requester = { id: 1 }; // gắn user ảo
     next();
-  },
+  }
 }));
 
 jest.mock('../src/middlewares/validate.middleware', () => ({
-  validate: () => (req: Request, res: Response, next: NextFunction) => next(),
+  validate: () => (req: Request, res: Response, next: NextFunction) => next()
 }));
 
 import userRouter from '../src/routes/user.route';
@@ -64,7 +64,7 @@ describe('User Routes', () => {
       id: 1,
       userName: 'Thế',
       email: 'the@example.com',
-      passwordHash: '1234',
+      passwordHash: '1234'
     });
 
     const response = await request(app).get('/api/users/1');
@@ -86,7 +86,7 @@ describe('User Routes', () => {
       id: 1,
       userName: 'Thế',
       email: 'the@example.com',
-      passwordHash: 'xxx',
+      passwordHash: 'xxx'
     });
 
     const response = await request(app).get('/api/users/my-info');
@@ -107,19 +107,17 @@ describe('User Routes', () => {
       id: 1,
       userName: 'hathe',
       phoneNumber: '0123',
-      passwordHash: 'xxx',
+      passwordHash: 'xxx'
     });
 
     mockRepo.save.mockResolvedValue({
       id: 1,
       userName: 'havanthe',
       phoneNumber: '0999',
-      passwordHash: 'xxx',
+      passwordHash: 'xxx'
     });
 
-    const response = await request(app)
-      .put('/api/users/my-info')
-      .send({ userName: 'havanthe', phoneNumber: '0999' });
+    const response = await request(app).put('/api/users/my-info').send({ userName: 'havanthe', phoneNumber: '0999' });
 
     expect(response.status).toBe(200);
     expect(response.body.data.userName).toBe('havanthe');
@@ -128,9 +126,7 @@ describe('User Routes', () => {
   it('Trả lỗi khi không tìm thấy user (updateMyInfo)', async () => {
     mockRepo.findOne.mockResolvedValue(null);
 
-    const response = await request(app)
-      .put('/api/users/my-info')
-      .send({ userName: 'havanthe' });
+    const response = await request(app).put('/api/users/my-info').send({ userName: 'havanthe' });
 
     expect(response.status).toBe(404);
   });
