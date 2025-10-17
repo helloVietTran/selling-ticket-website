@@ -60,7 +60,7 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
 
         {!isSearchPage && (
           <Link
-            to={`/search?category=${category}`}
+            to={`/search?categories=${category}`}
             className="flex items-center gap-1 text-gray-400 text-sm hover:text-gray-300 transition-all"
           >
             Xem thêm

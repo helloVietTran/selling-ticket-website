@@ -102,53 +102,52 @@ describe('TicketTypeController (updated)', () => {
     } as unknown as Request;
 
     it('Tạo booking thành công', async () => {
-  const res = createMockResponse();
-  res.locals.requester = { id: 1 };
+      const res = createMockResponse();
+      res.locals.requester = { id: 1 };
 
-  // ✅ req có eventId và ticketTypes đúng định dạng
-  const req = {
-    body: {
-      eventId: 10,
-      ticketTypes: [{ ticketTypeId: 1, quantity: 2 }]
-    }
-  } as unknown as Request;
+      // ✅ req có eventId và ticketTypes đúng định dạng
+      const req = {
+        body: {
+          eventId: 10,
+          ticketTypes: [{ ticketTypeId: 1, quantity: 2 }]
+        }
+      } as unknown as Request;
 
-  const fakeUser = new User();
-  const fakeTicketType = new TicketType();
-  fakeTicketType.price = 100;
-  fakeTicketType.soldTicket = 0;
-  fakeTicketType.totalQuantity = 10;
+      const fakeUser = new User();
+      const fakeTicketType = new TicketType();
+      fakeTicketType.price = 100;
+      fakeTicketType.soldTicket = 0;
+      fakeTicketType.totalQuantity = 10;
 
+      // ✅ Mock findOneBy (User rồi TicketType)
+      mockManagerFindOneBy
+        .mockResolvedValueOnce(fakeUser) // find User
+        .mockResolvedValueOnce(fakeTicketType); // find TicketType
 
-  // ✅ Mock findOneBy (User rồi TicketType)
-  mockManagerFindOneBy
-    .mockResolvedValueOnce(fakeUser) // find User
-    .mockResolvedValueOnce(fakeTicketType); // find TicketType
+      // ✅ Mock save
+      const fakeBooking = new Booking();
+      fakeBooking.bookingItems = [new BookingItem()];
+      mockManagerSave.mockResolvedValueOnce(fakeTicketType);
+      mockManagerSave.mockResolvedValueOnce(fakeBooking);
 
-  // ✅ Mock save
-  const fakeBooking = new Booking();
-  fakeBooking.bookingItems = [new BookingItem()];
-  mockManagerSave.mockResolvedValueOnce(fakeTicketType);
-  mockManagerSave.mockResolvedValueOnce(fakeBooking);
+      await ticketTypeController.bookingTicketType(req, res, mockNext);
 
-  await ticketTypeController.bookingTicketType(req, res, mockNext);
+      expect(mockConnect).toHaveBeenCalled();
+      expect(mockStartTransaction).toHaveBeenCalled();
+      expect(mockManagerFindOneBy).toHaveBeenCalledWith(User, { id: 1 });
+      expect(mockManagerFindOneBy).toHaveBeenCalledWith(TicketType, { ticketTypeId: 1 });
 
-  expect(mockConnect).toHaveBeenCalled();
-  expect(mockStartTransaction).toHaveBeenCalled();
-  expect(mockManagerFindOneBy).toHaveBeenCalledWith(User, { id: 1 });
-  expect(mockManagerFindOneBy).toHaveBeenCalledWith(TicketType, { ticketTypeId: 1 });
+      // ✅ validate() phải được gọi ít nhất 1 lần
 
-  // ✅ validate() phải được gọi ít nhất 1 lần
-
-  expect(mockManagerSave).toHaveBeenCalledTimes(2);
-  expect(mockCommitTransaction).toHaveBeenCalled();
-  expect(res.status).toHaveBeenCalledWith(201);
-  expect(res.json).toHaveBeenCalledWith(
-    expect.objectContaining({
-      message: 'Booking created successfully. Please proceed to payment.'
-    })
-  );
-});
+      expect(mockManagerSave).toHaveBeenCalledTimes(2);
+      expect(mockCommitTransaction).toHaveBeenCalled();
+      expect(res.status).toHaveBeenCalledWith(201);
+      expect(res.json).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: 'Booking created successfully. Please proceed to payment.'
+        })
+      );
+    });
 
     it('Gọi next khi không có ticketTypes', async () => {
       const badReq = { body: { ticketTypes: [] } } as unknown as Request;
@@ -167,9 +166,7 @@ describe('TicketTypeController (updated)', () => {
       const req = { params: { eventId: '5' } } as unknown as Request;
       const res = createMockResponse();
 
-      const fakeTickets = [
-        { ticketTypeName: 'VIP', totalQuantity: 100, soldTicket: 50, event: { eventId: 5 } }
-      ];
+      const fakeTickets = [{ ticketTypeName: 'VIP', totalQuantity: 100, soldTicket: 50, event: { eventId: 5 } }];
       mockFind.mockResolvedValue(fakeTickets);
       mockSum.mockResolvedValueOnce(100).mockResolvedValueOnce(50);
 

@@ -12,9 +12,9 @@ jest.mock('../src/config/data-source', () => ({
     getRepository: jest.fn().mockReturnValue({
       findOne: jest.fn(),
       save: jest.fn(),
-      create: jest.fn(),
-    }),
-  },
+      create: jest.fn()
+    })
+  }
 }));
 
 describe('EventController', () => {
@@ -41,22 +41,22 @@ describe('EventController', () => {
           eventImage: 'image.jpg',
           startTime: new Date(),
           endTime: new Date(),
-          category: 'Music',
+          category: 'Music'
         },
         venue: {
           province: 'Hà Nội',
           district: 'Cầu Giấy',
           ward: 'Dịch Vọng',
-          street: 'Phạm Văn Bạch',
+          street: 'Phạm Văn Bạch'
         },
         organizer: {
           organizerName: 'Test Organizer',
-          organizerInfo: 'Thông tin nhà tổ chức',
+          organizerInfo: 'Thông tin nhà tổ chức'
         },
         ticketTypes: [],
         setting: {
-          messageToReceiver: 'Cảm ơn bạn đã tham gia!',
-        },
+          messageToReceiver: 'Cảm ơn bạn đã tham gia!'
+        }
       });
 
     expect(response.status).toBe(201);

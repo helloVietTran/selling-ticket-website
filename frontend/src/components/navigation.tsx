@@ -20,7 +20,7 @@ const Navigation = () => {
           {categories.map(cat => (
             <li key={cat.value}>
               <Link
-                to={`/search?category=${cat.value}`}
+                to={`/search?categories=${cat.value}`}
                 className="hover:text-emerald-400 transition-colors">
                 {cat.label}
               </Link>
