@@ -1,27 +1,29 @@
 import React, { useEffect } from 'react';
-import { Link, useLocation, useSearchParams } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Pagination } from 'swiper/modules';
-
-import 'swiper/css';
-import 'swiper/css/navigation';
-import 'swiper/css/pagination';
+import { Link, useLocation, useSearchParams } from 'react-router-dom'; // Sử dụng useLocation và useSearchParams để lấy tham số tìm kiếm từ URL
+import { ChevronRight } from 'lucide-react'; // icon mũi tên
+import { Swiper, SwiperSlide } from 'swiper/react'; // Import Swiper React components
+import { Navigation, Pagination } from 'swiper/modules'; // Thêm Pagination module
+// Import Swiper styles
+import 'swiper/css'; // core Swiper
+import 'swiper/css/navigation'; // Navigation module
+import 'swiper/css/pagination'; // Pagination module
 
 import EventCard from '@/components/event-card';
 import type { Event, GetEventsParams } from '@/types';
 import { useApi } from '@/api/hooks/useApi';
 import { getEvents } from '@/api/eventApi';
-import { categoryLabels, EventCategory } from '@/constant';
-
+import { categoryLabels, EventCategory } from '@/constant'; // import categoryLabels
+// định nghĩa kiểu props cho component
 type EventListProps = {
   category?: EventCategory;
-};
+}; // có thể không truyền category
+
+// component danh sách sự kiện
 
 const EventList: React.FC<EventListProps> = ({ category }) => {
   const location = useLocation();
-  const [searchParams] = useSearchParams();
-  const isSearchPage = location.pathname === '/search';
+  const [searchParams] = useSearchParams(); // hook lấy tham số tìm kiếm từ URL
+  const isSearchPage = location.pathname === '/search'; // kiểm tra xem có phải trang tìm kiếm không
 
   const { data, exec } = useApi(getEvents);
 
@@ -30,7 +32,7 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
   const province = searchParams.get('province') || undefined;
   const categories = searchParams.get('categories') || undefined;
   const keyword = searchParams.get('keyword') || undefined;
-
+// gọi api khi các tham số tìm kiếm thay đổi
   useEffect(() => {
     const params: GetEventsParams = {};
 
@@ -39,7 +41,7 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
     if (province) params.province = province;
     if (categories) params.category = categories;
     if (keyword) params.keyword = keyword;
-
+// nếu không phải trang tìm kiếm và có category, thêm category vào params
     if (!isSearchPage && category) {
       params.category = category;
     }
@@ -47,7 +49,7 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
     exec(params);
   }, [startTime, endTime, province, categories, keyword, category, isSearchPage]);
 
-  const events: Event[] = data?.data ?? [];
+  const events: Event[] = data?.data ?? []; // danh sách sự kiện từ kết quả api hoặc mảng rỗng nếu không có
 
   return (
     <>
@@ -56,7 +58,7 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
           <h2 className="text-white text-lg font-semibold">
             {categoryLabels[category]}
           </h2>
-        )}
+        )} {/* hiển thị tiêu đề nếu có category */}
 
         {!isSearchPage && (
           <Link
@@ -66,7 +68,7 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
             Xem thêm
             <ChevronRight className="size-4 text-inherit" />
           </Link>
-        )}
+        )} {/* hiển thị link xem thêm nếu không phải trang tìm kiếm */}
       </div>
 
       {events.length === 0 ? (
@@ -87,7 +89,7 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
               eventId={event.eventId}
             />
           ))}
-        </div>
+        </div> /* hiển thị dạng lưới nếu là trang tìm kiếm */
       ) : (
         <div className="pb-6 overflow-x-hidden">
           <Swiper
@@ -106,8 +108,8 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
             }}
             className="rounded-lg relative"
             loop={true}
-          >
-            {events.map((event: Event, index) => (
+          > {/* hiển thị dạng slider nếu không phải trang tìm kiếm */}
+            {events.map((event: Event, index) => ( /* duyệt qua danh sách sự kiện và hiển thị từng thẻ sự kiện trong SwiperSlide */
               <SwiperSlide key={`${event.eventId}-${index}`}>
                 <EventCard
                   title={event.title}
@@ -118,7 +120,7 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
                   eventId={event.eventId}
                 />
               </SwiperSlide>
-            ))}
+            ))} {/* hiển thị các nút điều hướng tùy chỉnh */}
 
             <div className="swiper-button-prev-custom absolute top-1/3 -translate-y-1/2 left-2 bg-black text-white p-2.5 rounded-md cursor-pointer z-10 opacity-40 hover:opacity-100 transition">
               <ChevronRight className="rotate-180" size={20} />
