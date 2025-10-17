@@ -18,27 +18,21 @@ type Event = {
 const events: Event[] = [
   {
     id: 1,
-    img: 'https://picsum.photos/id/1011/800/400',
+    img: 'http://localhost:3001/uploads/1760628307703-508454613.jpg',
     alt: 'Event 1',
     href: '/events/1',
   },
   {
     id: 2,
-    img: 'https://picsum.photos/id/1015/800/400',
+    img: 'http://localhost:3001/uploads/1760629236185-304620039.jpg',
     alt: 'Event 2',
     href: '/events/2',
   },
   {
     id: 3,
-    img: 'https://picsum.photos/id/1025/800/400',
+    img: 'http://localhost:3001/uploads/1760629437327-588735914.jpg',
     alt: 'Event 3',
     href: '/events/3',
-  },
-  {
-    id: 4,
-    img: 'https://picsum.photos/id/1035/800/400',
-    alt: 'Event 4',
-    href: '/events/4',
   },
 ];
 

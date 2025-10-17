@@ -17,6 +17,6 @@ export class TransactionHistory {
   @Column('double precision')
   amount!: number;
 
-  @Column({ type: 'datetime' })
+  @Column({ type: 'timestamp' })
   createdAt!: Date;
 }

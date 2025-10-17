@@ -8,6 +8,7 @@ import {
 import { useAuth } from '@/context/auth-context';
 import { User, Ticket, Calendar, LogOut } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 type AvatarDropdownProps = {
   side?: 'top' | 'right' | 'bottom' | 'left';
@@ -21,10 +22,13 @@ export default function AvatarDropdown({
   const { logout } = useAuth();
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger asChild className="bg-red-400">
-        <button className="size-10 cursor-pointer rounded-full bg-white/10 flex items-center justify-center hover:ring-2 hover:ring-emerald-500 transition">
-          <User className="size-6 text-white" />
-        </button>
+      <DropdownMenuTrigger asChild className="bg-transparent">
+        <Avatar className="size-10 cursor-pointer hover:ring-2 hover:ring-emerald-500 transition">
+          <AvatarImage src="/assets/mock_avatar.png" alt="mock_avatar" />
+          <AvatarFallback className="bg-transparent">
+            <User className="size-6 text-white" />
+          </AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent
