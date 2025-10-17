@@ -60,7 +60,7 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
 
         {!isSearchPage && (
           <Link
-            to={`/search?category=${category}`}
+            to={`/search?categories=${category}`}
             className="flex items-center gap-1 text-gray-400 text-sm hover:text-gray-300 transition-all"
           >
             Xem thêm
@@ -74,7 +74,7 @@ const EventList: React.FC<EventListProps> = ({ category }) => {
           Không có sự kiện nào phù hợp với yêu cầu.
         </div>
       ) : isSearchPage ? (
-    
+
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 pb-10">
           {events.map((event: Event) => (
             <EventCard
